@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Error - Trendy Threads</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .error-container {
+            text-align: center;
+            padding: 40px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .error-container h1 {
+            font-size: 80px;
+            color: #dc3545;
+            margin-bottom: 10px;
+        }
+        .error-container h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .btn {
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="error-container">
+        <h1>403</h1>
+        <h2>Access Denied</h2>
+        <p>You do not have permission to access this page.</p>
+        <a href="/admin" class="btn btn-primary">Go to Dashboard</a>
+        <a href="javascript:history.back()" class="btn btn-secondary">Go Back</a>
+
+    </div>
+
+</body>
+</html>

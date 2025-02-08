@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css" />
+  <link rel="stylesheet" href="css/elegant-icons.css" type="text/css" />
+  <link rel="stylesheet" href="css/magnific-popup.css" type="text/css" />
+  <link rel="stylesheet" href="css/nice-select.css" type="text/css" />
+  <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css" />
+  <link rel="stylesheet" href="css/slicknav.min.css" type="text/css" />
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f7f7f7;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 350px; /* Compact width */
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 6px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 22px;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    label {
+      font-size: 13px;
+      color: #333;
+      display: block;
+      margin-bottom: 5px;
+      text-align: left;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(90deg, #007BFF, #0056b3);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #0056b3, #007BFF);
+    }
+
+    .google-btn {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .g_id_signin {
+      width: 100% !important;
+      display: flex;
+      justify-content: center;
+    }
+
+    .login-link {
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    .login-link a {
+      color: #007BFF;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+    .error-message {
+      color: #d63031;
+      font-size: 0.73rem;
+      margin-top: 1px;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        width: 90%;
+        padding: 15px;
+      }
+      h2 {
+        font-size: 20px;
+      }
+      input, button {
+        font-size: 14px;
+        padding: 10px;
+      }
+    }
+
+    .error {
+    color: red;
+    font-size: 0.73rem;
+}
+.login {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.login p {
+    font-size: 16px;
+    color: #333;
+}
+
+.login a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.login a:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}
+.password-container {
+    position: relative;
+    width: 100%;
+}
+
+.password-container input {
+    width: 100%;
+    padding-right: 40px; /* Space for eye icon */
+}
+
+.password-container .toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #888;
+}
+
+.password-container .toggle-password:hover {
+    color: #333;
+}
+
+
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Sign Up</h2>
+    <% if (message) { %>
+      <p class="error"><%= message %></p>
+  <% } %>
+    <form id="signupform" action="/signup" method="POST">
+      <div class="input-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="name" placeholder="Enter Name" required>
+        <div id="error1" class="error-message"></div>
+      </div>
+  
+      <div class="input-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" placeholder="Enter Email" required>
+        <div id="error2" class="error-message"></div>
+      </div>
+  
+      <div class="input-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" placeholder="Enter Phone Number" required>
+        <div id="error3" class="error-message"></div>
+      </div>
+  
+      <div class="input-group">
+        <label for="password">Password</label>
+        <div class="password-container">
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <i class="fas fa-eye toggle-password" onclick="togglePassword('password', this)"></i>
+        </div>
+        <div id="error4" class="error-message"></div>
+    </div>
+    
+    <div class="input-group">
+        <label for="confirm_password">Confirm Password</label>
+        <div class="password-container">
+            <input type="password" id="confirm_password" name="confirmPassword" placeholder="Confirm Password" required>
+            <i class="fas fa-eye toggle-password" onclick="togglePassword('confirm_password', this)"></i>
+        </div>
+        <div id="error5" class="error-message"></div>
+    </div>
+    
+  
+      <button type="submit" value="submit">Sign Up</button>
+    </form>
+
+    <!-- Google Sign-Up Button -->
+    <div class="google-btn">
+      <div id="g_id_onload"
+        data-client_id="YOUR_GOOGLE_CLIENT_ID"
+        data-context="signin"
+        data-ux_mode="popup"
+        data-callback="handleCredentialResponse"
+        data-auto_prompt="false">
+      </div>
+      <div class="g_id_signin" data-type="standard"></div>
+    </div>
+    <div class="login">
+      <p>Already have an account? <a href="/login">Login</a></p>
+  </div>
+  
+
+
+
+    <script>
+    const signupform = document.getElementById("signupform")
+    document.addEventListener("DOMContentLoaded",function(){
+      signupform.addEventListener("submit",formValidate)
+    })
+    function formValidate(e){
+       e.preventDefault()  //prevent for submission
+    
+      // get form values
+    const name = document.getElementById("name").value.trim()
+    const email = document.getElementById("email").value.trim()
+    const phone = document.getElementById("phone").value.trim()
+    const password = document.getElementById("password").value.trim()
+    const confirmPassword = document.getElementById("confirm_password").value.trim()
+    
+    // get error message
+    const nameError = document.getElementById("error1")
+    const emailError = document.getElementById("error2")
+    const phoneError = document.getElementById("error3")
+    const passwordError = document.getElementById("error4")
+    const confirmPasswordError = document.getElementById("error5")
+
+      // reset error message
+      nameError.textContent = ""
+      emailError.textContent = ""
+      phoneError.textContent = ""
+      passwordError.textContent = ""
+      confirmPassword.textContent = ""
+      
+      let isValid = true
+
+      // // name validation
+      const nameRegex = /^[A-Za-z\s]{3,}$/
+      if(name===""){
+        nameError.textContent = "name is required"
+        isValid = false
+      }else if(!nameRegex.test(name)){
+        nameError.textContent = "Please enter a valid name"
+        isValid = false
+      }
+
+      // // phone number validation
+      const phoneRegex = /^\+?[0-9]{10,15}$/
+      if(phone===""){
+        phoneError.textContent = "Phone number is required"
+        isValid = false
+      }else if(!phoneRegex.test(phone)){
+        phoneError.textContent = "Please enter a valid phone number"
+        isValid = false
+      }
+
+      // email validation
+      const emailRegex = /^[a-zA-z0-9]([a-a-zA-z0-9._-])*@[a-a-zA-z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if(email===""){
+        emailError.textContent = "Email is required",
+        isValid = false
+      }else if(!emailRegex.test(email)){
+        emailError.textContent = "Please enter a valid email address"
+        isValid = false
+      }
+
+      // password validation
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/
+      if(password===""){
+        passwordError.textContent = "Password is required"
+        isValid = false
+      }else if(!passwordRegex.test(password)){
+        passwordError.textContent = "Password must be 8 characters and include uppercase, lowercase, and a number"
+        isValid = false
+      }
+
+      // confirm password
+      if(confirmPassword === ""){
+        confirmPasswordError.textContent = "Please confirm your password"
+        isValid = false
+      }else if(password !==confirmPassword){
+        confirmPasswordError.textContent = "Password do not match"
+        isValid = false
+      }
+
+      //submit form if valid
+      if(isValid){
+        e.target.submit()
+      }
+
+    }
+    
+
+
+
+
+    function handleCredentialResponse(response) {
+      console.log("Google Credential Response:", response);
+      // Send the response to your backend for authentication
+    }
+
+    function togglePassword(fieldId, icon) {
+    const field = document.getElementById(fieldId);
+    if (field.type === "password") {
+        field.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+    } else {
+        field.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+    }
+}
+
+  </script>
+
+</body>
+</html>

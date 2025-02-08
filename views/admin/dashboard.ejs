@@ -1,0 +1,123 @@
+<%- include("../../views/partials/admin/header") %>
+<section class="p-6 bg-gray-100 min-h-screen">
+    <!-- Dashboard Header -->
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
+            <ul class="flex text-gray-600 text-sm">
+                <li><a href="#" class="hover:text-blue-500">Dashboard</a></li>
+                <li class="mx-2">/</li>
+                <li class="text-blue-500">Home</li>
+            </ul>
+        </div>
+        <a href="#" class="flex items-center bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600">
+            <i class='bx bxs-cloud-download mr-2'></i> Download PDF
+        </a>
+    </div>
+
+    <!-- Info Boxes -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div class="flex items-center p-5 bg-white rounded-lg shadow-md">
+            <i class='bx bxs-calendar-check text-4xl text-blue-500'></i>
+            <div class="ml-4">
+                <h3 class="text-2xl font-bold">1020</h3>
+                <p class="text-gray-600">New Orders</p>
+            </div>
+        </div>
+        <div class="flex items-center p-5 bg-white rounded-lg shadow-md">
+            <i class='bx bxs-group text-4xl text-green-500'></i>
+            <div class="ml-4">
+                <h3 class="text-2xl font-bold">2834</h3>
+                <p class="text-gray-600">Visitors</p>
+            </div>
+        </div>
+        <div class="flex items-center p-5 bg-white rounded-lg shadow-md">
+            <i class='bx bxs-dollar-circle text-4xl text-yellow-500'></i>
+            <div class="ml-4">
+                <h3 class="text-2xl font-bold">$2543</h3>
+                <p class="text-gray-600">Total Sales</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Orders & To-Do List -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Recent Orders Table -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold">Recent Orders</h3>
+                <div class="flex space-x-3 text-gray-500">
+                    <i class='bx bx-search cursor-pointer hover:text-gray-700'></i>
+                    <i class='bx bx-filter cursor-pointer hover:text-gray-700'></i>
+                </div>
+            </div>
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="p-3">User</th>
+                        <th class="p-3">Date Order</th>
+                        <th class="p-3">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="border-b">
+                        <td class="p-3 flex items-center">
+                            <img src="img/people.png" class="w-8 h-8 rounded-full mr-3">
+                            <p>John Doe</p>
+                        </td>
+                        <td class="p-3">01-10-2021</td>
+                        <td class="p-3"><span class="px-3 py-1 text-sm text-white bg-green-500 rounded">Completed</span></td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="p-3 flex items-center">
+                            <img src="img/people.png" class="w-8 h-8 rounded-full mr-3">
+                            <p>John Doe</p>
+                        </td>
+                        <td class="p-3">01-10-2021</td>
+                        <td class="p-3"><span class="px-3 py-1 text-sm text-white bg-yellow-500 rounded">Pending</span></td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="p-3 flex items-center">
+                            <img src="img/people.png" class="w-8 h-8 rounded-full mr-3">
+                            <p>John Doe</p>
+                        </td>
+                        <td class="p-3">01-10-2021</td>
+                        <td class="p-3"><span class="px-3 py-1 text-sm text-white bg-blue-500 rounded">Processing</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- To-Do List -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold">Todos</h3>
+                <div class="flex space-x-3 text-gray-500">
+                    <i class='bx bx-plus cursor-pointer hover:text-gray-700'></i>
+                    <i class='bx bx-filter cursor-pointer hover:text-gray-700'></i>
+                </div>
+            </div>
+            <ul class="space-y-3">
+                <li class="flex justify-between p-3 bg-gray-100 rounded shadow">
+                    <p>Todo Item 1</p>
+                    <i class='bx bx-dots-vertical-rounded text-gray-500 cursor-pointer'></i>
+                </li>
+                <li class="flex justify-between p-3 bg-gray-100 rounded shadow">
+                    <p>Todo Item 2</p>
+                    <i class='bx bx-dots-vertical-rounded text-gray-500 cursor-pointer'></i>
+                </li>
+                <li class="flex justify-between p-3 bg-gray-100 rounded shadow">
+                    <p>Todo Item 3</p>
+                    <i class='bx bx-dots-vertical-rounded text-gray-500 cursor-pointer'></i>
+                </li>
+                <li class="flex justify-between p-3 bg-gray-100 rounded shadow">
+                    <p>Todo Item 4</p>
+                    <i class='bx bx-dots-vertical-rounded text-gray-500 cursor-pointer'></i>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<%- include("../../views/partials/admin/footer") %>
+

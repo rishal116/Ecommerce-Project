@@ -1,0 +1,145 @@
+<%- include("../../views/partials/admin/header") %>
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
+    <style>
+        .error-message { color: red; }
+        .image-container { display: flex; flex-wrap: wrap; gap: 10px; }
+        .image-box { position: relative; width: 150px; height: 150px; border: 1px solid #ddd; border-radius: 5px; overflow: hidden; }
+        .image-box img { width: 100%; height: 100%; object-fit: cover; }
+        .remove-btn { position: absolute; top: 5px; right: 5px; background: red; color: white; border: none; cursor: pointer; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 20px; border-radius: 5px; max-width: 500px; }
+        .modal img { max-width: 100%; }
+    </style>
+</head>
+
+<section class="content-main">
+    <div class="row">
+        <div class="col-lg-9 mx-auto">
+            <div class="content-header">
+                <h2 class="content-title text-primary fw-bold">Add New Product</h2>
+            </div>
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form id="productForm" method="POST" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Product Name</label>
+                                <input type="text" name="productName" class="form-control shadow-sm border" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Brand</label>
+                                <select class="form-select shadow-sm border" name="brand" required>
+                                    <option value="">Select Brand</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Full Description</label>
+                            <textarea name="description" class="form-control shadow-sm border" rows="4" required></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-bold">Regular Price</label>
+                                <input name="regularPrice" type="text" class="form-control shadow-sm border" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-bold">Sale Price</label>
+                                <input name="salePrice" type="text" class="form-control shadow-sm border">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-bold">Quantity</label>
+                                <input name="quantity" type="text" class="form-control shadow-sm border" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Category</label>
+                            <select class="form-select shadow-sm border" name="category" required>
+                                <option value="">Select Category</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <button type="button" id="addImageBtn" class="btn btn-primary">Add Image</button>
+                        </div>
+                        <div class="image-container" id="imageContainer"></div>
+                        <div class="mt-4 text-center">
+                            <button class="btn btn-primary px-4 py-2 fw-bold" type="submit">Publish</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Crop Modal -->
+<div id="cropModal" class="modal">
+    <div class="modal-content">
+        <h4 class="text-center fw-bold">Crop Image</h4>
+        <img id="cropImage" src="">
+        <div class="mt-3 text-center">
+            <button id="cropSaveBtn" class="btn btn-success px-4">Save</button>
+            <button id="cropCancelBtn" class="btn btn-danger px-4">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
+<script>
+    let cropper;
+    let selectedFile;
+
+    document.getElementById('addImageBtn').addEventListener('click', function() {
+        let input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.style.display = 'none';
+
+        input.addEventListener('change', function(event) {
+            selectedFile = event.target.files[0];
+            if (selectedFile) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('cropImage').src = e.target.result;
+                    document.getElementById('cropModal').style.display = 'flex';
+                    if (cropper) cropper.destroy();
+                    cropper = new Cropper(document.getElementById('cropImage'), {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                    });
+                };
+                reader.readAsDataURL(selectedFile);
+            }
+        });
+
+        document.body.appendChild(input);
+        input.click();
+        document.body.removeChild(input);
+    });
+
+    document.getElementById('cropCancelBtn').addEventListener('click', function() {
+        document.getElementById('cropModal').style.display = 'none';
+    });
+
+    document.getElementById('cropSaveBtn').addEventListener('click', function() {
+        let canvas = cropper.getCroppedCanvas({ width: 150, height: 150 });
+        let croppedImageUrl = canvas.toDataURL();
+
+        let imgBox = document.createElement('div');
+        imgBox.classList.add('image-box');
+        imgBox.innerHTML = `
+            <img src="${croppedImageUrl}" alt="">
+            <button class="remove-btn">X</button>
+        `;
+
+        document.getElementById('imageContainer').appendChild(imgBox);
+        imgBox.querySelector('.remove-btn').addEventListener('click', function() {
+            imgBox.remove();
+        });
+
+        document.getElementById('cropModal').style.display = 'none';
+    });
+</script>
+<%- include("../../views/partials/admin/footer") %>
+
+
