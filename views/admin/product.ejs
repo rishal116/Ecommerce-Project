@@ -38,12 +38,13 @@
                 </tr>
             </thead>
             <tbody>
+                <%for(let i=data.length-1;i>=0;i--){%>
                 <tr class="text-center">
-                    <td class="py-2 px-4 border">Sample Product</td>
-                    <td class="py-2 px-4 border">Brand Name</td>
-                    <td class="py-2 px-4 border">Category Name</td>
-                    <td class="py-2 px-4 border">$50</td>
-                    <td class="py-2 px-4 border">$40</td>
+                    <td class="py-2 px-4 border"><%=data[i].productName%></td>
+                    <td class="py-2 px-4 border"><%=data[i].brand%></td>
+                    <td class="py-2 px-4 border"><%=data[i].category.name%></td>
+                    <td class="py-2 px-4 border"><%=data[i].regularPrice%></td>
+                    <td class="py-2 px-4 border"><%=data[i].salePrice%></td>
                     <td class="py-2 px-4 border">
                         <div class="flex justify-center gap-2">
                             <a href="#" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition">Add Offer</a>
@@ -61,10 +62,22 @@
                         <a href="#" class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition">Edit</a>
                     </td>
                 </tr>
+                <%}%>
             </tbody>
         </table>
     </div>
 </div>
+<div class="container mt-3">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center mb-4">
+            <%for(let i=1;i<=totalPages;i++){%>
+             <li class="page-item <%=(i===currentPage) ? 'active' : '' %>">
+                <a class="page-link" href="?page=<%=i%>"><%= i %></a>
+             </li>
+             <%}%>
+        </ul>
+    </nav>
+ </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>

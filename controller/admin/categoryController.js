@@ -145,9 +145,9 @@ const editCategory = async(req,res)=>{
     
         const existingCategory = await Category.findOne({name:categoryName})
         
-        // if(existingCategory){
-        //     res.status(400).json({error:"Category already exists , Please try another name"})
-        // } 
+        if(existingCategory){
+            res.status(400).json({error:"Category already exists , Please try another name"})
+        } 
 
         const updateCategory = await Category.findByIdAndUpdate(id,{
             name :categoryName,

@@ -117,12 +117,13 @@ const signup = async (req, res) => {
 };
 
 
-const securePassword = async (req,res)=>{
+const securePassword = async (password)=>{
     try {
         const passwordHash = await bcrypt.hash(password,10)
         return passwordHash
     } catch (error) {
-        
+        console.error("Error hashing password:", error);
+        res.status(500).send("Server Error");
     }
 }
 
@@ -148,7 +149,7 @@ const verifyOtp = async (req,res)=>{
                 name:user.name,
                 email:user.email,
                 phone:user.phone,
-                password:user.password,
+                password:passwordHash,
                 googleId: null
             })
 
@@ -169,6 +170,9 @@ const verifyOtp = async (req,res)=>{
 
 const resendOtp = async(req,res)=>{
     try {
+        if (!req.session.userData) {
+            return res.status(400).json({ error: "Session expired or userData is missing." });
+        }
         const {email} = req.session.userData
         if(!email){
             return res.status(400).json({success:false,message:"Email is not found in session"})

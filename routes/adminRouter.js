@@ -4,9 +4,12 @@ const adminController = require("../controller/admin/adminController")
 const customerController = require("../controller/admin/customerController")
 const categoryController = require("../controller/admin/categoryController")
 const productController = require("../controller/admin/productController")
+const brandController = require("../controller/admin/brandController")
 const auth = require("../middlewares/auth")
 const Product = require("../models/productSchema")
-
+const multer = require("multer")
+const storage = require("../helpers/multer")
+const uploads = multer({storage:storage})
 
 router
 // Error management
@@ -29,11 +32,12 @@ router
 .get("/editCategory",auth.adminAuth,categoryController.getEditCategory)
 .post("/editCategory/:id",auth.adminAuth,categoryController.editCategory)
 // brand management
-
+.get("/brands",auth.adminAuth,brandController.getBrandPage)
 
 // product management
 .get("/products",auth.adminAuth,productController.productInfo)
 .get("/addProducts",auth.adminAuth,productController.getProductAddPage)
+.post("/addProducts",auth.adminAuth,productController.addProduct)
 
 
 

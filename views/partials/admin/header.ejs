@@ -45,12 +45,6 @@
             color: white;
         }
 
-        /* Navbar */
-        .navbar {
-            background-color: white;
-            border-bottom: 1px solid #ddd;
-        }
-
         /* Overlay (for mobile) */
         #overlay {
             display: none;
@@ -70,6 +64,7 @@
             overflow-y: auto; /* Allow scrolling */
             height: 100vh;
             padding: 20px;
+            margin-top: 70px;
         }
 
         /* Responsive Sidebar for Mobile */
@@ -79,24 +74,8 @@
                 position: fixed;
                 z-index: 20;
             }
-
-            main {
-                margin-left: 0; /* Remove margin for mobile view */
-            }
-
-            #menuToggle {
-                display: block;
-                position: absolute;
-                top: 20px;
-                left: 20px;
-                z-index: 30;
-                font-size: 24px;
-            }
-
-            #overlay.show {
-                display: block;
-            }
         }
+
     </style>
 </head>
 <body class="bg-gray-100">
@@ -106,7 +85,7 @@
     <!-- Sidebar -->
     <aside id="sidebar" class="sidebar shadow-lg lg:translate-x-0 ">
         <div class=" mb-8 p-5">
-            <h1 class="text-xl font-bold left-0">Trendy Threads</h1>
+            <h1 class="font-bold left-0">Trendy Threads</h1>
         </div>
         <nav>
             <ul class="space-y-4">
@@ -121,25 +100,44 @@
             </ul>
         </nav>
     </aside>
-
-    <!-- Overlay -->
-    <div id="overlay"></div>
-
-
-
+    
     <!-- Main Content -->
     <main>
         <!-- Header -->
-        <header class="navbar p-4 flex justify-between items-center bg-white shadow-md">
-            <div></div>
+        <header class="navbar fixed top-0 left-0 w-full ml-[250px] py-2 px-4 flex justify-between items-center bg-white shadow-md z-50">
+            <div class="flex-grow"></div> <!-- Push the profile icon to the right -->
             <div class="relative">
-                <a href="/admin/logout" 
-                   class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
-                    Logout
-                </a>
+                <button id="profileDropdownBtn" class="flex items-center focus:outline-none">
+                    <img src="/path-to-profile-image.jpg" alt="Profile" class="w-8 h-8 rounded-full border border-gray-400 shadow-md">
+                </button>
+                <div id="profileDropdown" class="absolute right-0 mt-2 w-36 bg-white rounded-lg shadow-md hidden">
+                    <a href="/admin/profile" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 flex items-center">
+                        <i class="fas fa-user mr-2 text-gray-600"></i> Profile
+                    </a>
+                    <a href="/admin/logout" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 flex items-center">
+                        <i class="fas fa-sign-out-alt mr-2 text-gray-600"></i> Logout
+                    </a>
+                </div>
             </div>
         </header>
-
+        
+        <script>
+            document.getElementById('profileDropdownBtn').addEventListener('click', function() {
+                document.getElementById('profileDropdown').classList.toggle('hidden');
+            });
+        
+            document.addEventListener('click', function(event) {
+                var dropdown = document.getElementById('profileDropdown');
+                var button = document.getElementById('profileDropdownBtn');
+                if (!dropdown.contains(event.target) && !button.contains(event.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+        </script>
+        
+        <!-- Add Font Awesome for Icons -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+        
 
 
 

@@ -1,16 +1,112 @@
 <%- include("../../views/partials/admin/header") %>
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
-    <style>
-        .error-message { color: red; }
-        .image-container { display: flex; flex-wrap: wrap; gap: 10px; }
-        .image-box { position: relative; width: 150px; height: 150px; border: 1px solid #ddd; border-radius: 5px; overflow: hidden; }
-        .image-box img { width: 100%; height: 100%; object-fit: cover; }
-        .remove-btn { position: absolute; top: 5px; right: 5px; background: red; color: white; border: none; cursor: pointer; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
-        .modal-content { background: white; padding: 20px; border-radius: 5px; max-width: 500px; }
-        .modal img { max-width: 100%; }
-    </style>
+    <head>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
+        <style>
+            body { background-color: #f4f7f9; } /* Light Gray Background */
+            .error-message { color: #d32f2f; } /* Dark Red for Better Visibility */
+    
+            /* Image Container Styles */
+            .image-container { display: flex; flex-wrap: wrap; gap: 10px; }
+            .image-box { position: relative; width: 150px; height: 150px; border: 1px solid #bbb; border-radius: 5px; overflow: hidden; }
+            .image-box img { width: 100%; height: 100%; object-fit: cover; }
+            .remove-btn { position: absolute; top: 5px; right: 5px; background: #d32f2f; color: white; border: none; cursor: pointer; }
+    
+              /* Modal Background */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Modal Content */
+    .modal-content {
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        width: 400px;
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    /* Image Container */
+    .image-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .image-container img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 5px;
+        border: 2px solid #ddd;
+    }
+
+    /* Button Group */
+    .button-group {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 20px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-success {
+        background: #28a745;
+        color: white;
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn:hover {
+        opacity: 0.8;
+    }
+
+    /* Animation */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+            /* New Form Styling */
+            .content-title { color: #009688; } /* Teal */
+            .card { background: #E0F2F1; box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1); border-radius: 10px; }
+            .form-control, .form-select { border: 1px solid #009688; background: white; color: #333; }
+            .form-label { color: #00796b; font-weight: 600; }
+            .btn-primary { background-color: #009688; border: none; }
+            .btn-primary:hover { background-color: #00796b; } /* Darker Teal */
+            .btn-success { background-color: #4CAF50; border: none; }
+            .btn-danger { background-color: #f44336; border: none; }
+        </style>
+    </head>
+    
 </head>
 
 <section class="content-main">
@@ -21,49 +117,76 @@
             </div>
             <div class="card shadow-sm">
                 <div class="card-body p-4">
-                    <form id="productForm" method="POST" enctype="multipart/form-data">
+                    <form id="productForm" method="POST" enctype="multipart/form-data" action="/admin/addProducts" onsubmit="return validateForm()">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-bold">Product Name</label>
-                                <input type="text" name="productName" class="form-control shadow-sm border" required>
+                                <input id="productName" type="text" name="productName" class="form-control shadow-sm border" placeholder="Product Name" required>
+                                <div id="productName-error" class="error-message"></div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-bold">Brand</label>
-                                <select class="form-select shadow-sm border" name="brand" required>
-                                    <option value="">Select Brand</option>
+                                <select class="form-select shadow-sm border" name="brand" id="brand" required>
+                                    <%for(let i=0;i<bra.length;i++){%>
+                                    <option value="<%=bra[i].name%>"><%=bra[i].name%></option>
+                                    <%}%>
                                 </select>
+                                <div id="brand-error" class="error-message"></div>
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Full Description</label>
-                            <textarea name="description" class="form-control shadow-sm border" rows="4" required></textarea>
+                            <label class="form-label fw-bold">Description</label>
+                            <textarea name="description" class="form-control shadow-sm border" rows="4" id="description" placeholder="Description" required></textarea>
+                            <div id="description-error" class="error-message"></div> 
                         </div>
                         <div class="row">
                             <div class="col-md-4 mb-3">
-                                <label class="form-label fw-bold">Regular Price</label>
-                                <input name="regularPrice" type="text" class="form-control shadow-sm border" required>
+                                <label class="form-label fw-bold">Price</label>
+                                <input name="regularPrice" type="text" class="form-control shadow-sm border" id="regularPrice" required>
+                                <div id="price-error" class="error-message"></div>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label fw-bold">Sale Price</label>
-                                <input name="salePrice" type="text" class="form-control shadow-sm border">
+                                <input name="salePrice" type="text" class="form-control shadow-sm border" id="salePrice">
+                                <div id="sale-error" class="error-message"></div>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label fw-bold">Quantity</label>
-                                <input name="quantity" type="text" class="form-control shadow-sm border" required>
+                                <input name="quantity" type="text" class="form-control shadow-sm border" id="quantity" required>
+                                <div id="quantity-error" class="error-message"></div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-bold">color</label>
+                                <input name="color" type="text" class="form-control shadow-sm border" id="color" required>
+                                <div id="color-error" class="error-message"></div>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Category</label>
-                            <select class="form-select shadow-sm border" name="category" required>
-                                <option value="">Select Category</option>
-                            </select>
+                            <div class="relative">
+                                <select class="appearance-none form-select shadow-sm border px-4 py-2 rounded-md cursor-pointer w-full" name="category" id="category">
+                                    <option value="" disabled selected>Select Category</option>
+                                    <% for(let i = 0; i < cat.length; i++) { %>
+                                        <option value="<%= cat[i].name %>">
+                                            <%= cat[i].name %>
+                                        </option>
+                                    <% } %>
+                                </select>
+                                <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div id="category-error" class="error-message"></div>
                         </div>
                         <div class="mb-3">
                             <button type="button" id="addImageBtn" class="btn btn-primary">Add Image</button>
+                            <div id="images-error" class="error-message"></div>
                         </div>
                         <div class="image-container" id="imageContainer"></div>
                         <div class="mt-4 text-center">
-                            <button class="btn btn-primary px-4 py-2 fw-bold" type="submit">Publish</button>
+                            <button class="btn btn-primary px-4 py-2 fw-bold" type="submit" onclick="validateAndSubmit()">Add Product</button>
                         </div>
                     </form>
                 </div>
@@ -76,70 +199,160 @@
 <div id="cropModal" class="modal">
     <div class="modal-content">
         <h4 class="text-center fw-bold">Crop Image</h4>
-        <img id="cropImage" src="">
-        <div class="mt-3 text-center">
-            <button id="cropSaveBtn" class="btn btn-success px-4">Save</button>
-            <button id="cropCancelBtn" class="btn btn-danger px-4">Cancel</button>
+        <div class="image-container">
+            <img id="cropImage" src="" alt="Crop Preview">
+        </div>
+        <div class="button-group">
+            <button id="cropSaveBtn" class="btn btn-success">Save</button>
+            <button id="cropCancelBtn" class="btn btn-danger">Cancel</button>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
 <script>
-    let cropper;
-    let selectedFile;
 
-    document.getElementById('addImageBtn').addEventListener('click', function() {
-        let input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'image/*';
-        input.style.display = 'none';
+    function validateAndSubmit(){
+        if(validateForm){
+            document.forms[0].sumbit()
+        }
+    }
+    function validateForm() {
+        clearErrorMessages();
+        const name = document.getElementById('productName').value.trim()
+        const description = document.getElementById('description').value.trim()
+        const brand = document.getElementById('brand').value.trim()
+        const price = document.getElementById('regularPrice').value.trim()
+        const saleprice = document.getElementById('salePrice').value.trim()
+        const color = document.getElementById('color').value.trim()
+        const category = document.getElementById('category').value.trim()
+        const images = document.getElementById('addImageBtn')
+        const quantity = document.getElementById('quantity')
+        let isValid = true
 
-        input.addEventListener('change', function(event) {
-            selectedFile = event.target.files[0];
-            if (selectedFile) {
-                let reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('cropImage').src = e.target.result;
-                    document.getElementById('cropModal').style.display = 'flex';
-                    if (cropper) cropper.destroy();
-                    cropper = new Cropper(document.getElementById('cropImage'), {
-                        aspectRatio: 1,
-                        viewMode: 1,
-                    });
-                };
-                reader.readAsDataURL(selectedFile);
-            }
-        });
+        // product name validation
+        if (name === ""){
+            displayErrorMessage('productName-error', 'Please enter a product name.');
+            isValid = false;
+        }else if (!/^[a-zA-Z\s]+$/.test(name.trim())){
+            displayErrorMessage('productName-error', 'Product name should contain only alphabetic characters.');
+            isValid = false;
+        }
+        
+        //  description validation
+        if (description.trim() === ""){
+            displayErrorMessage('description-error', 'Please enter a product description.')
+            isValid = false
+        } else if (!/^[a-zA-Z\s]+$/.test(description.trim())) {
+            displayErrorMessage('description-error', 'Product description should contain only alphabetic characters.')
+            isValid = false
+        }
+        
+        // quantity validation
+        if ( parseInt(quantity) < 0){
+            displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.')
+            isValid = false
+        }
+        
+        // Price validation
+        if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0){
+            displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.')
+            isValid = false
+        }
+        
+        // salePrice validation
+        if (!/^\d+(\.\d{1,2})?$/.test(saleprice) || parseFloat(saleprice) < 0){
+            displayErrorMessage('salePrice-error', 'Please enter a valid non-negative price.')
+            isValid = false
+        }
+        
+        // check price <= salePrice
+        if (parseFloat(price) <= parseFloat(saleprice)){
+            displayErrorMessage('regularPrice-error', 'Regular price must be greater than sale price.')
+            isValid = false
+        }
+        
+        // image Validation
+        if (images.files.length === 0){
+            displayErrorMessage("images-error",'Please select an image.')
+            isValid = false
+        }
 
-        document.body.appendChild(input);
-        input.click();
-        document.body.removeChild(input);
-    });
+        return isValid
+    }
+    
+    
+    function displayErrorMessage(elementId, message){
+        var errorElement = document.getElementById(elementId)
+        errorElement.innerText = message
+        errorElement.style.display = "block"
+    }
 
-    document.getElementById('cropCancelBtn').addEventListener('click', function() {
-        document.getElementById('cropModal').style.display = 'none';
-    });
 
-    document.getElementById('cropSaveBtn').addEventListener('click', function() {
-        let canvas = cropper.getCroppedCanvas({ width: 150, height: 150 });
-        let croppedImageUrl = canvas.toDataURL();
+    function clearErrorMessages(){
+        const errorElements = document.getElementsByClassName('error-message')
+        Array.from(errorElements).forEach(element => {
+            element.innerText = ''
+        })
+        const errorMessage = document.getElementById('errorMessage')
+    }
 
-        let imgBox = document.createElement('div');
-        imgBox.classList.add('image-box');
-        imgBox.innerHTML = `
-            <img src="${croppedImageUrl}" alt="">
+
+    let cropper
+    let selectedFile
+
+    document.getElementById('addImageBtn').addEventListener('click',function(){
+        let input = document.createElement('input')
+        input.type = 'file'
+        input.accept = 'image/*'
+        input.style.display = 'none'
+        input.multiple = true
+        
+        input.addEventListener('change', function(event){
+            selectedFile = event.target.files[0]
+            if (selectedFile){
+                let reader = new FileReader()
+                reader.onload = function(e){
+                    document.getElementById('cropImage').src = e.target.result
+                    document.getElementById('cropModal').style.display = 'flex'
+                    if (cropper) cropper.destroy()
+                    cropper = new Cropper(document.getElementById('cropImage'),{
+                aspectRatio: 1,
+                viewMode: 1,
+                guides:true,
+                background:false,
+                autoCropArea:1,
+                zoomable:true
+            })
+        }
+        reader.readAsDataURL(selectedFile)
+    }
+})
+document.body.appendChild(input)
+input.click()
+document.body.removeChild(input)
+})
+
+document.getElementById('cropCancelBtn').addEventListener('click', function(){
+    document.getElementById('cropModal').style.display = 'none'
+})
+
+document.getElementById('cropSaveBtn').addEventListener('click', function(){
+    let canvas = cropper.getCroppedCanvas({ width: 150, height: 150 })
+    let croppedImageUrl = canvas.toDataURL()
+    let imgBox = document.createElement('div')
+    imgBox.classList.add('crop-image')
+    imgBox.innerHTML = `<img src="${croppedImageUrl}" alt="">
             <button class="remove-btn">X</button>
         `;
+        
+        document.getElementById('imageContainer').appendChild(imgBox)
+        imgBox.querySelector('.remove-btn').addEventListener('click', function(){
+            imgBox.remove()
+        })
 
-        document.getElementById('imageContainer').appendChild(imgBox);
-        imgBox.querySelector('.remove-btn').addEventListener('click', function() {
-            imgBox.remove();
-        });
-
-        document.getElementById('cropModal').style.display = 'none';
-    });
+        document.getElementById('cropModal').style.display = 'none'
+        })
 </script>
 <%- include("../../views/partials/admin/footer") %>
-
 
