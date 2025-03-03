@@ -130,44 +130,129 @@
 }
 
 .password-container i:hover {
-    color: #007bff;
+    color: black;
 }
+
+      /* Google Button Styling */
+      .social-btns {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        /* Google Button Styling */
+        .btn-google {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            border: 1px solid #dcdcdc;
+            border-radius: 5px;
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #555;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-google:hover {
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+            background-color: #f8f8f8;
+        }
+
+        /* Google Logo */
+        .btn-google img {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+
 
 </style>
 <body>
-    <div class="login-container">
-        <h2>Login</h2>
-
-        <% if (message) { %>
-            <p class="error"><%= message %></p>
-        <% } %>
-
-        <form action="/login" method="POST">
-            <input type="email" name="email" placeholder="Enter Email" required>
-            <div class="password-container">
-                <input type="password" id="password" name="password" placeholder="Enter Password" required>
-                <i class="fa fa-eye" id="togglePassword"></i>
+    <body>
+        <div class="login-container">
+            <h2>Login</h2>
+    
+            <% if (message) { %>
+                <p class="error"><%= message %></p>
+            <% } %>
+    
+            <form action="/login" method="POST" id="loginForm">
+                <input type="email" id="email" name="email" placeholder="Enter Email" required>
+                <p id="emailError" class="error"></p>
+    
+                <div class="password-container">
+                    <input type="password" id="password" name="password" placeholder="Enter Password" required>
+                    <i class="fa fa-eye" id="togglePassword"></i>
+                </div>
+                <p id="passwordError" class="error"></p>
+    
+                <button type="submit">Login</button>
+            </form>
+    
+            <!-- Forgot Password -->
+            <p><a href="/forgot-password">Forgot Password?</a></p>
+    
+            <!-- Google Sign-In Button -->
+            <div class="social-btns">
+                <a href="/auth/google" class="btn-google">
+                    <img src="img/googlesignup.png" alt="Google Logo">
+                    Sign in with Google
+                </a>
             </div>
-            
-            <button type="submit">Login</button>
-        </form>
-
-        <p>Don't have an account? <a href="/signup">Sign up</a></p>
-    </div>
+    
+            <p>Don't have an account? <a href="/signup">Sign up</a></p>
+        </div>
+    
+        <script>
+            // Toggle Password Visibility
+            const togglePassword = document.querySelector("#togglePassword");
+            const passwordInput = document.querySelector("#password");
+    
+            togglePassword.addEventListener("click", function () {
+                const type = passwordInput.type === "password" ? "text" : "password";
+                passwordInput.type = type;
+                this.classList.toggle("fa-eye");
+                this.classList.toggle("fa-eye-slash");
+            });
+    
+            // Form Validation
+            document.getElementById("loginForm").addEventListener("submit", function (event) {
+                let isValid = true;
+                const email = document.getElementById("email").value.trim();
+                const password = document.getElementById("password").value.trim();
+                const emailError = document.getElementById("emailError");
+                const passwordError = document.getElementById("passwordError");
+    
+                emailError.textContent = "";
+                passwordError.textContent = "";
+    
+                const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                if (!emailRegex.test(email)) {
+                    emailError.textContent = "Invalid email format.";
+                    isValid = false;
+                }
+    
+                if (password.length < 6) {
+                    passwordError.textContent = "Password must be at least 6 characters.";
+                    isValid = false;
+                }
+    
+                if (!isValid) event.preventDefault();
+            });
+    
+          
+        </script>
+    
+        <!-- Google Sign-In Script -->
+        <script src="https://accounts.google.com/gsi/client" async defer></script>
+    </body>
+    
+    
 </body>
 </html>
-<script>
-    const togglePassword = document.querySelector("#togglePassword");
-    const passwordInput = document.querySelector("#password");
-
-    togglePassword.addEventListener("click", function () {
-        // Toggle password visibility
-        const type = passwordInput.type === "password" ? "text" : "password";
-        passwordInput.type = type;
-
-        // Toggle the eye icon class
-        this.classList.toggle("fa-eye");
-        this.classList.toggle("fa-eye-slash");
-    });
-</script>
 

@@ -1,15 +1,39 @@
 <%- include("../../views/partials/admin/header") %>
+<style>
+           /* Breadcrumb Styling */
+   .breadcrumb {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        background-color: #F9FAFB; /* Light Gray Background */
+        padding: 10px 16px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .breadcrumb a {
+        color: #4B5563; /* Dark Gray */
+        text-decoration: none;
+        margin-right: 8px;
+        font-weight: 500;
+    }
+
+    .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .breadcrumb span {
+        color: #9CA3AF; /* Light Gray Text */
+        margin-right: 8px;
+    }
+</style>
 <section class="p-6 bg-gray-100 min-h-screen">
     <!-- Dashboard Header -->
     <div class="flex justify-between items-center mb-6">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
-            <ul class="flex text-gray-600 text-sm">
-                <li><a href="#" class="hover:text-blue-500">Dashboard</a></li>
-                <li class="mx-2">/</li>
-                <li class="text-blue-500">Home</li>
-            </ul>
-        </div>
+     <!-- Breadcrumb -->
+<div class="breadcrumb">
+    <a href="/admin">Dashboard</a>
+</div>
         <a href="#" class="flex items-center bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600">
             <i class='bx bxs-cloud-download mr-2'></i> Download PDF
         </a>

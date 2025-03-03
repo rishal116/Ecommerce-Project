@@ -1,0 +1,317 @@
+<%- include("../../views/partials/user/header") %>
+<title>Your Addresses</title>
+
+<style>
+    /* Styles for the Address Page */
+    .main-container {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 20px;
+        margin: 0 auto;
+    }
+
+    /* Sidebar Style */
+    .sidebar {
+        flex: 1;
+        min-width: 250px;
+        max-width: 300px;
+        background-color: #ffffff;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        margin-right: 20px;
+    }
+
+    .sidebar h3 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        color: #333;
+        font-weight: bold;
+    }
+
+    .sidebar a {
+        display: block;
+        color: #333;
+        text-decoration: none;
+        padding: 12px;
+        margin: 12px 0;
+        font-size: 1rem;
+        border-radius: 5px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .sidebar a:hover {
+        background-color: #f1f1f1;
+    }
+
+    .sidebar a.active {
+        background-color: #e8f0fe;
+        color: #1967d2;
+        font-weight: 500;
+    }
+
+    /* Main Content Area */
+    .main-content {
+        flex: 3;
+        min-width: 600px;
+        background-color: #ffffff;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+
+    .account-header {
+        font-size: 1.75rem;
+        margin-bottom: 20px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    /* Address Item Styling */
+    .address-items {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px; /* Add space between address items */
+        justify-content: flex-start;
+    }
+
+    .address-item {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f0f8ff; /* Light blue background for address item */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        width: 100%;
+        max-width: 350px;
+        height: auto;
+    }
+
+    .address-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .address-details {
+        margin-bottom: 15px;
+    }
+
+    .address-section {
+        margin-bottom: 8px;
+    }
+
+    .address-section strong {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .address-section span {
+        color: #555;
+        margin-left: 5px;
+    }
+
+    .address-buttons {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    /* Edit/Delete Button Styling */
+    .edit-btn,
+    .delete-btn {
+        background-color: #4caf50; /* Green color for edit */
+        color: #fff;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-size: 0.9rem;
+        text-align: center;
+    }
+
+    .edit-btn:hover {
+        background-color: #388e3c;
+    }
+
+    .delete-btn {
+        background-color: #e53935; /* Red color for delete */
+    }
+
+    .delete-btn:hover {
+        background-color: #c62828;
+    }
+
+    /* Add New Address Button */
+    .add-address-btn {
+        padding: 8px 20px;
+        font-size: 0.9rem;
+        background-color: #1967d2;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .add-address-btn:hover {
+        background-color: #1558a3;
+    }
+
+    /* Align Add New Address Button to the right */
+    .add-address-container {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 20px;
+    }
+
+    /* Modal Styling */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+        padding-top: 60px;
+    }
+
+    .modal-content {
+        background-color: #fff;
+        margin: 5% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 500px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+        font-size: 1.75rem;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #333;
+    }
+
+    .modal-body {
+        margin-bottom: 15px;
+    }
+
+    .close {
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .main-container {
+            flex-direction: column;
+        }
+
+        .sidebar {
+            margin-right: 0;
+            margin-bottom: 20px;
+        }
+
+        .main-content {
+            min-width: 100%;
+        }
+
+        .address-item {
+            width: 100%;
+        }
+
+        .add-address-container {
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="main-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h3>Profile Settings</h3>
+        <a href="/userProfile">Personal Information</a>
+        <a href="/myAddress" class="active">Your Addresses</a>
+        <a href="/wishlist">Wishlist</a>
+        <a href="/myorders">Your Orders</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="account-header">Your Addresses</div>
+
+        <!-- Add Address Button Container -->
+        <div class="add-address-container">
+            <a href="/addAddress"><button class="add-address-btn">Add New Address</button></a>
+        </div>
+
+        <!-- Addresses List Section -->
+        <% if (userAddress) { %>
+            <div class="address-items">
+                <% userAddress.address.forEach((address) => { %>
+                    <div class="address-item">
+                        <div class="address-details">
+                            <h4><%=address.addressType%></h4>
+                            <div class="address-section">
+                                <strong>Name:</strong><span><%=address.name%></span>
+                            </div>
+                            <div class="address-section">
+                                <strong>City:</strong> <span><%=address.city%></span>
+                            </div>
+                            <div class="address-section">
+                                <strong>LandMark:</strong> <span><%= address.landMark%></span>
+                            </div>
+                            <div class="address-section">
+                                <strong>State:</strong> <span><%= address.state %></span>
+                            </div>
+                            <div class="address-section">
+                                <strong>Pin Code:</strong> <span><%= address.pincode %></span>
+                            </div>
+                            <div class="address-section">
+                                <strong>Phone:</strong> <span><%= address.phone%></span>
+                            </div>
+                            <div class="address-section">
+                                <strong>Alternative Phone:</strong> <span><%=address.altPhone%></span>
+                            </div>
+                        </div>
+
+                        <!-- Edit and Delete Buttons -->
+                        <div class="address-buttons">
+                            <a href="/editAddress?id=<%=address._id%>" class="edit-btn">Edit</a>
+                            <a href="/deleteAddress?id=<%=address._id%>" class="delete-btn" onclick="return confirm('are you sure to delete address') ">Delete</a>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <p>No addresses found. <a href="/addAddress">Add a new address</a>.</p>
+        <% } %>
+    </div>
+</div>
+<script>
+    
+  
+</script>
+
+<%- include("../../views/partials/user/footer") %>
+
+
+
+
+
+
+

@@ -1,0 +1,260 @@
+<%- include("../../views/partials/admin/header") %>
+
+<style>
+    :root {
+        --bg-dark: #0f172a;
+        --bg-darker: #1e293b;
+        --text-primary: black;
+        --text-secondary: #94a3b8;
+        --border-color: #334155;
+        --accent-blue: #0ea5e9;
+        --status-processing: #06b6d4;
+        --status-cancelled: #64748b;
+        --table-bg: #1e293b;
+        --table-hover: #334155;
+    }
+
+    body {
+        background-color: var(--bg-dark);
+        color: var(--text-primary);
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+
+    .orders-container {
+        padding: 2rem;
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        font-size: 2rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .search-container {
+        position: relative;
+        width: 300px;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        padding-right: 3rem;
+        background-color: var(--table-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 0.5rem;
+        color: var(--text-primary);
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--accent-blue);
+    }
+
+    .search-icon {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-secondary);
+    }
+
+    .orders-table {
+        background-color: var(--table-bg);
+        border-radius: 0.75rem;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table th, .table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+        text-align: left;
+    }
+
+    .table th {
+        background-color: var(--bg-darker);
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        font-size: 0.875rem;
+    }
+
+    .table tbody tr {
+        transition: background 0.3s;
+    }
+
+    .table tbody tr:hover {
+        background-color: var(--table-hover);
+    }
+
+    .order-id {
+        font-family: monospace;
+        color: var(--text-secondary);
+    }
+
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: inline-block;
+    }
+
+    .status-processing {
+        background-color: rgba(6, 182, 212, 0.1);
+        color: var(--status-processing);
+    }
+
+    .status-cancelled {
+        background-color: rgba(100, 116, 139, 0.1);
+        color: var(--status-cancelled);
+    }
+
+    .action-button {
+        padding: 0.5rem 1rem;
+        background-color: var(--accent-blue);
+        border: none;
+        border-radius: 0.5rem;
+        color: #fff;
+        text-decoration: none;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+    }
+
+    .action-button:hover {
+        background-color: #0284c7;
+    }
+
+    .rupee-symbol::before {
+        content: '₹';
+        margin-right: 0.25rem;
+    }
+
+           /* Breadcrumb Styling */
+   .breadcrumb {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        background-color: #F9FAFB; /* Light Gray Background */
+        padding: 10px 16px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .breadcrumb a {
+        color: #4B5563; /* Dark Gray */
+        text-decoration: none;
+        margin-right: 8px;
+        font-weight: 500;
+    }
+
+    .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .breadcrumb span {
+        color: #9CA3AF; /* Light Gray Text */
+        margin-right: 8px;
+    }
+</style>
+
+<body>
+      <!-- Breadcrumb -->
+<div class="breadcrumb">
+    <a href="/admin">Dashboard</a>
+    <span>›</span>
+    <a href="/admin/products">Products</a>
+</div>
+    <div class="orders-container">
+        <div class="page-header">
+            <h1 class="page-title">Orders</h1>
+  
+<!-- Search Bar -->
+<div class="search-container">
+    <form action="/admin/orderList/search" method="get" class="search-box">
+        <input type="text" placeholder="Search customers..." name="search">
+        <button type="submit">Search</button>
+    </form>
+</div>
+
+        </div>
+
+        <div class="orders-table">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>USER NAME</th>
+                        <th>Date</th>
+                        <th>Total Amount</th>
+                        <th>Status</th>
+                        <th>Payment Method</th>
+                        <th>ACTION</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% orders.forEach(function(order) { %>
+                        <tr>
+                            <td class="order-id"><%= order.orderId %></td>
+                            <td><%= order.userName %></td>
+                            <td><%= new Date(order.date).toLocaleDateString('en-IN') %></td>
+                            <td class="rupee-symbol"><%= (order.totalAmount || 0).toFixed(2) %></td>
+                            <td>
+                                <span class="status-badge status-<%= order.status.toLowerCase() %>">
+                                    <%= order.status %>
+                                </span>
+                            </td>
+                            <td><%= order.paymentMethod %></td>
+                            <td>
+                                <a href="/admin/orderDetailsAdmin/<%= order.orderId %>" class="action-button">
+                                    View
+                                </a>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+       <!-- Pagination -->
+       <div class="container mt-6">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-center mb-4 flex space-x-2">
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                <li class="page-item <%=(i === currentPage) ? 'bg-indigo-600 text-white' : 'bg-gray-300' %> rounded">
+                    <a class="page-link px-3 py-2 rounded hover:bg-indigo-700" href="?page=<%= i %>">
+                        <%= i %>
+                    </a>
+                </li>
+                <% } %>
+            </ul>
+        </nav>
+    </div>
+
+    <script>
+        document.querySelector('.search-input').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    </script>
+</body>
+
+<%- include("../../views/partials/admin/footer") %>

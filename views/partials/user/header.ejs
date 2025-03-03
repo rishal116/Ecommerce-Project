@@ -7,8 +7,21 @@
     <meta name="keywords" content="Male_Fashion, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
+   rel="stylesheet">
+   <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+   <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
+   <link rel="stylesheet" href="css/elegant-icons.css" type="text/css">
+   <link rel="stylesheet" href="css/magnific-popup.css" type="text/css">
+   <link rel="stylesheet" href="css/nice-select.css" type="text/css">
+   <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
+   <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
+   <link rel="stylesheet" href="css/style.css" type="text/css">
+   <link rel="stylesheet" href="./user-assets/css/maind134.css">
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <title>Trendy Threads</title>
-
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
     rel="stylesheet">
@@ -25,12 +38,110 @@
 </head>
 
 <style>
-.cart-link {
-    position:absolute;
-    bottom:25px;
-    left:20px
-    
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #F8F8F8;
+  margin: 0;
 }
+
+/* Profile Dropdown Container */
+.profile-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Profile Link (Username + Dropdown Arrow) */
+.profile-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: #f8f8f8;
+    border-radius: 25px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+    transition: 0.3s ease;
+    cursor: pointer;
+}
+
+/* Dropdown Arrow */
+.profile-link i {
+    font-size: 14px;
+    color: #666;
+    transition: transform 0.3s ease;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 40px;
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    min-width: 160px;
+    z-index: 100;
+}
+
+/* Dropdown Items */
+.dropdown-menu a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: 0.3s ease;
+    white-space: nowrap;
+}
+
+.dropdown-menu a i {
+    font-size: 16px;
+    color: #666;
+}
+
+/* Hover Effect */
+.dropdown-menu a:hover {
+    background: #f1f1f1;
+}
+
+/* Show Dropdown on Hover */
+.profile-dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* Rotate Arrow on Hover */
+.profile-dropdown:hover .profile-link i {
+    transform: rotate(180deg);
+}
+
+
+
+.header__logo a {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    color: #FF3F6C; /* Myntra pink */
+    text-transform: capitalize;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.header__logo a span {
+    font-weight: 700;
+    color: #282C3F; /* Myntra black */
+}
+.header__menu .active a {
+    text-decoration: none !important; /* Remove underline */
+    border-bottom: none !important;   /* Remove any border underline */
+    color: inherit; /* Keep the same text color */
+}
+
 </style>
 <body>
     <!-- Page Preloder -->
@@ -40,43 +151,61 @@
 
     <!-- Header Section Begin -->
     <header class="header">
-              <div class="container">
-            <div class="row">
+        <div class="container">
+            <div class="row align-items-center">
+                <!-- Logo Section -->
                 <div class="col-lg-3 col-md-3">
                     <div class="header__logo">
-                        <a href="/"><img src="img/logo.png" alt=""></a>
+                        <a href="/">Trendy <span>Threads</span></a>
                     </div>
                 </div>
+    
+                <!-- Navigation Menu -->
                 <div class="col-lg-6 col-md-6">
                     <nav class="header__menu mobile-menu">
                         <ul>
-                            <li class="active"><a href="./index.html">Home</a></li>
-                            <li><a href="./shop.html">Shop</a></li>
-                            <li><a href="#">Pages</a>
-                                <ul class="dropdown">
-                                    <li><a href="./about.html">About Us</a></li>
-                                    <li><a href="./shop-details.html">Shop Details</a></li>
-                                    <li><a href="./shopping-cart.html">Shopping Cart</a></li>
-                                    <li><a href="./checkout.html">Check Out</a></li>
-                                    <li><a href="./blog-details.html">Blog Details</a></li>
-                                </ul>
+                            <li class=""><a href="/">Home</a></li>
+                            <li><a href="/shop">Shop</a></li>
+                            <li>
+                                <a href="/">Pages</a>
                             </li>
                             <li><a href="./blog.html">Blog</a></li>
                             <li><a href="./contact.html">Contacts</a></li>
                         </ul>
                     </nav>
                 </div>
+    
+                <!-- User & Cart Section -->
                 <div class="col-lg-3 col-md-3">
-                    <div class="header__nav__option">
-                        <a href="/signup" class="sign-in-link">Sign Up</a>
-                        <a href="/login" class="sign-in-link">Log in</a>
+                    <div class="header__nav__option d-flex align-items-center justify-content-end">
+                        <% if (!locals.user) { %> 
+                            <!-- If Not Logged In -->
+                            <a href="/signup" class="sign-in-link">Sign Up</a>
+                            <a href="/login" class="sign-in-link">Log in</a>
+                        <% } else { %>
+                            <!-- If Logged In -->
+                            <div class="profile-dropdown">
+                                <a class="profile-link">
+                                    <%=locals.user.name%>
+                                    <i class="fa fa-chevron-down"></i>
+                                </a>
+                                <div class="dropdown-menu">
+                                    <a href="/account"><i class="fa fa-user"></i>Your Account</a>
+                                    <a href="/logout"><i class="fa fa-sign-out"></i>Logout</a>
+                                </div>
+                            </div>
+                            
+                        <% } %>
                         <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
-                        <a href="#"><img src="img/icon/heart.png" alt=""></a>
-                        <a href="#" class="cart-link"><img src="img/icon/cart.png" alt=""> <span>0</span></a>
+                        <a href="/wishlist"><img src="img/icon/heart.png" alt=""></a>
+                        <a href="/cart" class="cart-link"><img src="img/icon/cart.png" alt=""> <span>0</span></a>
                     </div>
                 </div>
             </div>
+    
+            <!-- Mobile Menu Icon -->
             <div class="canvas__open"><i class="fa fa-bars"></i></div>
         </div>
     </header>
+    
     <!-- Header Section End -->

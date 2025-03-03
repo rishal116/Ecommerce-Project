@@ -14,17 +14,18 @@ const userSchema = new Schema({
     phone:{
         type:String,
         required:false,
-        unique:false,
+        unique:true,
         sparse:true,
         default:null
     },
     googleId:{
         type:String,
-        unique:true
+        unique:true,
+        require:false
     },
     password:{
         type:String,
-        required:true
+        required:false
     },
     isBlocked:{
         type:Boolean,
@@ -34,8 +35,8 @@ const userSchema = new Schema({
         type:Boolean,
         default:false
     },
-    cart:[{type:Schema.Types.ObjectId,
-        ref:"Cart"
+    cart:[{ type: Schema.Types.ObjectId,
+        ref: "Cart"
     }],
     wallet:{
         type:Number,
@@ -52,10 +53,12 @@ const userSchema = new Schema({
         default:Date.now
     },
     referalCode:{
-        type:String
+        type:String,
+        required: false
     },
     redeemed:{
         type:Boolean,
+        default: false
     },
     redeemedUser:[{
         type:Schema.Types.ObjectId,

@@ -1,0 +1,218 @@
+<%- include("../../views/partials/user/header") %> <!-- Just include header directly -->
+
+<title>Your Profile</title>
+<style>
+    /* Main Container for the entire page */
+    .main-container {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 20px;
+        margin: 0 auto;
+    }
+
+    /* Sidebar Style */
+    .sidebar {
+        flex: 1;
+        min-width: 250px;
+        max-width: 300px;
+        background-color: #ffffff;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        margin-right: 20px;
+    }
+
+    /* Sidebar Header */
+    .sidebar h3 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        color: #333;
+        font-weight: bold;
+    }
+
+    /* Sidebar Links */
+    .sidebar a {
+        display: block;
+        color: #333;
+        text-decoration: none;
+        padding: 12px;
+        margin: 12px 0;
+        font-size: 1rem;
+        border-radius: 5px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .sidebar a:hover {
+        background-color: #f1f1f1;
+    }
+
+    .sidebar a.active {
+        background-color: #e8f0fe;
+        color: #1967d2;
+        font-weight: 500;
+    }
+
+    /* Main Content Area */
+    .main-content {
+        flex: 3;
+        min-width: 600px;
+        background-color: #ffffff;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+
+    /* Header for Main Content */
+    .account-header {
+        font-size: 1.75rem;
+        margin-bottom: 20px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    /* Form Section Style */
+    .section h4 {
+        font-size: 1.25rem;
+        margin-bottom: 15px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    /* Form Group Style */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 1rem;
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 12px;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 5px;
+        box-sizing: border-box;
+    }
+
+    .form-group input:focus {
+        border-color: #1967d2;
+        outline: none;
+    }
+
+    .form-group small {
+        font-size: 0.9rem;
+        color: #777;
+    }
+
+    /* Button Style */
+    button {
+        padding: 12px 25px;
+        background-color: #1967d2;
+        color: #fff;
+        font-size: 1rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #1558a3;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .main-container {
+            flex-direction: column;
+        }
+
+        .sidebar {
+            margin-right: 0;
+            margin-bottom: 20px;
+        }
+
+        .main-content {
+            min-width: 100%;
+        }
+
+        .form-group input {
+            font-size: 0.9rem;
+        }
+
+        button {
+            width: 100%;
+        }
+    }
+
+    .change{
+        margin-left: 500px;
+        color: black;
+        
+    }
+    .change:hover{
+        color: #1558a3;
+    }
+
+    .edit-button {
+    margin-top: 15px;
+    padding: 12px;
+    background-color: #14CAD8;
+    color: #fff;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%; /* Makes the button full-width */
+    text-align: center;
+}
+
+.edit-button:hover {
+    background-color: #0FA5B2;
+}
+
+</style>
+
+<!-- Main Container for Sidebar and Main Content -->
+<div class="main-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h3>Profile Settings</h3>
+        <a href="/userProfile" class="active">Personal Information</a>
+        <a href="/myAddress">Your Addresses</a>
+        <a href="/wishlist">Wishlist</a>
+        <a href="/myorders">Your Orders</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="account-header">Personal Information</div>
+
+
+       <!-- Profile Details Section -->
+<div class="section" id="profile-details">
+    <p><strong>Full Name:</strong> <span id="full-name-text"><%= user.name %></span></p>
+    <p><strong>Mobile Number:</strong> <span id="phone-text"><%= user.phone %></span></p>
+    <p><strong>Email ID:</strong> <span id="email-text"><%= user.email %></span></p> 
+
+    <!-- Edit Button -->
+<a href="/editProfile">
+    <button class="edit-button">Edit</button>
+</a>
+
+</div>
+
+
+    </div>
+</div>
+
+<%- include("../../views/partials/user/footer") %> <!-- Just include footer directly -->
+
+
+

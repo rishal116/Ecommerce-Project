@@ -37,7 +37,7 @@ const customerInfo = async(req,res)=>{
         res.render("customers",{data:userData, totalPages:totalPages, currentPage:page})
         
     } catch (error) {
-        console.error(error);
+        console.error(error)
         res.status(500).send('Something went wrong while fetching customer data.');
     }
 }
@@ -48,7 +48,8 @@ const customerBlocked = async(req,res)=>{
         await User.updateOne({_id:id }, {$set:{isBlocked:true}})
         res.redirect("/admin/users")
     } catch (error) {
-        res.redirect("/pageError")
+        console.error(error)
+        res.redirect("/admin/pageError")
     }
 }
 
@@ -58,7 +59,8 @@ const customerunBlock = async(req,res)=>{
         await User.updateOne({_id:id }, {$set:{isBlocked:false}})
         res.redirect("/admin/users")
     } catch (error) {
-        res.redirect("/pageError")
+        console.error(error)
+        res.redirect("/admin/pageError")
     }
 }
 

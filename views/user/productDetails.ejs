@@ -1,0 +1,315 @@
+<%- include("../../views/partials/user/header") %>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.breadcrumb {
+  background: #f8f8f8;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.breadcrumb a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.breadcrumb span {
+  margin: 0 5px;
+}
+
+.product-gallery {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.main-image-container {
+  position: relative;
+  width: 400px;
+  max-width: 400px;
+  overflow: hidden;
+}
+
+#main-product-image {
+  width: 100%;
+  transition: transform 0.3s ease-in-out;
+}
+
+.zoom-effect:hover #main-product-image {
+  transform: scale(1.5);
+  cursor: zoom-in;
+}
+
+.thumbnail-slider {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  overflow-x: auto;
+  padding: 10px 0;
+  justify-content: center;
+}
+
+.thumbnail-slider img {
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: 0.3s;
+}
+
+.thumbnail-slider img:hover {
+  border: 2px solid #007bff;
+}
+
+.product-info {
+  position: sticky;
+  top: 10px;
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.button-add-to-cart {
+  background-color: #FF3F6C;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.button-add-to-cart:hover {
+  background-color: #E6355B;
+}
+
+.button-wishlist {
+  background-color: transparent;
+  color: #FF3F6C;
+  border: 2px solid #FF3F6C;
+  padding: 8px 18px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-left: 10px;
+}
+
+.button-wishlist:hover {
+  background-color: #FF3F6C;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .product-detail {
+    flex-direction: column;
+  }
+}
+</style>
+
+<main class="main">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="/" class="text-muted">Home</a><span><a href="/shop" class="text-muted">shop</a></span><span class="text-muted">Product Detail</span>
+    </div>
+    <div class="row">
+      <div class="col-lg-6 product-gallery">
+        <div class="main-image-container zoom-effect">
+          <img id="main-product-image" src="/uploads/re-image/<%= product.productImage[0] %>" alt="Product Image">
+        </div>
+        <div class="thumbnail-slider">
+          <% product.productImage.forEach((image) => { %>
+            <img src="/uploads/re-image/<%= image %>" onclick="changeMainImage('<%= image %>')">
+          <% }); %>
+        </div>
+      </div>
+      <div class="col-lg-6 product-info">
+        <h2><%= product.productName %></h2>
+        <p class="product-price">
+          <span class="text-brand">₹<%= product.salePrice %></span>
+          <span class="old-price"><strike>₹<%= product.regularPrice.toLocaleString('en-IN') %></strike></span>
+          <span class="discount">(<%= totalOffer || 0 %>% Off)</span>
+        </p>
+        <p><%= product.description %></p>
+        <button class="button-add-to-cart" onclick="addToCart(event, '<%= product._id %>', '<%= product.salePrice %>')">Add to Cart</button>
+        <button class="button-wishlist">♡ Wishlist</button>
+        <p>Availability:</p>
+        <div class="flex flex-wrap gap-2 mt-2">
+          <% if (sizes && sizes.some(sizeData => sizeData.quantity > 0)) { %>
+              <% sizes.forEach(sizeData => { %>
+                  <% if (sizeData.quantity > 0) { %>  
+                      <button 
+                          class="px-4 py-2 bg-gray-200 text-gray-800 font-medium rounded-lg border border-gray-300 hover:bg-gray-300 active:bg-gray-400 transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-400 size-option"
+                          data-size="<%= sizeData.size %>"
+                          data-quantity="<%= sizeData.quantity %>"
+                          onclick="selectSize(this)"
+                      >
+                          <%= sizeData.size %> (<%= sizeData.quantity %> pcs)
+                      </button>
+                  <% } %>
+              <% }); %>
+          <% } else { %>  
+              <span class="text-gray-500 text-sm italic">No sizes available</span>
+          <% } %>
+      </div>
+      
+      
+      
+      
+        
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+function changeMainImage(imageSrc) {
+  document.getElementById("main-product-image").src = "/uploads/re-image/" + imageSrc;
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+let selectedSize = null;
+let selectedSizeQuantity = null;
+
+// Function to handle size selection
+function selectSize(button) {
+    // Remove active class from all size buttons
+    document.querySelectorAll('.size-option').forEach(btn => {
+        btn.classList.remove('bg-blue-500', 'text-white');
+        btn.classList.add('bg-gray-200');
+    });
+
+        // Add selected styles to the clicked button
+        button.classList.remove('bg-gray-200', 'text-gray-800', 'border-gray-300');
+        button.classList.add('bg-blue-500', 'text-white', 'border-blue-600');
+
+    // Store selected size and its quantity
+    selectedSize = button.getAttribute('data-size');
+    selectedSizeQuantity = button.getAttribute('data-quantity');
+}
+
+  
+  // Modify addToCart to include size selection
+  async function addToCart(event, productId, productPrice) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!selectedSize) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Select a Size',
+            text: 'Please select a size before adding to the cart.',
+            position: 'top-end',
+            toast: true,
+            timer: 2000,
+            showConfirmButton: false
+        });
+        return;
+    }
+
+    const sizeQuantity = parseInt(selectedSizeQuantity)
+
+    console.log("size quantity",sizeQuantity)
+
+    if (sizeQuantity < 5 ) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Out of Stock',
+            text: 'you can add 5 product.',
+            position: 'top-end',
+            toast: true,
+            timer: 3000,
+            showConfirmButton: false
+        });
+        return;
+    }
+
+
+    if (sizeQuantity <= 0) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Out of Stock',
+            text: 'This size is currently out of stock.',
+            position: 'top-end',
+            toast: true,
+            timer: 3000,
+            showConfirmButton: false
+        });
+        return;
+    }
+
+    if (!productPrice || isNaN(productPrice)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Product price is unavailable.',
+            position: 'top-end',
+            toast: true,
+            timer: 2000,
+            showConfirmButton: false
+        });
+        return;
+    }
+
+    try {
+        const response = await fetch('/addToCart', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productId, productPrice, selectedSize, sizeQuantity }) 
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: result.message || 'Product added to cart!',
+                position: 'top-end',
+                toast: true,
+                timer: 2000,
+                showConfirmButton: false
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: result.message|| 'Failed to add product to cart.',
+                position: 'top-end',
+                toast: true,
+                timer: 3000,
+                showConfirmButton: false
+            });
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Login to add products to the cart!',
+            position: 'top-end',
+            toast: true,
+            timer: 3000,
+            showConfirmButton: false
+        });
+    }
+}
+
+  </script>
+  
+<%- include("../../views/partials/user/footer") %>
+
+

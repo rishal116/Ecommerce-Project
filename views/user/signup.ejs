@@ -41,7 +41,7 @@
 
     h2 {
       font-size: 22px;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
       color: #333;
     }
 
@@ -79,16 +79,6 @@
       background: linear-gradient(90deg, #0056b3, #007BFF);
     }
 
-    .google-btn {
-      width: 100%;
-      margin-top: 10px;
-    }
-
-    .g_id_signin {
-      width: 100% !important;
-      display: flex;
-      justify-content: center;
-    }
 
     .login-link {
       margin-top: 12px;
@@ -130,7 +120,7 @@
 }
 .login {
     text-align: center;
-    margin-top: 15px;
+    margin-top: 10px;
 }
 
 .login p {
@@ -171,6 +161,43 @@
 .password-container .toggle-password:hover {
     color: #333;
 }
+
+        /* Google Button Styling */
+        .social-btns {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        /* Google Button Styling */
+        .btn-google {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            border: 1px solid #dcdcdc;
+            border-radius: 5px;
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #555;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-google:hover {
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+            background-color: #f8f8f8;
+        }
+
+        /* Google Logo */
+        .btn-google img {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
 
 
   </style>
@@ -218,22 +245,15 @@
         </div>
         <div id="error5" class="error-message"></div>
     </div>
-    
-  
       <button type="submit" value="submit">Sign Up</button>
-    </form>
-
-    <!-- Google Sign-Up Button -->
-    <div class="google-btn">
-      <div id="g_id_onload"
-        data-client_id="YOUR_GOOGLE_CLIENT_ID"
-        data-context="signin"
-        data-ux_mode="popup"
-        data-callback="handleCredentialResponse"
-        data-auto_prompt="false">
-      </div>
-      <div class="g_id_signin" data-type="standard"></div>
+      <div class="social-btns">
+        <a href="/auth/google" class="btn-google">
+            <img src="img/googlesignup.png" alt="Google Logo">
+            Sign in with Google
+        </a>
     </div>
+    </form>
+    
     <div class="login">
       <p>Already have an account? <a href="/login">Login</a></p>
   </div>
@@ -293,7 +313,7 @@
       }
 
       // email validation
-      const emailRegex = /^[a-zA-z0-9]([a-a-zA-z0-9._-])*@[a-a-zA-z0-9.-]+\.[a-zA-Z]{2,}$/;
+      const emailRegex = /^[a-z0-9]([a-z0-9._-])*@[a-z0-9.-]+\.[a-z]{2,}$/;
       if(email===""){
         emailError.textContent = "Email is required",
         isValid = false
@@ -332,10 +352,6 @@
 
 
 
-    function handleCredentialResponse(response) {
-      console.log("Google Credential Response:", response);
-      // Send the response to your backend for authentication
-    }
 
     function togglePassword(fieldId, icon) {
     const field = document.getElementById(fieldId);

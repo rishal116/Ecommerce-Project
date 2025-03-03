@@ -7,6 +7,7 @@ const pageError = async(req,res)=> {
         res.render("adminError",{message:"We can't find the page you're looking for."})
     }
     catch(error){
+        console.log("Error in pageError",error)
         res.redirect("/admin/pageError")
     }
 }
@@ -35,7 +36,7 @@ const login = async(req,res)=>{
             return res.redirect("/admin/login")
         }
     } catch (error) {
-        console.error("login error",error);
+        console.error("Error in login: ",error)
         return res.redirect("/admin/pageError")
     }
 }
@@ -45,9 +46,21 @@ const loadDashboard = async(req,res)=>{
         try {
             res.render("dashboard")
         } catch (error) {
-            console.log("not admin")
-            res.redirect("/pageError")
+            console.log("Error in loadDasboard: ",error)
+            res.redirect("/admin/pageError")
         }
+    }
+}
+
+const logout = async(req,res)=>{
+    try {
+        req.session.admin = undefined
+        return res.redirect("/admin/login")
+
+    } catch (error) {
+        console.log("Error in logout: ",error)
+        res.redirect("/admin/pageError")
+        
     }
 }
 
@@ -56,4 +69,5 @@ module.exports = {
     loadLogin,
     login,
     loadDashboard,
+    logout
 }
