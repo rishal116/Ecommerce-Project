@@ -292,7 +292,7 @@
                         <!-- Edit and Delete Buttons -->
                         <div class="address-buttons">
                             <a href="/editAddress?id=<%=address._id%>" class="edit-btn">Edit</a>
-                            <a href="/deleteAddress?id=<%=address._id%>" class="delete-btn" onclick="return confirm('are you sure to delete address') ">Delete</a>
+                            <a href="/deleteAddress?id=<%=address._id%>" class="delete-btn">Delete</a>
                         </div>
                     </div>
                 <% }) %>
@@ -303,9 +303,34 @@
     </div>
 </div>
 <script>
-    
-  
+    // Delete Confirmation using SweetAlert
+    document.addEventListener("DOMContentLoaded", function () {
+        const deleteButtons = document.querySelectorAll(".delete-btn");
+
+        deleteButtons.forEach((button) => {
+            button.addEventListener("click", function (event) {
+                event.preventDefault(); // Prevent default link action
+
+                const deleteUrl = this.getAttribute("href");
+
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = deleteUrl; // Redirect to delete URL
+                    }
+                });
+            });
+        });
+    });
 </script>
+
 
 <%- include("../../views/partials/user/footer") %>
 

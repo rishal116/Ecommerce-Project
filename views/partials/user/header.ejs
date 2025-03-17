@@ -1,32 +1,46 @@
 <!DOCTYPE html>
 <html lang="zxx">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="description" content="Male_Fashion Template">
-    <meta name="keywords" content="Male_Fashion, unica, creative, html">
+    <meta name="description" content="Trendy Threads">
+    <meta name="keywords" content="Trendy Threads, fashion, clothing, ecommerce">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
-   rel="stylesheet">
-   <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
-   <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
-   <link rel="stylesheet" href="css/elegant-icons.css" type="text/css">
-   <link rel="stylesheet" href="css/magnific-popup.css" type="text/css">
-   <link rel="stylesheet" href="css/nice-select.css" type="text/css">
-   <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
-   <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
-   <link rel="stylesheet" href="css/style.css" type="text/css">
-   <link rel="stylesheet" href="./user-assets/css/maind134.css">
-   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <title>Trendy Threads</title>
-<!-- Bootstrap CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
-    rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
 
-    <!-- Css Styles -->
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <!-- Notyf CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+
+    <!-- Magnific Popup CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
+
+    <!-- Nice Select CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css">
+
+    <!-- Owl Carousel CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+
+    <!-- SlickNav CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/SlickNav/1.0.10/slicknav.min.css">
+    <title>Trendy Threads</title>
+   <!-- Css Styles -->
     <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
     <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
     <link rel="stylesheet" href="css/elegant-icons.css" type="text/css">
@@ -35,177 +49,304 @@
     <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
     <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="css/style.css" type="text/css">
-</head>
+    <link rel="stylesheet" href="css/style.css">
+    
+
+    <!-- Add Bootstrap Icons in the <head> -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+        
 
 <style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #F8F8F8;
+        margin: 0;
+    }
 
-body {
-  font-family: 'Poppins', sans-serif;
-  background-color: #F8F8F8;
-  margin: 0;
+    /* Profile Dropdown */
+    .profile-dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .profile-link {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        background: #f8f8f8;
+        border-radius: 25px;
+        text-decoration: none;
+        color: #333;
+        font-weight: 600;
+        transition: 0.3s ease;
+        cursor: pointer;
+    }
+
+    .profile-link i {
+        font-size: 14px;
+        color: #666;
+        transition: transform 0.3s ease;
+    }
+
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 40px;
+        background: white;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+        min-width: 160px;
+        z-index: 100;
+    }
+
+    .dropdown-menu a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px;
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+        transition: 0.3s ease;
+        white-space: nowrap;
+    }
+
+    .dropdown-menu a i {
+        font-size: 16px;
+        color: #666;
+    }
+
+    .dropdown-menu a:hover {
+        background: #f1f1f1;
+    }
+
+    .profile-dropdown:hover .dropdown-menu {
+        display: block;
+    }
+
+    .profile-dropdown:hover .profile-link i {
+        transform: rotate(180deg);
+    }
+
+    /* Header Styles */
+    .header__logo a {
+        font-family: 'Nunito Sans', sans-serif;
+        font-size: 26px;
+        font-weight: 800;
+        color: #FF3F6C;
+        text-transform: capitalize;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .header__logo a span {
+        font-weight: 700;
+        color: #282C3F;
+    }
+
+    .header__menu .active a {
+        text-decoration: none !important;
+        border-bottom: none !important;
+        color: inherit;
+    }
+
+
+
+/* Ensure icons and links stay the same on hover */
+.header__nav__option a:hover {
+    color: inherit !important; /* Prevent any color change */
+    background: inherit !important; /* Prevent background change */
 }
 
-/* Profile Dropdown Container */
-.profile-dropdown {
-    position: relative;
-    display: inline-block;
+/* Ensure icons inside links do not change color */
+.header__nav__option a:hover i {
+    color: inherit !important; /* Keep original icon color */
+}
+/* Responsive Design */
+@media (max-width: 992px) {
+    .header__nav__option {
+        justify-content: center !important;
+    }
+
+    .profile-dropdown {
+        position: relative;
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        right: 50%;
+        transform: translateX(50%);
+        top: 45px;
+        min-width: 140px;
+    }
+
+    .profile-link {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
+    .header__menu {
+        display: none;
+    }
+
+    .canvas__open {
+        display: block !important;
+        font-size: 24px;
+        cursor: pointer;
+        color: #333;
+        padding: 10px;
+    }
+
+    .mobile-menu {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 75%;
+        height: 100vh;
+        background: white;
+        box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.1);
+        transition: 0.3s ease-in-out;
+        z-index: 1000;
+        padding: 20px;
+    }
+
+    .mobile-menu.active {
+        left: 0;
+    }
+
+    .mobile-menu ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .mobile-menu ul li {
+        margin: 15px 0;
+    }
+
+    .mobile-menu ul li a {
+        text-decoration: none;
+        color: #333;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .close-menu {
+        position: absolute;
+        right: 15px;
+        top: 10px;
+        font-size: 28px;
+        cursor: pointer;
+        color: #333;
+    }
 }
 
-/* Profile Link (Username + Dropdown Arrow) */
-.profile-link {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 14px;
-    background: #f8f8f8;
-    border-radius: 25px;
-    text-decoration: none;
-    color: #333;
-    font-weight: 600;
-    transition: 0.3s ease;
-    cursor: pointer;
+@media (max-width: 576px) {
+    .header__nav__option {
+        flex-direction: row;
+        gap: 10px;
+    }
+
+    .profile-dropdown {
+        display: flex;
+        align-items: center;
+    }
+
+    .profile-link {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+
+    .dropdown-menu {
+        min-width: 120px;
+    }
+
+    .header__logo a {
+        font-size: 20px;
+    }
 }
 
-/* Dropdown Arrow */
-.profile-link i {
-    font-size: 14px;
-    color: #666;
-    transition: transform 0.3s ease;
-}
-
-/* Dropdown Menu */
-.dropdown-menu {
-    display: none;
-    position: absolute;
-    right: 0;
-    top: 40px;
-    background: white;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    overflow: hidden;
-    min-width: 160px;
-    z-index: 100;
-}
-
-/* Dropdown Items */
-.dropdown-menu a {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px;
-    text-decoration: none;
-    color: #333;
-    font-weight: 500;
-    transition: 0.3s ease;
-    white-space: nowrap;
-}
-
-.dropdown-menu a i {
-    font-size: 16px;
-    color: #666;
-}
-
-/* Hover Effect */
-.dropdown-menu a:hover {
-    background: #f1f1f1;
-}
-
-/* Show Dropdown on Hover */
-.profile-dropdown:hover .dropdown-menu {
-    display: block;
-}
-
-/* Rotate Arrow on Hover */
-.profile-dropdown:hover .profile-link i {
-    transform: rotate(180deg);
-}
-
-
-
-.header__logo a {
-    font-family: 'Nunito Sans', sans-serif;
-    font-size: 26px;
-    font-weight: 800;
-    color: #FF3F6C; /* Myntra pink */
-    text-transform: capitalize;
-    text-decoration: none;
-    display: inline-block;
-}
-
-.header__logo a span {
-    font-weight: 700;
-    color: #282C3F; /* Myntra black */
-}
-.header__menu .active a {
-    text-decoration: none !important; /* Remove underline */
-    border-bottom: none !important;   /* Remove any border underline */
-    color: inherit; /* Keep the same text color */
-}
 
 </style>
 <body>
-    <!-- Page Preloder -->
+    <!-- Page Preloader -->
     <div id="preloder">
         <div class="loader"></div>
     </div>
 
-    <!-- Header Section Begin -->
+    <!-- Header Section -->
     <header class="header">
         <div class="container">
             <div class="row align-items-center">
-                <!-- Logo Section -->
+                
+                <!-- Logo -->
                 <div class="col-lg-3 col-md-3">
                     <div class="header__logo">
                         <a href="/">Trendy <span>Threads</span></a>
                     </div>
                 </div>
-    
+
                 <!-- Navigation Menu -->
                 <div class="col-lg-6 col-md-6">
                     <nav class="header__menu mobile-menu">
                         <ul>
-                            <li class=""><a href="/">Home</a></li>
+                            <li><a href="/">Home</a></li>
                             <li><a href="/shop">Shop</a></li>
-                            <li>
-                                <a href="/">Pages</a>
-                            </li>
-                            <li><a href="./blog.html">Blog</a></li>
-                            <li><a href="./contact.html">Contacts</a></li>
                         </ul>
                     </nav>
                 </div>
-    
+
                 <!-- User & Cart Section -->
                 <div class="col-lg-3 col-md-3">
                     <div class="header__nav__option d-flex align-items-center justify-content-end">
                         <% if (!locals.user) { %> 
-                            <!-- If Not Logged In -->
                             <a href="/signup" class="sign-in-link">Sign Up</a>
                             <a href="/login" class="sign-in-link">Log in</a>
                         <% } else { %>
-                            <!-- If Logged In -->
                             <div class="profile-dropdown">
                                 <a class="profile-link">
-                                    <%=locals.user.name%>
+                                    <%= locals.user.name %>
                                     <i class="fa fa-chevron-down"></i>
                                 </a>
                                 <div class="dropdown-menu">
-                                    <a href="/account"><i class="fa fa-user"></i>Your Account</a>
-                                    <a href="/logout"><i class="fa fa-sign-out"></i>Logout</a>
+                                    <a href="/account"><i class="fa fa-user"></i> Your Account</a>
+                                    <a href="/logout"><i class="fa fa-sign-out"></i> Logout</a>
                                 </div>
                             </div>
-                            
                         <% } %>
-                        <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
-                        <a href="/wishlist"><img src="img/icon/heart.png" alt=""></a>
-                        <a href="/cart" class="cart-link"><img src="img/icon/cart.png" alt=""> <span>0</span></a>
+                        <a href="/wishlist"><i class="bi bi-heart-fill"></i></a>
+                        <a href="/cart"><i class="bi bi-cart"></i></a>
                     </div>
                 </div>
             </div>
-    
+
             <!-- Mobile Menu Icon -->
-            <div class="canvas__open"><i class="fa fa-bars"></i></div>
+            <div class="canvas__open"><i class="bi bi-list"></i></div>
         </div>
     </header>
-    
     <!-- Header Section End -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const menuToggle = document.querySelector(".canvas__open");
+            const mobileMenu = document.querySelector(".mobile-menu");
+            const closeMenu = document.querySelector(".close-menu");
+
+            menuToggle.addEventListener("click", function () {
+                mobileMenu.classList.add("active");
+            });
+
+            closeMenu.addEventListener("click", function () {
+                mobileMenu.classList.remove("active");
+            });
+
+            document.addEventListener("click", function (event) {
+                if (!mobileMenu.contains(event.target) && !menuToggle.contains(event.target)) {
+                    mobileMenu.classList.remove("active");
+                }
+            });
+        });
+    </script>
+    

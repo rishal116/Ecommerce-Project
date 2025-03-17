@@ -28,6 +28,10 @@ const productSchema = new Schema({
         type:Number,
         required:true
     },
+    finalPrice: {
+        type: Number,
+        required: false
+    },
     productOffer:{
         type:Number,
         default:0

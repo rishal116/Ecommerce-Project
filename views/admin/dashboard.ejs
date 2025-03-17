@@ -1,147 +1,713 @@
 <%- include("../../views/partials/admin/header") %>
+<title>Dashboard</title>
+<!-- CSS Libraries -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <style>
-           /* Breadcrumb Styling */
-   .breadcrumb {
-        display: flex;
-        align-items: center;
-        font-size: 14px;
-        background-color: #F9FAFB; /* Light Gray Background */
-        padding: 10px 16px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-    }
+/* ============================= */
+/* GLOBAL STYLES */
+/* ============================= */
+body {
+  background-color: #f8f9fa;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: #333;
+}
 
-    .breadcrumb a {
-        color: #4B5563; /* Dark Gray */
-        text-decoration: none;
-        margin-right: 8px;
-        font-weight: 500;
-    }
+/* ============================= */
+/* DASHBOARD LAYOUT */
+/* ============================= */
+.dashboard-container {
+  padding: 2rem;
+}
 
-    .breadcrumb a:hover {
-        text-decoration: underline;
-    }
+.dashboard-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+}
 
-    .breadcrumb span {
-        color: #9CA3AF; /* Light Gray Text */
-        margin-right: 8px;
-    }
+/* ============================= */
+/* CARD STYLING */
+/* ============================= */
+.stats-card {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  height: 100%;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+}
+
+.stats-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 1rem 1.25rem;
+  color: #4a5568;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.card-body {
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+}
+
+.card-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 0.25rem;
+}
+
+.card-percentage {
+  font-size: 0.9rem;
+  color: #718096;
+}
+
+.icon-container {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+}
+
+.icon {
+  font-size: 1.5rem;
+}
+
+/* ============================= */
+/* COLOR SCHEMES */
+/* ============================= */
+.bg-light-blue { background-color: #f0f7ff; }
+.bg-light-green { background-color: #f0fff4; }
+.bg-light-yellow { background-color: #fffbeb; }
+.bg-light-red { background-color: #fff5f5; }
+.bg-light-purple { background-color: #f3e5f5; }
+
+.icon-blue { background-color: #e1f0ff; color: #3b82f6; }
+.icon-green { background-color: #e0f2f1; color: #10b981; }
+.icon-yellow { background-color: #fef3c7; color: #d97706; }
+.icon-red { background-color: #fee2e2; color: #ef4444; }
+.icon-purple { background-color: #f3e8ff; color: #8b5cf6; }
+
+/* ============================= */
+/* FILTER SECTION */
+/* ============================= */
+.filters-section {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.btn-filter {
+  padding: 0.5rem 1rem;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-filter:hover {
+  background-color: #f8f9fa;
+}
+
+.btn-filter.active {
+  background-color: #4a5568;
+  color: white;
+  border-color: #4a5568;
+}
+
+.date-input {
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.5rem;
+  color: #4a5568;
+}
+
+/* ============================= */
+/* REPORT BUTTONS */
+/* ============================= */
+.report-btn {
+  padding: 0.3rem 0.7rem;
+  border-radius: 5px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: all 0.2s ease;
+  font-size: 0.8rem;
+}
+
+.report-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.4rem;
+  margin-top: 10px;
+}
+
+.excel-btn {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  min-width: 100px;
+}
+
+.excel-btn:hover {
+  background-color: #059669;
+}
+
+.pdf-btn {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  min-width: 100px;
+}
+
+.pdf-btn:hover {
+  background-color: #dc2626;
+}
+
+.report-btn i {
+  font-size: 0.8rem;
+}
+
+/* ============================= */
+/* TABLE STYLING */
+/* ============================= */
+.data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.data-table th {
+  background-color: #f8fafc;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  padding: 1rem;
+  letter-spacing: 0.05em;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.data-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.data-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.table-container {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.table-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.table-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0;
+}
+
+/* ============================= */
+/* CHARTS STYLING */
+/* ============================= */
+.chart-container {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  height: 100%;
+}
+
+.chart-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 250px;
+}
+
+/* ============================= */
+/* RESPONSIVE DESIGN */
+/* ============================= */
+@media (max-width: 768px) {
+  .report-buttons {
+    justify-content: flex-start;
+    margin-top: 1rem;
+  }
+  
+  .chart-container {
+    height: auto;
+  }
+  
+  canvas {
+    max-height: 250px;
+  }
+}
+
+@media (max-width: 576px) {
+  .report-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .report-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .filters-section .row {
+    flex-direction: column;
+  }
+  
+  .btn-group {
+    margin-bottom: 1rem;
+    display: flex;
+    width: 100%;
+  }
+  
+  .btn-filter {
+    flex: 1;
+  }
+  
+  .date-input-group {
+    margin-bottom: 1rem;
+  }
+}
+
 </style>
-<section class="p-6 bg-gray-100 min-h-screen">
-    <!-- Dashboard Header -->
-    <div class="flex justify-between items-center mb-6">
-     <!-- Breadcrumb -->
-<div class="breadcrumb">
-    <a href="/admin">Dashboard</a>
-</div>
-        <a href="#" class="flex items-center bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600">
-            <i class='bx bxs-cloud-download mr-2'></i> Download PDF
-        </a>
-    </div>
 
-    <!-- Info Boxes -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div class="flex items-center p-5 bg-white rounded-lg shadow-md">
-            <i class='bx bxs-calendar-check text-4xl text-blue-500'></i>
-            <div class="ml-4">
-                <h3 class="text-2xl font-bold">1020</h3>
-                <p class="text-gray-600">New Orders</p>
-            </div>
-        </div>
-        <div class="flex items-center p-5 bg-white rounded-lg shadow-md">
-            <i class='bx bxs-group text-4xl text-green-500'></i>
-            <div class="ml-4">
-                <h3 class="text-2xl font-bold">2834</h3>
-                <p class="text-gray-600">Visitors</p>
-            </div>
-        </div>
-        <div class="flex items-center p-5 bg-white rounded-lg shadow-md">
-            <i class='bx bxs-dollar-circle text-4xl text-yellow-500'></i>
-            <div class="ml-4">
-                <h3 class="text-2xl font-bold">$2543</h3>
-                <p class="text-gray-600">Total Sales</p>
-            </div>
-        </div>
+<div class="dashboard-container">
+  <!-- Dashboard Header -->
+  <div class="row">
+    <div class="col-md-8">
+      <h1 class="dashboard-title">Dashboard</h1>
     </div>
+  </div>
 
-    <!-- Recent Orders & To-Do List -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Recent Orders Table -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold">Recent Orders</h3>
-                <div class="flex space-x-3 text-gray-500">
-                    <i class='bx bx-search cursor-pointer hover:text-gray-700'></i>
-                    <i class='bx bx-filter cursor-pointer hover:text-gray-700'></i>
-                </div>
+  <!-- Filters Section -->
+  <div class="row">
+    <div class="col-12">
+      <div class="filters-section">
+        <div class="row align-items-center">
+          <div class="col-md-4">
+            <div class="btn-group" role="group">
+              <% ['all', '1day', '1week', '1month'].forEach(period => { %>
+                <button type="button" class="btn btn-filter <%= data.selectedPeriod === period ? 'active' : '' %>" data-period="<%= period %>">
+                  <%= period === 'all' ? 'All Time' : period.replace('1', '1 ') %>
+                </button>
+              <% }); %>
             </div>
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-gray-100">
-                        <th class="p-3">User</th>
-                        <th class="p-3">Date Order</th>
-                        <th class="p-3">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="border-b">
-                        <td class="p-3 flex items-center">
-                            <img src="img/people.png" class="w-8 h-8 rounded-full mr-3">
-                            <p>John Doe</p>
-                        </td>
-                        <td class="p-3">01-10-2021</td>
-                        <td class="p-3"><span class="px-3 py-1 text-sm text-white bg-green-500 rounded">Completed</span></td>
-                    </tr>
-                    <tr class="border-b">
-                        <td class="p-3 flex items-center">
-                            <img src="img/people.png" class="w-8 h-8 rounded-full mr-3">
-                            <p>John Doe</p>
-                        </td>
-                        <td class="p-3">01-10-2021</td>
-                        <td class="p-3"><span class="px-3 py-1 text-sm text-white bg-yellow-500 rounded">Pending</span></td>
-                    </tr>
-                    <tr class="border-b">
-                        <td class="p-3 flex items-center">
-                            <img src="img/people.png" class="w-8 h-8 rounded-full mr-3">
-                            <p>John Doe</p>
-                        </td>
-                        <td class="p-3">01-10-2021</td>
-                        <td class="p-3"><span class="px-3 py-1 text-sm text-white bg-blue-500 rounded">Processing</span></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- To-Do List -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold">Todos</h3>
-                <div class="flex space-x-3 text-gray-500">
-                    <i class='bx bx-plus cursor-pointer hover:text-gray-700'></i>
-                    <i class='bx bx-filter cursor-pointer hover:text-gray-700'></i>
-                </div>
+          </div>
+          <div class="col-md-4">
+            <div class="d-flex align-items-center date-input-group">
+              <input type="date" class="form-control date-input" value="<%= data.startDate %>">
+              <span class="mx-2">to</span>
+              <input type="date" class="form-control date-input" value="<%= data.endDate %>">
             </div>
-            <ul class="space-y-3">
-                <li class="flex justify-between p-3 bg-gray-100 rounded shadow">
-                    <p>Todo Item 1</p>
-                    <i class='bx bx-dots-vertical-rounded text-gray-500 cursor-pointer'></i>
-                </li>
-                <li class="flex justify-between p-3 bg-gray-100 rounded shadow">
-                    <p>Todo Item 2</p>
-                    <i class='bx bx-dots-vertical-rounded text-gray-500 cursor-pointer'></i>
-                </li>
-                <li class="flex justify-between p-3 bg-gray-100 rounded shadow">
-                    <p>Todo Item 3</p>
-                    <i class='bx bx-dots-vertical-rounded text-gray-500 cursor-pointer'></i>
-                </li>
-                <li class="flex justify-between p-3 bg-gray-100 rounded shadow">
-                    <p>Todo Item 4</p>
-                    <i class='bx bx-dots-vertical-rounded text-gray-500 cursor-pointer'></i>
-                </li>
-            </ul>
+          </div>
+          <span></span>
+          <div class="col-md-4">
+            <div class="report-buttons">
+              <button class="report-btn excel-btn">
+                <i class="fas fa-file-excel"></i> Excel Report
+              </button>
+              <button class="report-btn pdf-btn">
+                <i class="fas fa-file-pdf"></i> PDF Report
+              </button>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-</section>
+  </div>
+
+  <!-- Sales Overview Charts - Moved up -->
+  <h2 class="section-title">Sales Overview</h2>
+  <div class="row mb-4">
+    <div class="col-lg-6 mb-4">
+      <div class="chart-container">
+        <h3 class="chart-title">Monthly Sales</h3>
+        <div class="chart-wrapper">
+          <canvas id="salesChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6 mb-4">
+      <div class="chart-container">
+        <h3 class="chart-title">Order Status Distribution</h3>
+        <div class="chart-wrapper">
+          <canvas id="orderStatusChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sales & Orders Overview -->
+  <div class="row mb-4">
+    <% const stats = [
+      { title: 'Total Sales', value: data.totalSales, growth: data.totalSalesGrowth, icon: 'fas fa-chart-line', color: 'green' },
+      { title: 'Total Orders', value: data.totalOrders, icon: 'fas fa-shopping-bag', color: 'blue' },
+      { title: 'Cancelled Orders', value: data.cancelledOrders, extra: `₹${data.cancelledAmount.toLocaleString()} (${data.cancelledPercentage}%)`, icon: 'fas fa-times-circle', color: 'red' },
+      { title: 'Pending Orders', value: data.pendingOrders, extra: `₹${data.pendingAmount.toLocaleString()} (${data.pendingPercentage}%)`, icon: 'fas fa-clock', color: 'yellow' }
+    ]; %>
+
+    <% stats.forEach(stat => { %>
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stats-card bg-light-<%= stat.color %>">
+          <div class="card-header"><%= stat.title %></div>
+          <div class="card-body">
+            <div>
+              <h2 class="card-value"><%= stat.title === 'Total Sales' ? `₹${stat.value.toLocaleString()}` : stat.value.toLocaleString() %></h2>
+              <% if (stat.extra) { %><span class="card-percentage"><%= stat.extra %></span><% } %>
+            </div>
+            <div class="icon-container icon-<%= stat.color %>">
+              <i class="<%= stat.icon %> icon"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+
+  <!-- Order Status -->
+  <div class="row mb-4">
+    <% const orderStatus = [
+      { title: 'Processing Orders', value: data.processingOrders, extra: `₹${data.processingAmount.toLocaleString()} (${data.processingPercentage}%)`, icon: 'fas fa-truck', color: 'blue' },
+      { title: 'Delivered Orders', value: data.deliveredOrders, extra: `₹${data.deliveredAmount.toLocaleString()} (${data.deliveredPercentage}%)`, icon: 'fas fa-check-circle', color: 'green' },
+      { title: 'Total Users', value: data.totalUsers, extra: 'Active users', icon: 'fas fa-users', color: 'purple' }
+    ]; %>
+
+    <% orderStatus.forEach(status => { %>
+      <div class="col-lg-4 col-md-4 mb-4">
+        <div class="stats-card bg-light-<%= status.color %>">
+          <div class="card-header"><%= status.title %></div>
+          <div class="card-body">
+            <div>
+              <h2 class="card-value"><%= status.value.toLocaleString() %></h2>
+              <% if (status.extra) { %><span class="card-percentage"><%= status.extra %></span><% } %>
+            </div>
+            <div class="icon-container icon-<%= status.color %>">
+                <i class="<%= status.icon %> icon"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  
+    <!-- Discounts & Coupons -->
+    <div class="row mb-4">
+      <% const couponStats = [
+        { title: 'Total Discounts', value: `₹${data.totalDiscounts.toLocaleString()}`, extra: `${data.discountPercentage}% of total sales`, icon: 'fas fa-tags', color: 'purple' },
+        { title: 'Active Coupons', value: data.activeCoupons, extra: 'Currently Active', icon: 'fas fa-ticket-alt', color: 'green' },
+        { title: 'Expired Coupons', value: data.expiredCoupons, extra: 'Inactive', icon: 'fas fa-ban', color: 'red' },
+        { title: 'Coupon Usage', value: data.totalCouponUsage, extra: 'Orders with coupons', icon: 'fas fa-percentage', color: 'blue' }
+      ]; %>
+  
+      <% couponStats.forEach(coupon => { %>
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="stats-card bg-light-<%= coupon.color %>">
+            <div class="card-header"><%= coupon.title %></div>
+            <div class="card-body">
+              <div>
+                <h2 class="card-value"><%= coupon.value %></h2>
+                <span class="card-percentage"><%= coupon.extra %></span>
+              </div>
+              <div class="icon-container icon-<%= coupon.color %>">
+                <i class="<%= coupon.icon %> icon"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  
+    <!-- Top 10 Best Selling Products -->
+    <h2 class="section-title">Best Selling Products (Top 10)</h2>
+    <div class="table-container mb-4">
+      <div class="table-header">
+        <h3 class="table-title">Products Performance</h3>
+      </div>
+      <div class="table-body">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Total Quantity Sold</th>
+                <th>Total Revenue</th>
+                <th>Order Count</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% topProducts.forEach(product => { %>
+                <tr>
+                  <td><%= product.productName %></td>
+                  <td><%= product.categoryInfo.name %></td>
+                  <td><%= product.totalQuantitySold.toLocaleString() %></td>
+                  <td>₹<%= product.totalRevenue.toLocaleString() %></td>
+                  <td><%= product.orderCount.toLocaleString() %></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Top 5 Best-Selling Categories -->
+    <h2 class="section-title">Top 5 Best-Selling Categories</h2>
+    <div class="table-container mb-4">
+      <div class="table-header">
+        <h3 class="table-title">Category Performance</h3>
+      </div>
+      <div class="table-body">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Category Name</th>
+                <th>Total Quantity Sold</th>
+                <th>Total Revenue</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% topCategories.forEach(category => { %>
+                <tr>
+                  <td><%= category.categoryInfo.name %></td>
+                  <td><%= category.totalQuantitySold.toLocaleString() %></td>
+                  <td>₹<%= category.totalRevenue.toLocaleString() %></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  
 
 <%- include("../../views/partials/admin/footer") %>
 
+  
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    const orderStatusCtx = document.getElementById('orderStatusChart').getContext('2d');
+
+    const salesData = {
+        pending: '<%= data.pendingAmount || 0 %>',
+        processing: '<%= data.processingAmount || 0 %>',
+        delivered: '<%= data.deliveredAmount || 0 %>',
+        cancelled: '<%= data.cancelledAmount || 0 %>'
+    };
+
+    const orderCounts = {
+        pending: '<%= data.pendingOrders || 0 %>',
+        processing: '<%= data.processingOrders || 0 %>',
+        delivered: '<%= data.deliveredOrders || 0 %>',
+        cancelled: '<%= data.cancelledOrders || 0 %>'
+    };
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Pending', 'Processing', 'Delivered', 'Cancelled'],
+            datasets: [{
+                label: 'Total Sales (₹)',
+                data: [salesData.pending, salesData.processing, salesData.delivered, salesData.cancelled],
+                backgroundColor: ['#f39c12', '#3498db', '#2ecc71', '#e74c3c'],
+                borderColor: ['#d68910', '#2874a6', '#28b463', '#c0392b'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function (value) {
+                            return value >= 1000 ? (value / 1000) + 'K' : value;  
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Sales Amount (₹)',
+                        font: { weight: 'bold' }
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Order Status',
+                        font: { weight: 'bold' }
+                    }
+                }
+            }
+        }
+    });
+
+    new Chart(orderStatusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Pending', 'Processing', 'Delivered', 'Cancelled'],
+            datasets: [{
+                label: 'Order Count',
+                data: [orderCounts.pending, orderCounts.processing, orderCounts.delivered, orderCounts.cancelled],
+                backgroundColor: ['#f39c12', '#3498db', '#2ecc71', '#e74c3c'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top'
+                }
+            }
+        }
+    });
+
+    // Date filtering functionality
+    const filterButtons = document.querySelectorAll('.btn-filter');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const period = this.getAttribute('data-period');
+            
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            window.location.href = `/admin?period=${period}`;
+        });
+    });
+
+    // Date range picker functionality
+    const startDateInput = document.querySelector(".date-input:first-of-type");
+    const endDateInput = document.querySelector(".date-input:last-of-type");
+    const excelButton = document.querySelector(".excel-btn");
+    const pdfButton = document.querySelector(".pdf-btn");
+
+    function updateDateRange(days) {
+        const today = new Date();
+        const startDate = new Date();
+        startDate.setDate(today.getDate() - days);
+
+        const formatDate = (date) => date.toISOString().split('T')[0];
+
+        startDateInput.value = formatDate(startDate);
+        endDateInput.value = formatDate(today);
+    }
+
+    filterButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+            const period = this.getAttribute('data-period');
+            
+            if (period === '1day') updateDateRange(1);
+            else if (period === '1week') updateDateRange(7);
+            else if (period === '1month') updateDateRange(30);
+        });
+    });
+
+    function getSelectedDates() {
+        let startDate = startDateInput.value;
+        let endDate = endDateInput.value;
+
+        if (!startDate || !endDate) {
+            Swal.fire({
+                icon: "warning",
+                title: "Invalid Date Selection",
+                text: "Please select valid dates before downloading the report.",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "OK"
+            });
+            return null;
+        }
+
+        startDate = new Date(startDate).toISOString().split("T")[0]; 
+        endDate = new Date(endDate).toISOString().split("T")[0];
+
+        return { startDate, endDate };
+    }
+
+    excelButton.addEventListener("click", function () {
+        const dates = getSelectedDates();
+        
+        if (dates) {
+            const startDate = new Date(dates.startDate);
+            const endDate = new Date(dates.endDate);
+
+            if (startDate > endDate) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Invalid Date Range",
+                    text: "Start date cannot be later than the end date. Please select a valid range!",
+                    confirmButtonColor: "#d33",
+                });
+                return; 
+            }
+
+            window.location.href = `/admin/orders/download/excel?startDate=${dates.startDate}&endDate=${dates.endDate}`;
+        }
+    });
+
+    pdfButton.addEventListener("click", function () {
+        const dates = getSelectedDates();
+        
+        if (dates) {
+            const startDate = new Date(dates.startDate);
+            const endDate = new Date(dates.endDate);
+
+            if (startDate > endDate) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Invalid Date Range",
+                    text: "Start date cannot be later than the end date. Please select a valid range!",
+                    confirmButtonColor: "#d33",
+                });
+                return; 
+            }
+
+            window.location.href = `/admin/orders/download/pdf?startDate=${dates.startDate}&endDate=${dates.endDate}`;
+        }
+    });
+});
+</script>

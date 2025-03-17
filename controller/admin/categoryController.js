@@ -6,7 +6,7 @@ const categoryInfo = async(req,res)=>{
         const page  = parseInt(req.query.page) ||1
         const limit = 3
         const skip = (page-1)*limit
-
+        
         const categoryData = await Category.find({})
         .sort({createdAt:-1})
         .skip(skip)
@@ -60,16 +60,11 @@ const addCategoryOffer = async(req,res)=>{
         if(!category){
             return res.status(404).json({status:false , message:"Category not found"})
         }
-        const products = await Product.find({category:category._id})
-        const hasProductOffer = products.some((product)=> product.productOffer > percentage) 
-        if(hasProductOffer){
-            return res.json({status:false , message:"Products within this category already have offer "})
-        }
         await Category.updateOne({_id:categoryId},{$set:{categoryOffer:percentage}})
-
-        for(let product of products){
-            product.productOffer =0
-            product.salePrice = product.regularPrice
+        const products = await Product.find({ category: categoryId })
+        for (const product of products) {
+            const highestOffer = Math.max(percentage, product.productOffer)
+            product.salePrice = product.regularPrice - Math.floor(product.regularPrice * (highestOffer / 100))
             await product.save()
         }
         res.json({status:true})
@@ -86,18 +81,15 @@ const removeCategoryOffer = async(req,res)=>{
         if(!category){
             return res.status(404).json({status:false , message:"Category not found"})
         }
-        const percentage = category.categoryOffer
-        const products = await Product.find({category:category._id})
-
-        if(products.length>0){
-            for(let product of products){
-                product.salePrice += Math.floor(product.regularPrice * (percentage/100))
-                product.productOffer = 0
-                await product.save()
-            }
-        }
         category.categoryOffer = 0
         await category.save()
+        const products = await Product.find({ category: categoryId })
+        for(const product of products) {
+            const productOffer = product.productOffer || 0
+            product.salePrice = product.regularPrice - Math.floor(product.regularPrice * (productOffer / 100))
+
+            await product.save()
+        }
         res.json({status:true})
     } catch (error) {
         console.log("Error in removeOffer: ", error)
@@ -148,6 +140,7 @@ const editCategory = async(req,res)=>{
         if(existingCategory){
            return res.status(400).json({error:"Category already exists , Please try another name"})
         } 
+
 
         const updateCategory = await Category.findByIdAndUpdate(id,{
             name :categoryName,

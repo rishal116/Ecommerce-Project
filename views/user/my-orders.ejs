@@ -1,220 +1,514 @@
 <%- include("../../views/partials/user/header") %>
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <title>My Orders</title>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <style>
+/* Global Styles */
 
 body {
-  font-family: 'Poppins', sans-serif;
-  background-color: #F8F8F8;
-  margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--secondary-color);
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.5;
 }
 
-    header a {
-        text-decoration: none;
-    }
-    footer a {
-        text-decoration: none;
-    }
-    header a:hover {
-    color:#FF3F6C ; /* Keeps the original text color */
+header a {
+    text-decoration: none;
+    color: inherit; 
 }
 
-    :root {
-        --primary-color:#FF3F6C;
-        --secondary-color: #f8fafc;
-        --success-color: #22c55e;
-        --warning-color: #eab308;
-        --danger-color: #ef4444;
-        --text-primary: #1e293b;
-        --text-secondary: #64748b;
-        --border-radius: 1rem;
-    }
+footer a {
+    text-decoration: none;
+}
 
-    body {
-        background-color: var(--secondary-color);
-        color: var(--text-primary);
-        line-height: 1.5;
-    }
 
-    .page-header {
-        background: white;
-        padding: 2rem 0;
-        margin-bottom: 2rem;
-        border-bottom: 1px solid #e2e8f0;
-    }
+    /* Uses the default text color */
+/* Root Variables */
+:root {
+    --primary-color: #FF3F6C;
+    --secondary-color: #f8fafc;
+    --success-color: #22c55e;
+    --warning-color: #eab308;
+    --danger-color: #ef4444;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --border-radius: 1rem;
+}
 
-    .page-title {
-        font-size: 1.875rem;
-        font-weight: 600;
-        color: var(--text-primary);
-        margin: 0;
-    }
+/* Header & Title */
+.page-header {
+    background: white;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #e2e8f0;
+}
 
+.page-title {
+    font-size: 1.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+/* Orders Container */
+.orders-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Order Cards */
+.order-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.order-card:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.order-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+.order-content {
+    padding: 1.5rem;
+}
+
+/* Order Info */
+.order-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.info-item {
+    color: var(--text-secondary);
+}
+
+.info-item strong {
+    display: block;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.status-pending {
+    background-color: #fef9c3;
+    color: var(--warning-color);
+}
+
+.status-completed {
+    background-color: #dcfce7;
+    color: var(--success-color);
+}
+
+.status-cancelled {
+    background-color: #fee2e2;
+    color: var(--danger-color);
+}
+
+.status-badge.status-delivered {
+    background-color: #28a745;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+}
+
+/* Products List */
+.products-list {
+    margin-top: 1.5rem;
+}
+
+.product-card {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.product-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 0.5rem;
+    object-fit: cover;
+    margin-right: 1.5rem;
+}
+
+.product-info h5 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.product-info p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+/* Order Actions */
+.order-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.btn-custom {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+}
+
+.btn-custom i {
+    font-size: 1rem;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+/* Return Section */
+.return-section {
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+}
+
+.return-reason-select {
+    display: block;
+    width: 100%;
+    max-width: 250px;
+}
+
+/* Pagination */
+.pagination .page-item.active .page-link {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.pagination .page-item .page-link {
+    color: var(--primary-color);
+    border-radius: 50px;
+    margin: 0 5px;
+}
+
+.pagination .page-item.disabled .page-link {
+    opacity: 0.5;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
     .orders-container {
-        max-width: 1200px;
-        margin: 0 auto;
+        max-width: 90%;
         padding: 0 1rem;
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    }
-
-    .order-card {
-        background: white;
-        border-radius: var(--border-radius);
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        margin-bottom: 1.5rem;
-        overflow: hidden;
-        transition: all 0.2s ease;
-    }
-
-    .order-card:hover {
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transform: translateY(-2px);
-    }
-
-    .order-header {
-        padding: 1.5rem;
-        border-bottom: 1px solid #e2e8f0;
-        background: #f8fafc;
-    }
-
-    .order-content {
-        padding: 1.5rem;
-    }
-
-    .status-badge {
-        padding: 0.5rem 1rem;
-        border-radius: 9999px;
-        font-size: 0.875rem;
-        font-weight: 500;
-    }
-
-    .status-pending {
-        background-color: #fef9c3;
-        color: var(--warning-color);
-    }
-
-    .status-completed {
-        background-color: #dcfce7;
-        color: var(--success-color);
-    }
-
-    .status-cancelled {
-        background-color: #fee2e2;
-        color: var(--danger-color);
     }
 
     .order-info {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 1.5rem;
     }
 
-    .info-item {
-        color: var(--text-secondary);
+    .order-header, .order-content {
+        padding: 1rem;
     }
 
-    .info-item strong {
-        display: block;
-        color: var(--text-primary);
-        margin-bottom: 0.25rem;
-    }
-
-    .products-list {
-        margin-top: 1.5rem;
+    .order-info {
+        grid-template-columns: 1fr;
+        gap: 1rem;
     }
 
     .product-card {
-        display: flex;
-        align-items: center;
-        padding: 1rem;
-        background: #f8fafc;
-        border-radius: 0.75rem;
-        margin-bottom: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     .product-image {
-        width: 80px;
-        height: 80px;
-        border-radius: 0.5rem;
-        object-fit: cover;
-        margin-right: 1.5rem;
-    }
-
-    .product-info h5 {
-        margin: 0 0 0.5rem 0;
-        font-size: 1rem;
-        color: var(--text-primary);
-    }
-
-    .product-info p {
-        margin: 0;
-        color: var(--text-secondary);
-        font-size: 0.875rem;
-    }
-
-    .order-actions {
-        display: flex;
-        gap: 1rem;
-        margin-top: 1.5rem;
-    }
-
-    .btn-custom {
-        padding: 0.75rem 1.5rem;
-        border-radius: 0.5rem;
-        font-weight: 500;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        transition: all 0.2s;
-    }
-
-    .btn-custom i {
-        font-size: 1rem;
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 4rem 2rem;
-        background: white;
-        border-radius: var(--border-radius);
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-
-    .empty-state i {
-        font-size: 3rem;
-        color: var(--text-secondary);
+        width: 100%;
+        height: auto;
+        margin-right: 0;
         margin-bottom: 1rem;
     }
 
-
-
-    .return-section {
-        border-top: 1px solid #eee;
-        padding-top: 10px;
+    .order-actions {
+        flex-direction: column;
+        gap: 0.75rem;
     }
 
     .return-reason-select {
-        max-width: 250px;
-        font-size: 14px;
+        max-width: 100%;
+        z-index: 100;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-header {
+        padding: 1.5rem 0;
+        text-align: center;
     }
 
-    .status-badge.status-delivered {
-        background-color: #28a745;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 15px;
+    .orders-container {
+        max-width: 100%;
+        padding: 0 0.75rem;
     }
+
+    .order-header, .order-content {
+        padding: 0.75rem;
+    }
+
+    .product-card {
+        padding: 0.75rem;
+    }
+
+    .btn-custom {
+        width: 100%;
+        padding: 0.5rem 1rem;
+    }
+
+    .pagination .page-item .page-link {
+        font-size: 0.875rem;
+        padding: 0.5rem 0.75rem;
+    }
+}
+/* Responsive Styles */
+@media (max-width: 1024px) {
+    .orders-container {
+        max-width: 90%;
+        padding: 0 1rem;
+    }
+
+    .order-info {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+
+    .order-card {
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+
+    .order-header, .order-content {
+        padding: 1rem;
+    }
+
+    .order-info {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .product-card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0.75rem;
+    }
+
+    .product-image {
+        width: 100%;
+        height: auto;
+        max-width: 120px;
+        margin: 0 auto 1rem;
+    }
+
+    .product-info h5 {
+        font-size: 0.95rem;
+    }
+
+    .order-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+        width: 100%;
+    }
+
+    .btn-custom {
+        width: 100%;
+        padding: 0.75rem;
+    }
+
+    .return-reason-select {
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    .pagination .page-item .page-link {
+        font-size: 0.85rem;
+        padding: 0.5rem 0.75rem;
+    }
+}
+
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+    .orders-container {
+        max-width: 90%;
+        padding: 0 1rem;
+    }
+
+    .order-info {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+
+    .order-card {
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+
+    .order-header, .order-content {
+        padding: 1rem;
+    }
+
+    .order-info {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .product-card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0.75rem;
+    }
+
+    .product-image {
+        width: 100%;
+        height: auto;
+        max-width: 120px;
+        margin: 0 auto 1rem;
+    }
+
+    .product-info h5 {
+        font-size: 0.95rem;
+    }
+
+    .order-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+        width: 100%;
+    }
+
+    .btn-custom {
+        width: 100%;
+        padding: 0.75rem;
+    }
+
+    .return-reason-select {
+        max-width: 100%;
+    }
+
+    .pagination .page-item .page-link {
+        font-size: 0.85rem;
+        padding: 0.5rem 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-header {
+        padding: 1.25rem 0;
+        text-align: center;
+    }
+
+    .orders-container {
+        max-width: 100%;
+        padding: 0 0.75rem;
+    }
+
+    .order-header, .order-content {
+        padding: 0.75rem;
+    }
+
+    .order-info {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .product-card {
+        padding: 0.75rem;
+        flex-direction: column;
+    }
+
+    .product-image {
+        max-width: 100px;
+    }
+
+    .btn-custom {
+        width: 100%;
+        padding: 0.5rem 1rem;
+    }
+
+    .pagination .page-item .page-link {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.6rem;
+    }
+
+    .trust-badges {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .trust-badge {
+        width: 100%;
+        text-align: center;
+        padding: 0.5rem 0;
+    }
+}
+
+
 </style>
-</head>
-<body>
 <header class="page-header">
     <div class="orders-container">
         <h1 class="page-title">My Orders</h1>
@@ -223,140 +517,170 @@ body {
 
 <div class="orders-container">
     <% if (orders.length === 0) { %>
+        <!-- Empty State for No Orders -->
         <div class="empty-state">
             <i class="fas fa-shopping-bag"></i>
             <h3>No Orders Yet</h3>
             <p class="text-muted">Looks like you haven't placed any orders yet.</p>
             <a href="/shop" class="btn btn-custom text-white" style="background-color: #FF3F6C; border-color:#FF3F6C;">
-                <i class="fas fa-shopping-cart"></i>
-                Start Shopping
+                <i class="fas fa-shopping-cart"></i> Start Shopping
             </a>
-            
         </div>
-    <% } %>
-
-    <% orders.forEach(function(order) { %>
-        <div class="order-card">
-            <div class="order-header">
-                <div class="d-flex justify-content-between align-items-center">
+    <% } else { %>
+        <% orders.forEach(function(order) { %>
+            <div class="order-card">
+                <!-- Order Header -->
+                <div class="order-header d-flex justify-content-between align-items-center">
                     <div>
                         <h4 class="mb-1">Order #<%= order.orderNumber %></h4>
                         <span class="text-muted">Placed on <%= order.orderDate %></span>
                     </div>
                     <span class="status-badge status-<%= order.status.toLowerCase() %>">
-                        <i class="fas fa-circle me-1"></i>
-                        <%= order.status %>
+                        <i class="fas fa-circle me-1"></i> <%= order.status %>
                     </span>
                 </div>
-            </div>
 
-            <div class="order-content">
-                <div class="order-info">
-                    <div class="info-item">
-                        <strong>Total Amount</strong>
-                        ₹<%= order.finalAmount.toFixed(2) %>
+                <!-- Order Content -->
+                <div class="order-content">
+                    <!-- Order Information -->
+                    <div class="order-info">
+                        <div class="info-item"><strong>Total Amount:</strong> ₹<%= order.finalAmount.toFixed(2) %></div>
+                        <div class="info-item"><strong>Final Amount:</strong> ₹<%= order.finalAmount.toFixed(2) %></div>
+                        <div class="info-item"><strong>Payment Method:</strong> <%= order.paymentMethod %></div>
+                        <div class="info-item"><strong>Shipping Address:</strong> <%= order.address %></div>
                     </div>
-                    <div class="info-item">
-                        <strong>Final Amount</strong>
-                        ₹<%= order.finalAmount.toFixed(2) %>
-                    </div>
-                    <div class="info-item">
-                        <strong>Payment Method</strong>
-                        <%= order.paymentMethod %>
-                    </div>
-                    <div class="info-item">
-                        <strong>Shipping Address</strong>
-                        <%= order.address %>
-                    </div>
-                </div>
 
-                <div class="products-list">
-                    <h5 class="mb-3">Order Items</h5>
-                    <% order.products.forEach(function(product) { %>
-                        <div class="product-card">
-                            <img src="/uploads/product-images/<%= product.image %>" 
-                                 alt="<%= product.name %>" 
-                                 class="product-image">
-                            <div class="product-info">
-                                <h5><%= product.name %></h5>
-                                <p>
-                                    <span class="me-3">Quantity: <%= product.quantity %></span>
-                                    <span>Price: ₹<%= product.price.toFixed(2) %></span>
-                                    <span>Size: <%= product.selectedSize%></span>
-                                </p>
-                                
-                                <% if (order.status === 'Delivered') { %>
-                                    <div class="return-section mt-2">
-                                        <select class="form-select return-reason-select" 
-                                                id="returnReasonn"
-                                                aria-label="Select return reason">
-                                            <option value="" selected>Select Return Reason</option>
-                                            <option value="wrong_size">Wrong Size</option>
-                                            <option value="damaged">Product Damaged/Defective</option>
-                                            <option value="not_as_described">Product Not As Described</option>
-                                            <option value="wrong_item">Wrong Item Received</option>
-                                            <option value="quality_issues">Quality Issues</option>
-                                            <option value="other">Other</option>
-                                        </select>
+                    <!-- Order Items -->
+                    <div class="products-list">
+                        <h5 class="mb-3">Order Items</h5>
+                        <% order.products.forEach(function(product) { %>
+                            <div class="product-card">
+                                <img src="/uploads/product-images/<%= product.image %>" alt="<%= product.name %>" class="product-image">
+                                <div class="product-info">
+                                    <h5><%= product.name %></h5>
+                                    <p>
+                                        <span class="me-3">Quantity: <%= product.quantity %></span>
+                                        <span>Price: ₹<%= product.price.toFixed(2) %></span>
+                                        <span>Size: <%= product.selectedSize %></span>
+                                    </p>
 
-                                        
-                                        <button class="btn btn-warning mt-2" 
+                                    <!-- Return Option for Delivered Orders -->
+                                    <% if (order.status === 'Delivered') { %>
+                                        <div class="return-section mt-2">
+                                            <select class="form-select return-reason-select" id="returnReason" aria-label="Select return reason">
+                                                <option value="" selected>Select Return Reason</option>
+                                                <option value="wrong_size">Wrong Size</option>
+                                                <option value="damaged">Product Damaged/Defective</option>
+                                                <option value="not_as_described">Product Not As Described</option>
+                                                <option value="wrong_item">Wrong Item Received</option>
+                                                <option value="quality_issues">Quality Issues</option>
+                                                <option value="other">Other</option>
+                                            </select>
+                                            <button class="btn btn-warning mt-2" 
                                                 onclick="initiateReturn('<%= order.orderId %>', '<%= product.id %>')">
-                                            <i class="fas fa-undo"></i> Request Return
-                                        </button>
-                                    </div>
-                                <% } %>
+                                                <i class="fas fa-undo"></i> Request Return
+                                            </button>
+                                        </div>
+                                    <% } %>
+                                    
+                                </div>
                             </div>
-                        </div>
-                    <% }); %>
-                </div>
+                        <% }); %>
+                    </div>
 
-                <div class="order-actions">
-                    <button class="btn btn-primary btn-custom" onclick="viewOrderDetails('<%= order.orderId %>')" style="background-color: #FF3F6C;">
-                        <i class="fas fa-eye"></i>
-                        View Details
-                    </button>
-
-                    <button class="btn btn-primary btn-custom" onclick="downloadInvoice('<%= order.orderId %>')" style="background-color:  #14CAD8;">
-                        <i class="fas fa-file-pdf"></i>
-                        Download Invoice
-                    </button>
-                    
-
-                    <% if (order.status === 'Pending') { %>
-                        <button class="btn btn-outline-danger btn-custom" onclick="cancelOrder('<%= order.orderId %>')">
-                            <i class="fas fa-times"></i>
-                            Cancel Order
+                    <!-- Order Actions -->
+                    <div class="order-actions">
+                        <button class="btn btn-primary btn-custom" onclick="viewOrderDetails('<%= order.orderId %>')" style="background-color: #FF3F6C;">
+                            <i class="fas fa-eye"></i> View Details
+                        </button>
+                        <button class="btn btn-primary btn-custom" onclick="downloadInvoice('<%= order.orderId %>')" style="background-color: #14CAD8;">
+                            <i class="fas fa-file-pdf"></i> Download Invoice
                         </button>
 
-                        <div class="dropdown">
-                            <button class="btn btn-outline-secondary btn-custom dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-edit"></i>
-                                Modify Items
+                        <!-- Retry Payment Button for Pending Payments -->
+                        <% if (order.status === 'payment pending') { %>
+                            <button class="btn btn-warning btn-custom" 
+                                    onclick="retryPayment('<%= order.orderId %>', '<%= order.address._id %>', 'upi', '<%= order.finalAmount %>')">
+                                <i class="fas fa-redo"></i> Retry Payment
                             </button>
-                            <ul class="dropdown-menu">
-                                <% order.products.forEach(function(product) { %>
-                                    <li>
-                                        <a class="dropdown-item" href="#" onclick="cancelProduct('<%= order.orderId %>', '<%= product.id %>')">
-                                            Cancel <%= product.name %>
-                                        </a>
-                                    </li>
-                                <% }); %>
-                            </ul>
-                        </div>
-                    <% } %>
+                        <% } %>
+
+                        <!-- Cancel Order Option -->
+                        <% if (order.status === 'Pending') { %>
+                            <button class="btn btn-outline-danger btn-custom" onclick="cancelOrder('<%= order.orderId %>')">
+                                <i class="fas fa-times"></i> Cancel Order
+                            </button>
+
+                            <!-- Modify Items Option for Orders with Multiple Products -->
+                            <% if (order.products.length >= 2) { %>
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-secondary btn-custom dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-edit"></i> Modify Items
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <% order.products.forEach(function(product) { %>
+                                            <li>
+                                                <a class="dropdown-item" href="#" onclick="cancelProduct('<%= order.orderId %>', '<%= product.id %>')">
+                                                    Cancel <%= product.name %>
+                                                </a>
+                                            </li>
+                                        <% }); %>
+                                    </ul>
+                                </div>
+                            <% } %>
+                        <% } %>
+                    </div>
                 </div>
             </div>
-        </div>
-    <% }); %>
+        <% }); %>
+    <% } %>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Pagination -->
+<div class="pagination-container text-center mt-4">
+    <% if (totalPages > 1) { %>
+        <nav>
+            <ul class="pagination justify-content-center">
+                <!-- Previous Button -->
+                <% if (currentPage > 1) { %>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                    </li>
+                <% } else { %>
+                    <li class="page-item disabled"><a class="page-link">Previous</a></li>
+                <% } %>
 
-</body>
+                <!-- Page Numbers -->
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                    <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                    </li>
+                <% } %>
+
+                <!-- Next Button -->
+                <% if (currentPage < totalPages) { %>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                    </li>
+                <% } else { %>
+                    <li class="page-item disabled"><a class="page-link">Next</a></li>
+                <% } %>
+            </ul>
+        </nav>
+    <% } %>
+</div>
+
+<!-- Bootstrap Bundle (includes Popper.js) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 <script>
+
+document.getElementById('returnReason').addEventListener('click', () => {
+    console.log('Dropdown clicked!');
+});
+
 
 function downloadInvoice(orderId) {
     window.location.href = `/download-invoice/${orderId}`;
@@ -404,6 +728,7 @@ function cancelProduct(orderNumber, productId) {
         confirmButtonColor: '#d33',
         cancelButtonColor: '#3085d6',
         confirmButtonText: 'Yes, cancel it!',
+        cancelButtonText: 'No, keep it'
     }).then((result) => {
         if (result.isConfirmed) {
             fetch(`/productCancel/${orderNumber}/${productId}`, { 
@@ -413,19 +738,37 @@ function cancelProduct(orderNumber, productId) {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    Swal.fire('Cancelled!', 'The product has been cancelled.', 'success')
-                    .then(() => location.reload());
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Cancelled!',
+                        text: 'The product has been cancelled successfully.',
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then(() => location.reload());
                 } else {
-                    Swal.fire('Error!', 'Failed to cancel the product. Please try again.', 'error');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: data.message || 'Failed to cancel the product. Please try again.',
+                        showConfirmButton: false,
+                        timer: 2500
+                    });
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                Swal.fire('Error!', 'An error occurred while cancelling the product.', 'error');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'An error occurred while cancelling the product.',
+                    showConfirmButton: false,
+                    timer: 2500
+                });
             });
         }
     });
 }
+
 
 
 function viewOrderDetails(orderNumber) {
@@ -436,7 +779,7 @@ function viewOrderDetails(orderNumber) {
 
 async function initiateReturn(orderId, productId) {
      
-    const reason = document.getElementById('returnReasonn').value
+    const reason = document.getElementById('returnReason').value
     console.log('order Id: ', orderId, 'product Id: ', productId, 'reason: ', reason);
     
     if (!reason) {
@@ -461,7 +804,7 @@ async function initiateReturn(orderId, productId) {
             }
         });
 
-        const response = await fetch('/orders/return', {
+        const response = await fetch('/myOrders/return', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -504,6 +847,109 @@ async function initiateReturn(orderId, productId) {
     }
 }
 
-    </script>
+
+async function retryPayment(orderId, addressId, paymentMethod, amount) {
+
+console.log('Retry payment data:', orderId, paymentMethod, amount);
+
+try {
+
+    console.log('Order datas: ', orderId, amount);
+    
+
+    const responseOfRazorpay = await fetch("/create-retry-order", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ amount: amount, currency: "INR", orderId: orderId }),  
+    });
+
+    const data = await responseOfRazorpay.json();
+
+
+    console.log('data from the razorpay: ', data);
+    
+    if (!data.success) throw new Error("Failed to create order");
+
+    const options = {
+        key: "rzp_test_Qg11WlEkiWMukc",
+        amount: data.order.amount,  
+        currency: data.order.currency,
+        order_id: data.order.id,
+        name: "Trendy Threads",
+        description: "Payment Retry",
+        handler: async function (response) {
+
+            Swal.fire({
+                title: "Payment Successful!",
+                text: "Payment ID: " + response.razorpay_payment_id,
+                icon: "success",
+                confirmButtonColor: "#28a745",
+                confirmButtonText: "OK",
+            }).then(async () => {
+
+                console.log('helloo heyyy');
+
+                const response = await fetch('/retryPaymentSuccess', {
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({ orderId })
+                })
+
+
+                const result = await response.json()
+
+
+                if (result.success) {
+                    window.location.href = '/payment-success'
+                    return;
+                }
+
+                Swal.fire({
+                    title: "Payment Failed!",
+                    text: 'Error while retrying payment',
+                    icon: "error",
+                    confirmButtonColor: "#dc3545",
+                    confirmButtonText: "Try Again",
+                })
+
+            });
+        },
+        prefill: {
+            email: "test@example.com",
+            contact: "9999999999",
+        },
+        theme: { color: "#3399cc" },
+        modal: {
+            ondismiss: async function () {
+                    window.location.href = `/payment-failure?orderId=${data.order.id}&amount=${amount}&paymentMethod=upi&addressId=${addressId}`;
+                    return;
+                
+            }
+        }
+    };
+
+    const rzp = new Razorpay(options);
+    rzp.open();
+
+} catch (error) {
+    console.error("Error in retryPayment:", error);
+    Swal.fire({
+        title: "Payment Failed!",
+        text: error.message,
+        icon: "error",
+        confirmButtonColor: "#dc3545",
+        confirmButtonText: "Try Again",
+    }).then(() => {
+        console.log('Selected address ID:', addressId);
+        window.location.href = `/payment-failure?orderId=${data.order.id}&amount=${amount}&paymentMethod=RAZORPAY&addressId=${addressId}`;
+    });
+}
+}
+</script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <%- include("../../views/partials/user/footer") %>

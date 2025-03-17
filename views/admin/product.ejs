@@ -164,14 +164,14 @@
         input: "number",
         inputLabel: "Percentage",
         inputPlaceholder: "%",
-        inputAttributes: { min: 1, max: 100, step: 1 },
+        inputAttributes: { min: 1, max: 99,tep: 1 },
         showCancelButton: true
     });
 
     if (!amount) return;
 
-    if (amount < 1 || amount > 100) {
-        return Swal.fire("Invalid Input", "Offer percentage should be between 1 and 100.", "error");
+    if (amount < 1 || amount > 99) {
+        return Swal.fire("Invalid Input", "Offer percentage should be between 1 and 99.", "error");
     }
 
     try {

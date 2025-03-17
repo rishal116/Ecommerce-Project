@@ -19,6 +19,7 @@ const productInfo = async(req,res)=>{
                 {brand:{$regex: new RegExp(".*"+search+".*","i")}},
             ]
         })
+        .sort({createdAt:-1})
         .limit(limit*1)
         .skip((page-1)*limit)
         .populate('category')
@@ -140,7 +141,7 @@ const addProduct = async (req, res) => {
             brand: products.brand,
             category: category._id,
             regularPrice: products.regularPrice,
-            salePrice: products.salePrice,
+            salePrice: products.regularPrice,
             createdOn: new Date(),
             quantity: products.quantity,
             sizes: sizesWithQuantities,
@@ -162,11 +163,9 @@ const addProductOffer = async(req,res)=>{
         const {productId,percentage} = req.body
         const findProduct = await Product.findOne({_id:productId})
         const findCategory = await Category.findOne({_id:findProduct.category})
-        if(findCategory.categoryOffer>percentage){
-            return res.json({status:false , message:"This product category already has a category offer"})
-        }
         
-        findProduct.salePrice = findProduct.salePrice-Math.floor(findProduct.regularPrice*(percentage/100))
+        const highestOffer = Math.max(parseInt(percentage),findCategory.categoryOffer)
+        findProduct.salePrice = findProduct.regularPrice - Math.floor(findProduct.regularPrice * (highestOffer / 100))
         findProduct.productOffer = parseInt(percentage)
         await findProduct.save()
         res.json({status:true})
@@ -180,9 +179,10 @@ const removeProductOffer = async(req,res)=>{
     try {
         const {productId} = req.body
         const findProduct = await Product.findOne({_id:productId})
-        const percentage = findProduct.productOffer
-        findProduct.salePrice = findProduct.salePrice-Math.floor(findProduct.regularPrice*(percentage/100))
+        const findCategory = await Category.findOne({_id:findProduct.category})
         findProduct.productOffer = 0
+        const categoryOffer = findCategory.categoryOffer || 0
+        findProduct.salePrice = findProduct.regularPrice - Math.floor(findProduct.regularPrice * (categoryOffer / 100));
         await findProduct.save()
         res.json({status:true})
         
@@ -258,7 +258,7 @@ const editProduct = async (req, res) => {
             brand: data.brand,
             category: categoryId._id, 
             regularPrice: data.regularPrice,
-            salePrice: data.salePrice,
+            salePrice: data.regularPrice,
             color: data.color,
             sizes: sizes,  
         }

@@ -322,6 +322,59 @@ const deleteAddress = async(req,res)=>{
         
     }
 }
+
+const addAddressInCheckout = async (req, res) => {
+    try {
+        const userId = req.session.user; // Get userId from session
+        if (!userId) {
+            return res.status(401).json({ error: "User not authenticated" });
+        }
+
+        const { addressType, name, city, landMark, state, pincode, phone, altPhone } = req.body;
+
+        // Validate required fields
+        if (!addressType || !name || !city || !landMark || !state || !pincode || !phone) {
+            return res.status(400).json({ error: "All required fields must be filled." });
+        }
+
+        // Find user's address document
+        let userAddress = await Address.findOne({ userId });
+
+        if (!userAddress) {
+            // If no address document exists, create a new one
+            userAddress = new Address({
+                userId,
+                address: [{ addressType, name, city, landMark, state, pincode, phone, altPhone }]
+            });
+        } else {
+            // Check if the same address already exists (to prevent duplicates)
+            const isDuplicate = userAddress.address.some(addr =>
+                addr.addressType === addressType &&
+                addr.name === name &&
+                addr.city === city &&
+                addr.landMark === landMark &&
+                addr.state === state &&
+                addr.pincode === pincode &&
+                addr.phone === phone &&
+                addr.altPhone === altPhone
+            );
+
+            if (!isDuplicate) {
+                // If it's not a duplicate, add the new address
+                userAddress.address.push({ addressType, name, city, landMark, state, pincode, phone, altPhone });
+            }
+        }
+
+        // Save changes
+        await userAddress.save();
+
+        // Redirect back to checkout page
+        res.redirect("/checkout");
+    } catch (error) {
+        console.error("Error adding address:", error);
+        res.redirect("/pageNotFound");
+    }
+};
 module.exports = {
     getForgetPassPage,
     forgotEmailValid,
@@ -335,5 +388,6 @@ module.exports = {
     postAddAddress,
     editAddress,
     postEditAddress,
-    deleteAddress
+    deleteAddress,
+    addAddressInCheckout
 }

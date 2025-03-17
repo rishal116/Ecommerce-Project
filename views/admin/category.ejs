@@ -285,12 +285,12 @@
 
 
 <script>
- function handleFormSubmit(event) {
-    event.preventDefault();
+function handleFormSubmit(event) {
+    event.preventDefault()
     if (!validateForm()) {
-        return;
+        return
     }
-
+    
     Swal.fire({
         title: "Are you sure?",
         text: "Do you want to add this category?",
@@ -299,11 +299,12 @@
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
         confirmButtonText: "Yes, add it!"
-    }).then((result) => {
+    })
+    .then((result) => {
         if (result.isConfirmed) {
-            const name = document.getElementById("product_name").value.trim();
-            const description = document.getElementById("descriptionId").value.trim();
-
+            const name = document.getElementById("product_name").value.trim()
+            const description = document.getElementById("descriptionId").value.trim()
+            
             fetch("/admin/addCategory", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -312,7 +313,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
-                    throw new Error(data.error);
+                    throw new Error(data.error)
                 }
                 Swal.fire("Success!", "Category has been successfully added!", "success")
                 .then(() => location.reload());
@@ -365,13 +366,13 @@ async function addOffer(categoryId) {
         input: "number",
         inputLabel: "Percentage",
         inputPlaceholder: "%",
-        inputAttributes: { min: 1, max: 100, step: 1 },
+        inputAttributes: { min: 1, max: 99, step: 1 },
         showCancelButton: true
     });
 
     if (!amount) return;
 
-    if (amount < 1 || amount > 100) {
+    if (amount < 1 || amount > 99) {
         return Swal.fire("Invalid Input", "Offer percentage should be between 1 and 100.", "error");
     }
 

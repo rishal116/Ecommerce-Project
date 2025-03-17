@@ -3,46 +3,58 @@ const Product = require("../../models/productSchema");
 const mongodb = require("mongodb");
 const Cart = require("../../models/cartSchema")
 const mongoose = require("mongoose");
+const Wishlist = require("../../models/wishlistSchema");
 
 const getCartPage = async (req, res) => {
   try {
     if (!req.session || !req.session.user) {
-      return res.redirect('/')
+      return res.redirect('/');
     }
-    const userId = req.session.user
-    
-    let cart = await Cart.findOne({ userId }).populate('items.productId')
+
+    const userId = req.session.user;
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5;
+    const skip = (page - 1) * limit;
+
+    let cart = await Cart.findOne({ userId }).populate('items.productId');
     if (!cart) {
       cart = new Cart({
         userId,
         items: []
-      })
+      });
     }
-    
 
-    cart.items = cart.items.filter(item => item.productId && !item.productId.isBlocked)
-    let subtotal = cart.items.reduce((sum, item) => {
-      return sum + (item.price * item.quantity)
-    }, 0)
-    
-    const TAX_RATE = 0.12
-    let tax = subtotal * TAX_RATE
-    let total = subtotal + tax
-    
-    cart.subtotal = subtotal
-    cart.tax = tax
-    cart.total = total
-    
-    const userData = await User.findById(userId)
+ 
+    cart.items = cart.items.filter(item => item.productId && !item.productId.isBlocked);
+
+    const totalItems = cart.items.length;
+    const totalPages = Math.ceil(totalItems / limit);
+    const paginatedItems = cart.items.slice(skip, skip + limit);
+    cart.items = paginatedItems;
+
+ 
+    let subtotal = cart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    let total = subtotal; 
+
+    cart.subtotal = subtotal;
+    cart.total = total;
+
+    const userData = await User.findById(userId);
+
     res.render('cart', {
-      cart,
-      user: userData
-    })
+      cart: cart,
+      user: userData,
+      currentPage: page,
+      totalPages
+    });
+
   } catch (error) {
-    console.error('Error while loading the cart page', error)
-    res.redirect('/pageNotFound')
+    console.error('Error while loading the cart page', error);
+    res.redirect('/pageNotFound');
   }
-}
+};
+
+
 
 const addToCart = async (req, res) => {
   try {
@@ -51,9 +63,10 @@ const addToCart = async (req, res) => {
       return res.status(401).json({ message: 'Unauthorized. Please log in.' });
     }
 
-    const { productId, productPrice, selectedSize , sizeQuantity } = req.body; 
+    const { productId, productPrice, selectedSize} = req.body; 
+    console.log("body: ",req.body)
 
-    console.log("req.body",req.body)
+
     const parsedPrice = parseInt(productPrice);
 
     if (isNaN(parsedPrice)) {
@@ -117,6 +130,23 @@ const addToCart = async (req, res) => {
     await product.save();
     await cart.save();
 
+    const wishlist = await Wishlist.findOne({ userId });
+
+if (wishlist) {
+  const result = await Wishlist.updateOne(
+    { userId: userId },
+    { $pull: { products: { productId: productId } } }
+  )
+}
+
+await User.findByIdAndUpdate(
+  userId,
+  { $pull: { wishlist: productId } }, 
+  { new: true } 
+);
+
+
+
     await User.findByIdAndUpdate(userId, {
       $push: { cart: cart._id },
     });
@@ -131,9 +161,6 @@ const addToCart = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
-
-
-
 
 const changeQuantity = async (req, res) => {
   try {
@@ -254,9 +281,6 @@ const deleteProduct = async (req, res) => {
     res.status(500).send('Server error.')
   }
 }
-
-
-
 
 module.exports = {
   getCartPage,

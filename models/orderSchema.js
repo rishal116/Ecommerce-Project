@@ -44,7 +44,6 @@ const orderSchema = new Schema({
       status: {
         type: String,
         enum: ['Pending', 'Approved', 'Rejected'],
-        default: null,
       },
       reason: {
         type: String,
@@ -53,27 +52,27 @@ const orderSchema = new Schema({
       requestDate: {
         type: Date,
         default: null,
-        },
       },
     },
-  ],
-  totalPrice: {
-    type: Number,
+  },
+],
+totalPrice: {
+  type: Number,
+  required: true,
+},
+discount: {
+  type: Number,
+  default: 0,
+},
+finalAmount: {
+  type: Number,
+  required: true,
+},
+address: {
+  addressType: {
+    type: String,
     required: true,
   },
-  discount: {
-    type: Number,
-    default: 0,
-  },
-  finalAmount: {
-    type: Number,
-    required: true,
-  },
-  address: {
-    addressType: {
-      type: String,
-      required: true,
-    },
     name: {
       type: String,
       required: true,
@@ -115,6 +114,7 @@ const orderSchema = new Schema({
       'Shipped',
       'Delivered',
       'Cancelled',
+      'payment pending',
       'Return Request',
       'Return Accepted',
       'Return Rejected',

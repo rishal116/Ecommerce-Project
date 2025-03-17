@@ -1,0 +1,276 @@
+<%- include("../../views/partials/user/header") %>
+
+<title>Wallet Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Poppins', sans-serif;
+    }
+    .wallet-card {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease-in-out;
+    }
+    .wallet-card:hover {
+        transform: translateY(-5px);
+    }
+    .transaction-row:hover {
+        background-color: rgba(240, 240, 240, 0.5);
+    }
+    .btn-gradient {
+        background: linear-gradient(to right, #ff416c, #ff4b2b);
+    }
+    .btn-gradient:hover {
+        background: linear-gradient(to right, #ff4b2b, #ff416c);
+    }
+    /* Fixed modal styling */
+    #addMoneyModal {
+    display: none; /* Initially hidden */
+    align-items: center;
+    justify-content: center;
+}
+
+    #addMoneyModal.show {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    .modal-content {
+        transform: scale(0.95);
+        transition: transform 0.3s ease;
+    }
+    #addMoneyModal.show .modal-content {
+        transform: scale(1);
+    }
+</style>
+
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-lg mx-auto bg-white rounded-xl wallet-card p-6">
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-xl font-bold text-gray-800">Wallet Balance</h1>
+            <div class="flex items-center">
+                <svg class="w-6 h-6 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 100-4 2 2 0 000 4z"></path>
+                </svg>
+                <span class="text-2xl font-bold text-gray-900">₹<%= walletBalance %></span>
+            </div>
+        </div>
+
+        <button id="addMoneyBtn" class="w-full btn-gradient text-white py-3 px-4 rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-200">
+            Add Money to Wallet
+        </button>
+
+        <div class="bg-gray-50 rounded-lg p-4 mt-6">
+            <h2 class="text-lg font-semibold text-gray-700 mb-4">Transaction History</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-gray-600">
+                    <thead>
+                        <tr class="border-b border-gray-200">
+                            <th class="py-3 px-4 text-left font-semibold">Transaction</th>
+                            <th class="py-3 px-4 text-left font-semibold">Date</th>
+                            <th class="py-3 px-4 text-right font-semibold">Amount</th>
+                            <th class="py-3 px-4 text-right font-semibold">Method</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (transactions && transactions.length > 0) { %>
+                            <% transactions.forEach(function(transaction) { %>
+                            <tr class="transaction-row border-b border-gray-100">
+                                <td class="py-3 px-4"><%= transaction.type %></td>
+                                <td class="py-3 px-4 text-gray-500">
+                                    <%= new Date(transaction.createdAt).toLocaleString('en-IN', {
+                                        weekday: 'short',
+                                        year: 'numeric',
+                                        month: 'short',
+                                        day: '2-digit',
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        hour12: true
+                                    }) %>
+                                </td>
+                                <td class="py-3 px-4 text-right <%= transaction.type.toLowerCase() === 'debit' ? 'text-red-600' : 'text-green-600' %>">
+                                    ₹<%= Math.abs(transaction.amount).toLocaleString() %>
+                                </td>
+                                <td class="py-3 px-4 text-right"><%= transaction.method %></td>
+                            </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="4" class="py-8 text-center text-gray-500">No transactions found</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+                <% if (transactions && transactions.length > 0) { %>
+                    <div class="flex justify-center mt-4">
+                        <% if (currentPage > 1) { %>
+                            <a href="?page=<%= currentPage - 1 %>" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-l">Previous</a>
+                        <% } %>
+                        <span class="px-4 py-2 bg-gray-100 text-gray-800">Page <%= currentPage %> of <%= totalPages %></span>
+                        <% if (currentPage < totalPages) { %>
+                            <a href="?page=<%= currentPage + 1 %>" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-r">Next</a>
+                        <% } %>
+                    </div>
+                <% } %>                
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Add Money Modal - Fixed structure -->
+<div id="addMoneyModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4 modal-content p-6 relative">
+        <button id="closeModal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-2xl font-bold">
+            &times;
+        </button>
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Add Money to Wallet</h3>
+        
+        <form id="addMoneyForm">
+            <label for="amount" class="block text-sm font-medium text-gray-700 mb-2">Amount (₹)</label>
+            <input type="number" id="amount" name="amount" min="1" 
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none transition-all" 
+                placeholder="Enter amount">
+            
+            <div class="flex justify-between mt-4">
+                <button type="button" class="quick-amount-btn bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded text-gray-700" data-amount="100">₹100</button>
+                <button type="button" class="quick-amount-btn bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded text-gray-700" data-amount="500">₹500</button>
+                <button type="button" class="quick-amount-btn bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded text-gray-700" data-amount="1000">₹1000</button>
+            </div>
+            
+            <button type="submit" class="w-full mt-4 py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-lg shadow-md transition-all">
+                Proceed to Payment
+            </button>
+        </form>
+    </div>
+</div>
+
+
+<!-- Scripts moved to the bottom for better page loading -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get modal elements
+    const addMoneyBtn = document.getElementById('addMoneyBtn');
+    const addMoneyModal = document.getElementById('addMoneyModal');
+    const closeModalBtn = document.getElementById('closeModal');
+    const quickAmountBtns = document.querySelectorAll('.quick-amount-btn'); // Fixing selector
+    const addMoneyForm = document.getElementById('addMoneyForm'); // Define the form
+    const amountInput = document.getElementById('amount'); 
+
+    // Ensure modal is hidden initially
+    addMoneyModal.style.display = 'none';
+
+    // Function to open modal
+    function openModal() {
+        addMoneyModal.style.display = 'flex';
+        setTimeout(() => {
+            addMoneyModal.classList.add('show');
+        }, 10); // Delay to ensure transition works
+    }
+
+    // Function to close modal
+    function closeModal() {
+        addMoneyModal.classList.remove('show');
+        setTimeout(() => {
+            addMoneyModal.style.display = 'none';
+        }, 300); // Wait for animation to finish
+    }
+
+    // Open modal on button click
+    addMoneyBtn.addEventListener('click', openModal);
+
+    // Close modal when clicking close button
+    closeModalBtn.addEventListener('click', closeModal);
+
+    // Close modal when clicking outside modal content
+    addMoneyModal.addEventListener('click', function(event) {
+        if (event.target === addMoneyModal) {
+            closeModal();
+        }
+    });
+
+    // ✅ Quick amount buttons
+    quickAmountBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            amountInput.value = btn.getAttribute('data-amount');
+        });
+    });
+
+    // ✅ Form submission with Razorpay
+    addMoneyForm.addEventListener('submit', async function(e) {
+        console.log("hello")
+        e.preventDefault();
+        let amount = amountInput.value.trim(); // Trim spaces
+
+        // Validate amount
+        if (!amount || isNaN(amount) || amount <= 0) {
+            Swal.fire('Invalid Amount', 'Please enter a valid amount', 'error');
+            return;
+        }
+
+        try {
+            let response = await fetch('/add-money', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount })
+            });
+
+            let data = await response.json();
+            console.log("dataL ",data)
+
+            if (data.success) {
+                let options = {
+                    key:data.key_id,
+                    amount: data.order.amount,
+                    currency: data.order.currency,
+                    name: "Wallet Recharge",
+                    description: "Adding Money to Wallet",
+                    order_id: data.order.id,
+                    handler: async function(response) {
+                        try {
+                            let verifyResponse = await fetch('/verify-payment', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_signature: response.razorpay_signature
+                                })
+                            });
+
+                            let verifyData = await verifyResponse.json();
+
+                            if (verifyData.success) {
+                                Swal.fire('Success!', 'Money added to wallet!', 'success')
+                                    .then(() => window.location.reload());
+                            } else {
+                                Swal.fire('Error', 'Payment verification failed', 'error');
+                            }
+                        } catch (verifyError) {
+                            console.error('Verification error:', verifyError);
+                            Swal.fire('Error', 'Payment verification failed', 'error');
+                        }
+                    },
+                    theme: { color: "#3399cc" }
+                };
+
+                let rzp = new Razorpay(options);
+                rzp.open();
+            } else {
+                Swal.fire('Error', data.message || 'Payment failed', 'error');
+            }
+        } catch (error) {
+            console.error('Payment error:', error);
+            Swal.fire('Error', 'Something went wrong, try again later', 'error');
+        }
+    });
+});
+
+</script>
+
+<%- include("../../views/partials/user/footer") %>
+
+

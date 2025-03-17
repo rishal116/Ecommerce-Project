@@ -1,0 +1,576 @@
+<%- include("../../views/partials/admin/header") %>
+<title>Coupon Management</title>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+
+<style>
+/* Breadcrumb Styling */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    background-color: #F9FAFB; /* Light Gray Background */
+    padding: 10px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.breadcrumb a {
+    color: #4B5563; /* Dark Gray */
+    text-decoration: none;
+    margin-right: 8px;
+    font-weight: 500;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb span {
+    color: #9CA3AF; /* Light Gray Text */
+    margin-right: 8px;
+}
+
+</style>
+
+<div class="container mx-auto px-4 py-6">
+    <!-- Header -->
+    <div class="breadcrumb">
+        <a href="/admin">Dashboard</a>
+        <span>›</span>
+        <a href="/admin/products">Products</a>
+    </div>
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Coupons</h1>
+        </div>
+        <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center">
+            <span class="mr-2">+</span> Add Coupon
+        </button>
+    </div>
+
+    <!-- Create Modal -->
+<div id="couponModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
+        <h2 class="text-xl font-bold mb-4">Add New Coupon</h2>
+        <form id="couponForm" class="space-y-4">
+            <input type="text" name="couponCreateName" placeholder="Coupon Name" class="w-full px-3 py-2 border rounded-md focus:ring-1 focus:ring-blue-500">
+            <div class="grid grid-cols-2 gap-4">
+                <input type="date" name="startCreateDate" class="w-full px-3 py-2 border rounded-md">
+                <input type="date" name="expiryCreateDate" class="w-full px-3 py-2 border rounded-md">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <input type="number" name="offerCreatePrice" placeholder="Offer Price" class="w-full px-3 py-2 border rounded-md">
+                <input type="number" name="minimumCreatePrice" placeholder="Minimum Price" class="w-full px-3 py-2 border rounded-md">
+            </div>
+            <div class="flex justify-end space-x-3">
+                <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md">Cancel</button>
+                <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-md">Create Coupon</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+    <!-- Edit Modal -->
+    <!-- Edit Coupon Modal -->
+<div id="couponEditModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
+        <h2 class="text-xl font-bold mb-4">Edit Coupon</h2>
+        <form id="couponEditForm" class="space-y-4">
+            <input type="text" name="couponName" class="w-full px-3 py-2 border rounded-md" disabled>
+            <div class="grid grid-cols-2 gap-4">
+                <input type="date" name="startDate" class="w-full px-3 py-2 border rounded-md">
+                <input type="date" name="expiryDate" class="w-full px-3 py-2 border rounded-md">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <input type="number" name="offerPrice" class="w-full px-3 py-2 border rounded-md">
+                <input type="number" name="minimumPrice" class="w-full px-3 py-2 border rounded-md">
+            </div>
+            <div class="flex justify-end space-x-3">
+                <button type="button" onclick="closeEditModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md">Cancel</button>
+                <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-md">Edit Coupon</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+    <!-- Table -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-x-auto">
+        <table class="w-full">
+            <thead>
+                <tr class="bg-gray-50 border-b border-gray-200 text-left text-xs font-medium text-gray-500 uppercase">
+                    <th class="px-6 py-3">Coupon Code</th>
+                    <th class="px-6 py-3">Created On</th>
+                    <th class="px-6 py-3">Expires On</th>
+                    <th class="px-6 py-3">Offer Price</th>
+                    <th class="px-6 py-3">Min. Purchase</th>
+                    <th class="px-6 py-3">Status</th>
+                    <th class="px-6 py-3">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                <% if (coupons.length === 0) { %>
+                    <tr><td colspan="7" class="text-center text-gray-500 py-8">No coupons available</td></tr>
+                <% } else { %>
+                    <% coupons.forEach(function(coupon) { %>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900"><%= coupon.name %></td>
+                            <td class="px-6 py-4 text-sm text-gray-500"><%= new Date(coupon.createdOn).toLocaleDateString("en-GB") %></td>
+                            <td class="px-6 py-4 text-sm text-gray-500"><%= new Date(coupon.expireOn).toLocaleDateString("en-GB") %></td>
+                            <td class="px-6 py-4 text-sm text-blue-600 font-medium"><%= coupon.offerPrice %>₹</td>
+                            <td class="px-6 py-4 text-sm text-gray-500"><%= coupon.minimumPrice %>₹</td>
+                            <td class="px-6 py-4">
+                                <span class="px-3 py-1 rounded-full text-xs font-medium <%= coupon.isList ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                                    <%= coupon.isListed? 'Active' : 'Inactive' %>
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-500 flex space-x-3">
+                                <button class="edit-btn text-blue-600 hover:text-blue-800" data-id="<%= coupon.name %>">✏</button>
+                                <button onclick="deleteCoupon('<%= coupon.name%>')" class="text-red-600 hover:text-red-800 delete-btn">🗑</button>
+                            </td>
+                        </tr>
+                    <% }); %>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- Pagination -->
+<div class="flex justify-center space-x-2 mt-4">
+    <% if (currentPage > 1) { %>
+        <a href="/admin/coupon?page=<%= currentPage - 1 %>" 
+           class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">Previous</a>
+    <% } %>
+
+    <% for (let i = 1; i <= totalPages; i++) { %>
+        <a href="/admin/coupon?page=<%= i %>" 
+           class="px-4 py-2 <%= currentPage === i ? 'bg-blue-600 text-white' : 'bg-gray-300' %> rounded-md hover:bg-gray-400">
+           <%= i %>
+        </a>
+    <% } %>
+
+    <% if (currentPage < totalPages) { %>
+        <a href="/admin/coupons?page=<%= currentPage + 1 %>" 
+           class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">Next</a>
+    <% } %>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const today = new Date().toISOString().split("T")[0]
+    const startCreateDateInput = document.querySelector('input[name="startCreateDate"]')
+    if (startCreateDateInput) {
+        startCreateDateInput.value = today
+    }
+    
+    // Edit Coupon Form Submission
+    document.getElementById("couponEditForm")?.addEventListener("submit", async function (event) {
+        event.preventDefault()
+        
+        const formData = {
+            couponName: document.querySelector("[name='couponName']").value,
+            startDate: document.querySelector("[name='startDate']").value,
+            expiryDate: document.querySelector("[name='expiryDate']").value,
+            offerPrice: document.querySelector("[name='offerPrice']").value,
+            minimumPrice: document.querySelector("[name='minimumPrice']").value
+        }
+        
+        // Validate couponName
+        if (!formData.couponName) {
+            Swal.fire({
+                icon: "error",
+                title: "⚠️ Invalid Coupon Name",
+                text: "Coupon name cannot be empty.",
+                timer: 2500,
+                showConfirmButton: false,
+                background: "#fff7cd",
+                color: "#5a3e1b"
+            })
+            return
+        }
+        
+        // Check for valid coupon format (only letters, numbers, and dashes)
+        const couponRegex = /^[a-zA-Z0-9-]{3,20}$/
+        if (!couponRegex.test(formData.couponName)) {
+            Swal.fire({
+                icon: "error",
+                title: "⚠️ Invalid Coupon Format",
+                text: "Coupon name should be 3-20 characters long and contain only letters, numbers, and dashes.",
+                timer: 2500,
+                showConfirmButton: false,
+                background: "#ffe6e6",
+                color: "#b30000"
+            })
+            return
+        }
+        
+        // Check if both dates are provided
+        if (!formData.startDate || !formData.expiryDate) {
+            Swal.fire({
+                icon: "warning",
+                title: "⚠️ Missing Dates",
+                text: "Please select both the Start Date and Expiry Date.",
+                timer: 2500, // Auto-close after 2.5 seconds
+                showConfirmButton: false, // No button
+                background: "#fffbe6",
+                color: "#333"
+            })
+            return
+        }
+        
+        const start = new Date(formData.startDate)
+        const expiry = new Date(formData.expiryDate)
+        
+        // Ensure start date is before expiry date
+        if (start >= expiry) {
+            Swal.fire({
+                icon: "error",
+                title: "❌ Invalid Date Selection",
+                html: "<b>Start Date</b> must be before the <b>Expiry Date</b>.",
+                timer: 2500,
+                showConfirmButton: false,
+                background: "#ffe6e6",
+                color: "#333"
+            })
+            return
+        }
+        
+        // Validate Offer Price & Minimum Price
+        const offerPrice = Number(formData.offerPrice)
+        const minimumPrice = Number(formData.minimumPrice)
+        
+        if (offerPrice <= 0) {
+            Swal.fire({
+                icon: "error",
+                title: "💰 Invalid Offer Price",
+                text: "Offer price must be a positive number.",
+                timer: 2500,
+                showConfirmButton: false,
+                background: "#fff5f5",
+                color: "#333"
+            })
+            return
+        }
+        
+        if ( minimumPrice <= 0) {
+            Swal.fire({
+                icon: "error",
+                title: "💲 Invalid Minimum Price",
+                text: "Minimum price must be a positive number.",
+                timer: 2500,
+                showConfirmButton: false,
+                background: "#fff5f5",
+                color: "#333"
+            })
+            return
+        }
+        
+        if (minimumPrice < offerPrice) {
+            Swal.fire({
+                icon: "error",
+                title: "⚖️ Pricing Error",
+                html: "<b>Minimum Price</b> must be greater than or equal to the <b>Offer Price</b>.",
+                timer: 2500,
+                showConfirmButton: false,
+                background: "#fff0f0",
+                color: "#333"
+            })
+            return
+        }
+        
+        try {
+            const response = await fetch("/admin/editCoupon", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            })
+            
+            const result = await response.json()
+            
+            if (result.success) {
+                Swal.fire({
+                    title: "Success",
+                    text: result.message,
+                    icon: "success",
+                    confirmButtonText: "OK"
+                })
+                .then(() => {
+                    closeEditModal()
+                    location.reload()
+                })
+            } else {
+                Swal.fire({
+                    title: "Error!",
+                    text: result.message || "Something went wrong",
+                    icon: "error",
+                    confirmButtonText: "Try Again"
+                })
+            }
+        } catch (error) {
+            console.error("Error updating coupon:", error)
+            Swal.fire({
+                title: "Error!",
+                text: "Something went wrong",
+                icon: "error",
+                confirmButtonText: "Try Again"
+            })
+        }
+})
+
+// Delete Coupon
+window.deleteCoupon = async function(couponName) {
+    console.log("Deleting coupon:", couponName)
+    
+    Swal.fire({
+        title: "Are you sure?",
+        text: `You are about to delete the coupon: ${couponName}`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete it!"
+    })
+    .then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                const response = await fetch('/admin/deleteCoupon', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ couponName })
+                })
+                
+                const result = await response.json()
+                if (result.success) {
+                    Swal.fire({
+                        title: "Success",
+                        text: result.message,
+                        icon: "success",
+                        confirmButtonText: "OK"
+                    })
+                    .then(() => {
+                        location.reload();
+                    })
+                } else {
+                    Swal.fire({
+                        title: "Error!",
+                        text: result.message || "Something went wrong",
+                        icon: "error",
+                        confirmButtonText: "Try Again"
+                    })
+                }
+            } catch (error) {
+                console.error("Fetch error:", error)
+                Swal.fire({
+                    title: "Error!",
+                    text: error.message || "Failed to delete the coupon.",
+                    icon: "error",
+                    confirmButtonText: "OK"
+                })
+            }
+        }
+    })
+}
+
+// Create Coupon Form Submission
+document.getElementById("couponForm")?.addEventListener("submit", async function(event) {
+    event.preventDefault()
+    const formData = {
+        couponName: document.querySelector('input[name="couponCreateName"]').value,
+        startDate: document.querySelector('input[name="startCreateDate"]').value,
+        expiryDate: document.querySelector('input[name="expiryCreateDate"]').value,
+        offerPrice: document.querySelector('input[name="offerCreatePrice"]').value,
+        minimumPrice: document.querySelector('input[name="minimumCreatePrice"]').value
+    }
+    
+    // Validate couponName
+    if (!formData.couponName) {
+        Swal.fire({
+            icon: "error",
+            title: "⚠️ Invalid Coupon Name",
+            text: "Coupon name cannot be empty.",
+            timer: 2500,
+            showConfirmButton: false,
+            background: "#fff7cd",
+            color: "#5a3e1b"
+        })
+        return
+    }
+    
+    // Check for valid coupon format (only letters, numbers, and dashes)
+    const couponRegex = /^[a-zA-Z0-9-]{3,20}$/
+    if (!couponRegex.test(formData.couponName)) {
+        Swal.fire({
+            icon: "error",
+            title: "⚠️ Invalid Coupon Format",
+            text: "Coupon name should be 3-20 characters long and contain only letters, numbers, and dashes.",
+            timer: 2500,
+            showConfirmButton: false,
+            background: "#ffe6e6",
+            color: "#b30000"
+        })
+        return
+    }
+    
+    const start = new Date(formData.startDate)
+    const expiry = new Date(formData.expiryDate)
+    
+    if (!formData.startDate || !formData.expiryDate) {
+        Swal.fire({
+            icon: "warning",
+            title: "Missing Dates",
+            text: "Please select both start and expiry dates.",
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "OK"
+        })
+        return
+    }
+
+        if (start >= expiry) {
+            Swal.fire({
+                icon: "error",
+                title: "Invalid Date Selection",
+                text: "Start date must be before the expiry date.",
+                confirmButtonColor: "#d33",
+                confirmButtonText: "OK"
+            });
+            return;
+        }
+        
+        const offerPrice = Number(formData.offerPrice)
+        const minimumPrice = Number(formData.minimumPrice)
+        if (offerPrice <= 0) {
+            Swal.fire({
+                icon: "error",
+                title: "💰 Invalid Offer Price",
+                text: "Offer price must be a positive number.",
+                timer: 2500,
+                showConfirmButton: false,
+                background: "#fff5f5",
+                color: "#333"
+            })
+            return
+        }
+        
+        if ( minimumPrice <= 0) {
+            Swal.fire({
+                icon: "error",
+                title: "💲 Invalid Minimum Price",
+                text: "Minimum price must be a positive number.",
+                timer: 2500,
+                showConfirmButton: false,
+                background: "#fff5f5",
+                color: "#333"
+            })
+            return
+        }
+        
+        if (minimumPrice < offerPrice) {
+            Swal.fire({
+                icon: "error",
+                title: "⚖️ Pricing Error",
+                html: "<b>Minimum Price</b> must be greater than or equal to the <b>Offer Price</b>.",
+                timer: 2500,
+                showConfirmButton: false,
+                background: "#fff0f0",
+                color: "#333"
+            })
+            return
+        }
+        
+        try {
+            const response = await fetch("/admin/createCoupon", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            })
+            
+            const result = await response.json()
+            if (response.ok) {
+                Swal.fire({
+                    title: "Success!",
+                    text: result.message,
+                    icon: "success",
+                    confirmButtonText: "OK"
+                })
+                .then(() => {
+                    closeModal()
+                    location.reload()
+                })
+            } else {
+                Swal.fire({
+                    title: "Error!",
+                    text: result.message || "Something went wrong",
+                    icon: "error",
+                    confirmButtonText: "Try Again"
+                })
+            }
+        } catch (error) {
+            console.error("Error:", error)
+            Swal.fire({
+                title: "Error!",
+                text: "Failed to create coupon",
+                icon: "error",
+                confirmButtonText: "OK"
+            })
+        }
+    })
+    
+    // Fetch Coupon Details for Editing
+    document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', async () => {
+            const couponName = button.getAttribute('data-id')
+            
+            try {
+                const response = await fetch(`/admin/get-coupon/${couponName}`)
+                const coupon = await response.json()
+                if (coupon) {
+                    openEditModal(coupon)
+                }
+            } catch (error) {
+                console.error("Error fetching coupon data:", error)
+            }
+        })
+    })
+    window.openModal = function () {
+        const modal = document.getElementById("couponModal")
+        modal?.classList.remove("hidden")
+    }
+    
+    // Close Add Coupon Modal
+    window.closeModal = function () {
+        const modal = document.getElementById("couponModal")
+
+        modal?.classList.add("hidden")
+    }
+    
+    // Open Edit Coupon Modal
+    window.openEditModal = function (coupon) {
+        const modal = document.getElementById("couponEditModal")
+        modal?.classList.remove("hidden")
+        // Ensure values are properly set
+        document.querySelector('[name="couponName"]').value = coupon.name || ''
+        document.querySelector('[name="startDate"]').value = coupon.createdOn ? new Date(coupon.createdOn).toISOString().split('T')[0] : ''
+        document.querySelector('[name="expiryDate"]').value = coupon.expireOn ? new Date(coupon.expireOn).toISOString().split('T')[0] : ''
+        document.querySelector('[name="offerPrice"]').value = coupon.offerPrice || ''
+        document.querySelector('[name="minimumPrice"]').value = coupon.minimumPrice || ''
+    }
+    
+    // Close Edit Coupon Modal
+    window.closeEditModal = function () {
+        const modal = document.getElementById("couponEditModal")
+        modal?.classList.add("hidden")
+    }
+
+    })
+</script>
+<%- include("../../views/partials/admin/footer") %>

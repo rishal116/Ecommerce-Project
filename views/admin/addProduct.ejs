@@ -193,13 +193,6 @@
                                         <div id="regularPrice-error" class="error-message"></div>
                                     </div>
                                 </div>
-                                <div class="col-lg-4">
-                                    <div class="mb-4">
-                                        <label class="form-label">Sale Price (₹)</label>
-                                        <input type="number" name="salePrice" class="form-control">
-                                        <div id="salePrice-error" class="error-message"></div>
-                                    </div>
-                                </div>
                             </div>
     
                             <!-- Color -->
@@ -269,7 +262,6 @@ function validateForm() {
     const description = document.getElementById('descriptionid').value;
     const brand = document.getElementsByName('brand')[0].value;
     const price = document.getElementsByName('regularPrice')[0].value;
-    const saleprice = document.getElementsByName('salePrice')[0].value;
     const color = document.getElementsByName('color')[0].value;
     const category = document.getElementsByName('category')[0].value;
     const images = document.getElementById('productImage').files
@@ -299,18 +291,6 @@ function validateForm() {
     // Validate Regular Price
     if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
         displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
-        isValid = false;
-    }
-
-    // Validate Sale Price
-    if (!/^\d+(\.\d{1,2})?$/.test(saleprice) || parseFloat(saleprice) < 0) {
-        displayErrorMessage('salePrice-error', 'Please enter a valid non-negative price.');
-        isValid = false;
-    }
-
-    // Ensure Regular Price is greater than Sale Price
-    if (parseFloat(price) <= parseFloat(saleprice)) {
-        displayErrorMessage('regularPrice-error', 'Regular price must be greater than sale price.');
         isValid = false;
     }
 

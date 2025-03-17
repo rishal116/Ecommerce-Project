@@ -6,7 +6,14 @@ const productDetails = async(req,res)=>{
     try {
         const userId = req.session.user
         const userData = await User.findById(userId)
-        const productId = req.query.id
+        if(userId){
+        if (userData.isBlocked) {
+            req.session.destroy();
+            return res.redirect("/login")
+        }
+    }
+        const productId = req.params.id
+        console.log(productId)
         if (!productId || !productId.match(/^[0-9a-fA-F]{24}$/)) {
             return res.status(400).send("Invalid product ID");
         }
@@ -18,19 +25,20 @@ const productDetails = async(req,res)=>{
         if (!product || product.isBlocked) {
             return res.status(404).send("Product not available");
         }
-        const findCategory = product.category
-        const categoryOffer = findCategory?.categoryOffer||0
-        const productOffer = product.productOffer||0
-        const totalOffer = categoryOffer + productOffer
 
-        product.finalPrice = product.finalPrice || product.salePrice || product.regularPrice || 0;
+        const categories = await Category.find({ isListed: true }).lean();
+        const findCategory = product.category
+        const categoryDiscount = product.category?.categoryOffer || 0;
+        const productDiscount =  product.productOffer || 0;
+        const maxDiscount =   Math.max(categoryDiscount, productDiscount)
+        
         const sizes = product.sizes || [];
-        res.render("productDetails",{
+        res.render("productDetailPage",{
             user:userData,
             sizes,
             product:product,
             quantity:product.quantity,
-            totalOffer:totalOffer,
+            totalOffer:maxDiscount,
             category:findCategory,
         })
     } catch (error) {
@@ -41,8 +49,6 @@ const productDetails = async(req,res)=>{
 }
 
 
-
 module.exports = {
     productDetails,
-    
 }

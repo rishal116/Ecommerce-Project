@@ -205,52 +205,10 @@
         <h3 class="heading">Order Confirmed!</h3>
         <p>Thank you for shopping!</p>
         <div class="buttons">
-            <h4 id="pdf" class="btn download-btn">Download Order PDF</h4>
+            <a href="/myOrders" class="btn download-btn">Go to Orders</a>
             <a href="/shop" class="btn shop-btn">Continue Shopping</a>
         </div>
     </div>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const pdf = document.getElementById('pdf');
-            if (pdf) {
-                pdf.addEventListener('click', generatePDF);
-            }
-        });
-        
-        function generatePDF() {
-            const orderId = "<%= order.orderId %>";
-        
-            fetch('/generate-pdf', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: "include", // Ensure session cookies are sent
-                body: JSON.stringify({
-                    orderId: orderId,
-                    customerDetails: JSON.parse('<%- JSON.stringify(order.customerDetails) %>'),
-                    orderItems: JSON.parse('<%- JSON.stringify(order.items) %>'),
-                })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => { throw new Error(err.message || `Server error: ${response.status}`); });
-                }
-                return response.blob();
-            })
-            .then(blob => {
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `order-${orderId}.pdf`;
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-                window.URL.revokeObjectURL(url); // Free memory
-            })
-            .catch(error => console.error("Error generating PDF:", error));
-        }
-        </script>
-        
         
         
     

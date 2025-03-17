@@ -197,6 +197,71 @@
     }
 }
 
+/* Pagination Container */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    gap: 8px;
+}
+
+/* Pagination Buttons */
+.pagination-btn {
+    text-decoration: none;
+    padding: 10px 15px;
+    background: #FF3F6C; /* Matching the cart button color */
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: 0.3s ease-in-out;
+    border: none;
+}
+
+/* Hover Effect */
+.pagination-btn:hover {
+    background: #d32f2f; /* Darker shade for better contrast */
+}
+
+/* Active Page */
+.pagination-btn.active {
+    background: #333;
+    pointer-events: none;
+}
+
+/* First & Last Buttons */
+.pagination-btn.first-last {
+    background: #555; /* Neutral Gray */
+}
+
+.pagination-btn.first-last:hover {
+    background: #222; /* Darker Gray */
+}
+
+/* Previous & Next Buttons */
+.pagination-btn.prev-next {
+    background: #666; /* Slightly different tone */
+}
+
+.pagination-btn.prev-next:hover {
+    background: #444;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .pagination-container {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    
+    .pagination-btn {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+}
+
+
+
 </style>
 <div class="cart-container">
     <div class="cart-wrapper">
@@ -247,10 +312,27 @@
             </tbody>
         </table>
 
+    <!-- Pagination Controls -->
+<div class="pagination-container">
+    <% if (currentPage > 1) { %>
+        <a href="/cart?page=1" class="pagination-btn first-last">First</a>
+        <a href="/cart?page=<%= currentPage - 1 %>" class="pagination-btn prev-next">‹ Prev</a>
+    <% } %>
+
+    <% for (let i = 1; i <= totalPages; i++) { %>
+        <a href="/cart?page=<%= i %>" class="pagination-btn <%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+    <% } %>
+
+    <% if (currentPage < totalPages) { %>
+        <a href="/cart?page=<%= currentPage + 1 %>" class="pagination-btn prev-next">Next ›</a>
+        <a href="/cart?page=<%= totalPages %>" class="pagination-btn first-last">Last</a>
+    <% } %>
+</div>
+
+
         <div class="cart-summary">
             <div class="summary-details">
                 <div>Subtotal: <span class="cart-subtotal">₹<%= cart.subtotal ? cart.subtotal.toFixed(2) : '0.00' %></span></div>
-                <div>Tax: <span class="cart-tax">₹<%= cart.tax ? cart.tax.toFixed(2) : '0.00' %></span></div>
                 <div class="total">Total: <span class="cart-total">₹<%= cart.total ? cart.total.toFixed(2) : '0.00' %></span></div>
             </div>
             <a href="/checkout" class="checkout-btn">Proceed to Checkout</a>
@@ -342,19 +424,7 @@ async function updateCartItem(itemId, newQuantity, selectedSize) {
         return;
     }
 
-    if (newQuantity > 5) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Limit Exceeded',
-            text: 'You can only add up to 5 items per product.',
-            position: 'top-end',
-            toast: true,
-            timer: 2000,
-            showConfirmButton: false
-        });
-        return;
-    }
-
+    // **Fetch request to update cart**
     try {
         const response = await fetch('/changeQuantity', {
             method: 'POST',
@@ -365,11 +435,22 @@ async function updateCartItem(itemId, newQuantity, selectedSize) {
         const data = await response.json();
         console.log("Server Response:", data);
 
+        // **Handle errors properly**
         if (!response.ok) {
-            throw new Error(data.message || "Failed to update cart.");
+            Swal.fire({
+                icon: 'error',
+                title: 'Update Failed',
+                text: data.message || "Failed to update cart.",
+                position: 'top-end',
+                toast: true,
+                timer: 2000,
+                showConfirmButton: false
+            });
+            return;
         }
 
-        if (data.message.includes("Only")) {
+        // **Check if stock limit message exists**
+        if (data.message && data.message.includes("Only")) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Stock Limit Reached',
@@ -382,16 +463,18 @@ async function updateCartItem(itemId, newQuantity, selectedSize) {
             return;
         }
 
-        // **2️⃣ Ensure `data.cart` exists before updating the UI**
+        // **Ensure data.cart exists before updating UI**
         if (!data.cart) {
-            throw new Error("Cart data is missing from server response.");
+            console.error("Cart data missing in server response.");
+            return;
         }
 
+        // **Update UI only if cart data is valid**
         updateCartUI(itemId, newQuantity, data.cart);
 
-        // **3️⃣ Validate `data.cart.totalPrice` before using `.toFixed()`**
+        // **Ensure total price exists before calling `.toFixed()`**
         if (typeof data.cart.totalPrice !== "undefined" && !isNaN(data.cart.totalPrice)) {
-            document.getElementById("cart-total").innerText = data.cart.totalPrice.toFixed(2);
+            document.getElementById("cart-total").innerText = `₹${data.cart.totalPrice.toFixed(2)}`;
         } else {
             console.warn("Cart total price is missing or invalid:", data.cart);
         }
@@ -409,10 +492,6 @@ async function updateCartItem(itemId, newQuantity, selectedSize) {
     } catch (error) {
         console.error('Error updating cart:', error);
 
-        if (error == "TypeError: Cannot read properties of undefined (reading 'toFixed')") {
-            return;
-        }
-
         Swal.fire({
             icon: 'error',
             title: 'Update Failed',
@@ -429,7 +508,6 @@ async function updateCartItem(itemId, newQuantity, selectedSize) {
 
 
 
-
 function updateCartUI(itemId, quantity, cart) {
     const itemRow = document.querySelector(`tr[data-id="${itemId}"]`);
 
@@ -439,14 +517,31 @@ function updateCartUI(itemId, quantity, cart) {
 
         const price = parseFloat(itemRow.querySelector('.item-price').innerText.replace('₹', ''));
         itemRow.querySelector('.item-total').innerText = `₹${(price * quantity).toFixed(2)}`;
-
-        document.querySelector('.cart-subtotal').innerText = `₹${cart.subtotal.toFixed(2)}`;
-        document.querySelector('.cart-tax').innerText = `₹${cart.tax.toFixed(2)}`;
-        document.querySelector('.cart-total').innerText = `₹${cart.total.toFixed(2)}`;
-        console.log("Updated Cart Data:", cart);
-
     }
+
+    // **Recalculate subtotal dynamically**
+    let newSubtotal = 0;
+    document.querySelectorAll('.item-total').forEach((item) => {
+        newSubtotal += parseFloat(item.innerText.replace('₹', ''));
+    });
+
+    // **Remove tax calculations**
+    const newTotal = newSubtotal;
+
+    // **Update values in UI**
+    document.querySelector('.cart-subtotal').innerText = `₹${newSubtotal.toFixed(2)}`;
+    document.querySelector('.cart-total').innerText = `₹${newTotal.toFixed(2)}`;
+
+    // **Hide or remove tax UI element (if it exists)**
+    const taxElement = document.querySelector('.cart-tax');
+    if (taxElement) {
+        taxElement.style.display = 'none';
+    }
+
+    console.log("Updated Subtotal:", newSubtotal);
 }
+
+
 
 
 </script>

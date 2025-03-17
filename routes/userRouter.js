@@ -7,6 +7,8 @@ const cartController = require("../controller/user/cartController")
 const orderController = require("../controller/user/orderController")
 const accountController = require("../controller/user/accountController")
 const wishlistController = require("../controller/user/wishlistController")
+const couponController = require("../controller/user/couponController")
+const walletController = require("../controller/user/walletController")
 const {userAuth} = require("../middlewares/auth")
 const passport = require("passport")
 
@@ -56,18 +58,12 @@ router.get(
 .get("/login",userController.loadLogin)
 .post("/login",userController.login)
 
-
-
-
-
 // product management
-.get("/productDetails",productController.productDetails)
+.get("/productDetails/:id", productController.productDetails)
 .get("/shop",userController.loadShoppingPage)
 .get("/filter",userController.filterProduct)
 .get("/filterPrice",userController.filterByPrice)
 .post("/search",userController.searchProducts)
-
-
 
 // address management
 .get("/addAddress",userAuth,profileController.addAddress)
@@ -75,7 +71,7 @@ router.get(
 .get("/editAddress",userAuth,profileController.editAddress)
 .post("/editAddress",userAuth,profileController.postEditAddress)
 .get("/deleteAddress",userAuth,profileController.deleteAddress)
-
+.post("/addAddressCheckout",profileController.addAddressInCheckout)
 
 // Cart Management
 .post("/addToCart", userAuth, cartController.addToCart)
@@ -83,20 +79,38 @@ router.get(
 .post("/changeQuantity", userAuth,cartController.changeQuantity)
 .delete("/removeFromCart", userAuth, cartController.deleteProduct)
 
-
 // Order Management
 .get("/checkout", userAuth,orderController.getCheckoutPage)
 .get("/payment",userAuth,orderController.loadPayment)
+.get('/payment-failure', userAuth, orderController.paymentFailure)
+.post("/createOrder",userAuth,orderController.createOrder)
 .post("/orderPlaced",userAuth,orderController.orderPlaced)
 .get("/orderConformed",userAuth,orderController.orderConformed)
-.post('/generate-pdf', userAuth, orderController.generatePDF)
+.get('/payment-success', userAuth, orderController.loadPaymentSuccess)
+
+// order section
 .get("/myOrders",userAuth,orderController.loadOrders)
 .get("/download-invoice/:id",orderController.downloadInvoice)
 .get("/orderDetails/:id",userAuth,orderController.loadOrderDetails)
 .delete("/orderCancel/:id",userAuth,orderController.orderCancel)
+.delete('/productCancel/:orderNumber/:productId',userAuth,orderController.cancelProduct)
+.post('/myOrders/return',userAuth, orderController.returnOrder)
+.post('/retryPaymentSuccess', userAuth,orderController.retryPayment)
+.post('/create-retry-order', userAuth,orderController.createRetryOrder)
 
 // wishlist management
-.get("/wishlist",userAuth,wishlistController.loadWishlit)
+.get("/wishlist",userAuth,wishlistController.loadWishlist)
+.post("/addToWishlist",userAuth,wishlistController.addToWishlist)
+.get("/removeWishlist",userAuth,wishlistController.removeProduct)
+.post("/addToCart",userAuth,cartController.addToCart)
 
+// coupon management
+.post('/applyCoupon',userAuth,couponController.applyCoupon)
+.patch('/removeCoupon',userAuth,couponController.removeCoupon)
 
+.get('/wallet', userAuth,walletController.loadWallet)
+
+.post('/payWithWallet', userAuth,walletController.payWithWallet)
+.post('/add-money', userAuth,walletController.createAddMoneyOrder)
+.post('/verify-payment', userAuth,walletController.verifyAddMoneyPayment)
 module.exports = router

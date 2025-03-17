@@ -2,6 +2,7 @@ const User = require("../../models/userSchema");
 const Product = require("../../models/productSchema");
 const Address = require("../../models/addressSchema");
 const Order = require("../../models/orderSchema");
+const Wallet = require("../../models/walletSchema");
 const mongodb = require("mongodb");
 const mongoose = require('mongoose')
 const razorpay = require("razorpay");
@@ -161,9 +162,59 @@ const searchOrders = async (req, res) => {
     }
 }
 
+const handleReturn = async (req, res) => {
+    try {
+        const { orderId, productId, status, finalAmount } = req.body
+        const order = await Order.findOne({ orderId }).populate("userId")
+        if (!order) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+
+        const item = order.orderItems.find(item => item.productId.toString() === productId)
+        if (!item) {
+            return res.status(404).json({ success: false, message: 'Product not found in the order' });
+        }
+        
+        item.returnRequest.status = status
+        item.returnRequest.requestDate = new Date()
+
+        if (status === 'Approved') {
+            order.status = 'Return Accepted'
+            const userId = order.userId._id
+            
+            let wallet = await Wallet.findOne({ user: userId })
+            if (!wallet) {
+                wallet = new Wallet({ user: userId, balance: 0, transaction: [] })
+            }
+            
+            const refundAmount = item.price * item.quantity
+            
+            wallet.balance = parseInt(wallet.balance) + parseInt(refundAmount)
+            
+            wallet.transaction.push({
+                amount: refundAmount,
+                transactionId: `refund-${orderId}-${productId}-${Date.now()}`,
+                productName: [item.productName],
+                type: "credit",
+                method: "refund",
+                reason: "return order"
+            })
+            await wallet.save()
+        } else if (status === 'Rejected') {
+            order.status = 'Return Rejected'
+        }
+        await order.save()
+        return res.status(200).json({ success: true, message: `Product return ${status.toLowerCase()}!`, order })
+    } catch (error) {
+        console.error('Error while handling the return:', error)
+        return res.status(500).json({ success: false, message: 'Internal server error' })
+    }
+}
+
 module.exports = {
   getOrderListPageAdmin,
   changeOrderStatus,
   getOrderDetailsPageAdmin,
   searchOrders,
+  handleReturn,
 }
