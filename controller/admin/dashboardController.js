@@ -30,163 +30,109 @@ const filterOrder = async (req, res) => {
 
 const downloadExcelReport = async (req, res) => {
   try {
-      let { startDate, endDate } = req.query;
+    let { startDate, endDate } = req.query;
 
-      if (!startDate || !endDate) {
-          return res.status(400).json({ error: "Missing required date parameters" });
-      }
+    if (!startDate || !endDate) {
+      return res.status(400).json({ error: "Missing required date parameters" });
+    }
 
-      startDate = new Date(startDate);
-      endDate = new Date(endDate);
-      
-      if (isNaN(startDate) || isNaN(endDate)) {
-          return res.status(400).json({ error: "Invalid date format" });
-      }
+    startDate = new Date(startDate);
+    endDate = new Date(endDate);
 
-      endDate.setHours(23, 59, 59, 999); 
+    if (isNaN(startDate) || isNaN(endDate)) {
+      return res.status(400).json({ error: "Invalid date format" });
+    }
 
-      const orders = await Order.find({
-          createdOn: { $gte: startDate, $lte: endDate }
-      }).populate('userId', 'name');
-      
-      const totalOrders = orders.length;
-      const totalItems = orders.reduce((sum, order) => {
+    endDate.setHours(23, 59, 59, 999); 
 
-          const itemCount = order.orderedItems ? 
-              order.orderedItems.reduce((itemSum, item) => itemSum + (item.quantity || 1), 0) : 0;
-          return sum + itemCount;
-      }, 0);
-      const totalBaseAmount = orders.reduce((sum, order) => sum + (order.totalPrice || 0), 0);
-      const totalDiscount = orders.reduce((sum, order) => {
+    const orders = await Order.find({
+      createdOn: { $gte: startDate, $lte: endDate }
+    }).populate('userId', 'name');
 
-          const discount = (order.totalPrice || 0) - (order.finalAmount || 0);
-          return sum + (discount > 0 ? discount : 0);
-      }, 0);
-      const totalFinalAmount = orders.reduce((sum, order) => sum + (order.finalAmount || 0), 0);
+    const totalOrders = orders.length;
+    const totalItems = orders.reduce((sum, order) => {
+      const itemCount = order.orderItems ? 
+        order.orderItems.reduce((itemSum, item) => itemSum + (item.quantity || 1), 0) : 0;
+      return sum + itemCount;
+    }, 0);
+    const totalBaseAmount = orders.reduce((sum, order) => sum + (order.totalPrice || 0), 0);
+    const totalDiscount = orders.reduce((sum, order) => {
+      const discount = (order.totalPrice || 0) - (order.finalAmount || 0);
+      return sum + (discount > 0 ? discount : 0);
+    }, 0);
+    const totalFinalAmount = orders.reduce((sum, order) => sum + (order.finalAmount || 0), 0);
 
-      const workbook = new ExcelJS.Workbook();
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Orders');
 
-      const worksheet = workbook.addWorksheet('Orders', {
-          properties: { tabColor: { argb: '4167B8' } }
+    worksheet.columns = [
+      { header: 'Order ID', key: 'orderId', width: 30 },
+      { header: 'User Name', key: 'userName', width: 25 },
+      { header: 'Base Price', key: 'totalPrice', width: 15 },
+      { header: 'Final Amount', key: 'finalAmount', width: 15 },
+      { header: 'Status', key: 'status', width: 15 },
+      { header: 'Created On', key: 'createdOn', width: 15 }
+    ];
+
+    worksheet.getRow(1).font = { bold: true, size: 12 };
+    worksheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'F2F2F2' }
+    };
+    worksheet.getRow(1).border = {
+      bottom: { style: 'thin', color: { argb: 'CCCCCC' } }
+    };
+
+    orders.forEach(order => {
+      worksheet.addRow({
+        orderId: order.orderId || order._id,
+        userName: order.userId?.name || "Unknown",
+        totalPrice: order.totalPrice || 0,
+        finalAmount: order.finalAmount || 0,
+        status: order.status,
+        createdOn: order.createdOn.toISOString().split('T')[0]
       });
+    });
 
-      worksheet.columns = [
-          { header: 'Order ID', key: 'orderId', width: 30 },
-          { header: 'User Name', key: 'userName', width: 25 },
-          { header: 'Base Price', key: 'totalPrice', width: 15, style: { numFmt: '₹#,##0.00' } },
-          { header: 'Final Amount', key: 'finalAmount', width: 15, style: { numFmt: '₹#,##0.00' } },
-          { header: 'Status', key: 'status', width: 15 },
-          { header: 'Created On', key: 'createdOn', width: 15 }
-      ];
+    worksheet.autoFilter = {
+      from: { row: 1, column: 1 },
+      to: { row: 1, column: 6 }
+    };
 
-      worksheet.getRow(1).font = { bold: true, size: 12 };
-      worksheet.getRow(1).fill = {
-          type: 'pattern',
-          pattern: 'solid',
-          fgColor: { argb: 'F2F2F2' }
-      };
-      worksheet.getRow(1).border = {
-          bottom: { style: 'thin', color: { argb: 'CCCCCC' } }
-      };
+    worksheet.addRow({});
+    worksheet.addRow({});
 
-      orders.forEach(order => {
-          const userName = order.userId?.name || "Unknown";
-          
-          worksheet.addRow({
-              orderId: order.orderId || order._id,
-              userName: userName,
-              totalPrice: order.totalPrice || 0,
-              finalAmount: order.finalAmount || 0,
-              status: order.status,
-              createdOn: order.createdOn.toLocaleDateString()
-          });
-      });
+    const summaryTitleRow = worksheet.addRow(['Summary']);
+    summaryTitleRow.font = { bold: true, size: 14 };
+    summaryTitleRow.height = 25;
 
-      worksheet.autoFilter = {
-          from: { row: 1, column: 1 },
-          to: { row: 1, column: 6 }
-      };
+    const summaryData = [
+      ['Total Orders', totalOrders],
+      ['Total Items', totalItems],
+      ['Total Base Amount', totalBaseAmount],
+      ['Total Discount', totalDiscount],
+      ['Total Final Amount', totalFinalAmount]
+    ];
 
-      for (let i = 2; i <= orders.length + 1; i++) {
-          if (i % 2 === 0) {
-              worksheet.getRow(i).fill = {
-                  type: 'pattern',
-                  pattern: 'solid',
-                  fgColor: { argb: 'FAFAFA' }
-              };
-          }
+    summaryData.forEach(row => {
+      const excelRow = worksheet.addRow(row);
+      excelRow.getCell(1).font = { bold: true };
+      if (typeof row[1] === 'number' && (row[0].includes('Amount') || row[0].includes('Discount'))) {
+        excelRow.getCell(2).numFmt = '₹#,##0.00';
       }
+    });
 
-      worksheet.addRow({});
-      worksheet.addRow({});
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename=Orders_Report_${startDate.toISOString().split('T')[0]}_to_${endDate.toISOString().split('T')[0]}.xlsx`);
 
-      const summaryTitleRow = worksheet.addRow(['Summary']);
-      summaryTitleRow.font = { bold: true, size: 14 };
-      summaryTitleRow.height = 25;
-
-      const summaryStartRow = worksheet.rowCount + 1;
-
-      const summaryData = [
-          ['Total Orders', totalOrders],
-          ['Total Items', totalItems],
-          ['Total Base Amount', totalBaseAmount],
-          ['Total Discount', totalDiscount],
-          ['Total Final Amount', totalFinalAmount]
-      ];
-      
-      summaryData.forEach((row, index) => {
-          const excelRow = worksheet.addRow(row);
-
-          excelRow.getCell(1).font = { bold: true };
-
-          if (typeof row[1] === 'number' && row[0].includes('Amount') || row[0].includes('Discount')) {
-              excelRow.getCell(2).numFmt = '₹#,##0.00';
-          }
-
-          if (index % 2 === 0) {
-              excelRow.fill = {
-                  type: 'pattern',
-                  pattern: 'solid',
-                  fgColor: { argb: 'F9F9F9' }
-              };
-          }
-      });
-
-      const summaryEndRow = worksheet.rowCount;
-      
-      for (let i = summaryStartRow; i <= summaryEndRow; i++) {
-          const row = worksheet.getRow(i);
-          
-          row.getCell(1).border = {
-              left: { style: 'thin' },
-              right: { style: 'thin' },
-              bottom: { style: 'thin' }
-          };
-          
-          row.getCell(2).border = {
-              right: { style: 'thin' },
-              bottom: { style: 'thin' }
-          };
-
-          if (i === summaryStartRow) {
-              row.getCell(1).border.top = { style: 'thin' };
-              row.getCell(2).border.top = { style: 'thin' };
-          }
-      }
-
-      worksheet.getColumn(1).width = 30;
-      worksheet.getColumn(2).width = 15;
-
-      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      res.setHeader('Content-Disposition', `attachment; filename=Orders_Report_${startDate.toISOString().split('T')[0]}_to_${endDate.toISOString().split('T')[0]}.xlsx`);
-
-      await workbook.xlsx.write(res);
-      res.end();
+    await workbook.xlsx.write(res);
+    res.end();
   } catch (error) {
-      console.error("Error generating Excel report:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error generating Excel report:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
-};
+};;
 
 
 const downloadPdfReport = async (req, res) => {
