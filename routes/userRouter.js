@@ -108,9 +108,10 @@ router.get(
 .post('/applyCoupon',userAuth,couponController.applyCoupon)
 .patch('/removeCoupon',userAuth,couponController.removeCoupon)
 
+// wallet management
 .get('/wallet', userAuth,walletController.loadWallet)
-
 .post('/payWithWallet', userAuth,walletController.payWithWallet)
 .post('/add-money', userAuth,walletController.createAddMoneyOrder)
 .post('/verify-payment', userAuth,walletController.verifyAddMoneyPayment)
+
 module.exports = router
