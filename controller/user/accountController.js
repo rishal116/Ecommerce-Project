@@ -203,6 +203,16 @@ const resetPassword = async (req, res) => {
     }
 };
 
+const cancelOrder = async(req,res)=>{
+    try {
+        const orderId = req.params.id
+        const deletOrder = await Order.deleteOne({
+            _id:orderId
+        })
+    } catch (error) {
+        
+    }
+}
 
 
 module.exports = {

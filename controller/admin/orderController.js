@@ -98,7 +98,7 @@ const getOrderDetailsPageAdmin = async (req, res) => {
         
         if (!order) {
             console.log('Order not found: ', orderId)
-            return res.redirect('/pageNotFound')
+            return res.redirect('/admin/orderList')
         }
         
         res.render('orderDetailsAdmin', { order })
@@ -210,6 +210,7 @@ const handleReturn = async (req, res) => {
         return res.status(500).json({ success: false, message: 'Internal server error' })
     }
 }
+
 
 module.exports = {
   getOrderListPageAdmin,

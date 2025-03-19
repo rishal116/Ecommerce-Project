@@ -624,7 +624,7 @@
         
                                     <!-- Sorting Options -->
 <div class="sort-options">
-  <label for="sortSelect">Sort By:</label>
+  <label for="sortSelect" style="margin-left: 2px;"> Sort By:</label>
   <select id="sortSelect" onchange="applySort()">
       <option value="newest" <%= sort === 'newest' ? 'selected' : '' %>>Newest Arrivals</option>
       <option value="priceLowHigh" <%= sort === 'priceLowHigh' ? 'selected' : '' %>>Price: Low to High</option>

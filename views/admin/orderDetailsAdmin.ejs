@@ -2,72 +2,156 @@
 
 <head>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* General Styling */
         body {
-            background-color: #f3f4f6;
-            color: #333;
+            background-color: #f8fafc;
+            color: #334155;
             font-family: 'Poppins', sans-serif;
         }
 
         h1 {
             text-align: center;
-            color: #1f2937;
-            margin-bottom: 20px;
+            color: #1e293b;
+            margin-bottom: 30px;
+            font-weight: 600;
+            font-size: 2rem;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #2563eb);
+            border-radius: 2px;
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: auto;
-            padding: 20px;
+            padding: 30px 20px;
         }
 
         /* Order Grid */
         .order-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
         }
 
         /* Card Styling */
         .card {
             background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            padding: 25px;
             transition: all 0.3s ease-in-out;
+            border-top: 5px solid #3b82f6;
         }
 
         .card:hover {
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            color: #1e293b;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .card h2:before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 25px;
+            background: linear-gradient(180deg, #3b82f6, #2563eb);
+            margin-right: 15px;
+            border-radius: 4px;
         }
 
         /* Label and Value Styling */
         .label {
-            color: #6b7280;
+            color: #64748b;
             font-size: 0.9rem;
-            font-weight: 600;
+            font-weight: 500;
+            margin-right: 8px;
         }
 
         .value {
-            color: #1f2937;
+            color: #1e293b;
             font-size: 1.1rem;
             font-weight: 600;
         }
 
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .status-pending { background-color: #fef3c7; color: #92400e; }
+        .status-processing { background-color: #e0f2fe; color: #0369a1; }
+        .status-shipped { background-color: #d1fae5; color: #065f46; }
+        .status-delivered { background-color: #bbf7d0; color: #166534; }
+        .status-cancelled { background-color: #fee2e2; color: #b91c1c; }
+        .status-return { background-color: #fecaca; color: #991b1b; }
+        .status-payment { background-color: #e9d5ff; color: #6b21a8; }
+
         /* Dropdown Styling */
+        .select-container {
+            margin-top: 15px;
+        }
+
         select {
-            border: 1px solid #6b7280;
-            padding: 8px;
-            border-radius: 5px;
+            border: 1px solid #cbd5e1;
+            padding: 12px;
+            border-radius: 8px;
             background-color: #fff;
-            color: #333;
+            color: #1e293b;
             cursor: pointer;
             width: 100%;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.3s;
         }
 
         select:focus {
-            border-color: #1f2937;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+            outline: none;
+        }
+
+        select:disabled {
+            background-color: #f1f5f9;
+            cursor: not-allowed;
         }
 
         /* Buttons */
@@ -75,15 +159,26 @@
             background-color: #3b82f6;
             border: none;
             color: white;
-            padding: 10px 15px;
-            border-radius: 5px;
+            padding: 12px 20px;
+            border-radius: 8px;
             cursor: pointer;
             transition: 0.3s;
             font-size: 14px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        button i {
+            margin-right: 8px;
         }
 
         button:hover {
             background-color: #2563eb;
+            transform: translateY(-2px);
         }
 
         .reject-btn {
@@ -95,32 +190,104 @@
         }
 
         /* Order Items */
+        .order-items h2 {
+            margin-bottom: 25px;
+        }
+
         .order-items .item-card {
             background-color: #f8fafc;
             border-left: 5px solid #3b82f6;
-            padding: 15px;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 20px;
+        }
+
+        .item-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .item-image img {
+            max-width: 100%;
+            height: auto;
             border-radius: 8px;
-            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .item-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .item-details p {
+            margin: 5px 0;
+        }
+
+        .price-tag {
+            color: #3b82f6;
+            font-weight: 700;
+        }
+
+        .quantity-tag {
+            display: inline-block;
+            background-color: #e0f2fe;
+            color: #0369a1;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
         }
 
         /* Return Request Section */
         .return-request-section {
             background-color: #fef2f2;
             border-left: 5px solid #ef4444;
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 10px;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .return-request-section h4 {
+            color: #b91c1c;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .return-request-section h4 i {
+            margin-right: 8px;
+        }
+
+        .return-actions {
+            display: flex;
+            margin-top: 15px;
         }
 
         /* Responsive Design */
-        @media (max-width: 768px) {
+        @media (max-width: 992px) {
             .order-grid {
                 grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .item-card {
+                grid-template-columns: 1fr !important;
+            }
+
+            .return-actions {
+                flex-direction: column;
             }
 
             button {
                 width: 100%;
-                margin-top: 5px;
+                margin-top: 10px;
+                margin-right: 0;
             }
         }
     </style>
@@ -133,119 +300,214 @@
         <div class="order-grid">
             <!-- Order Details -->
             <div class="card">
-                <h2>Order Info</h2>
-                <p><span class="label">Order ID:</span> <span class="value"><%= order.orderId %></span></p>
-                <p><span class="label">Total Amount:</span> <span class="value">₹<%= order.finalAmount %></span></p>
-                <p><span class="label">Payment Method:</span> <span class="value"><%= order.paymentMethod %></span></p>
-                <p><span class="label">Order Date:</span> <span class="value"><%= new Date(order.createdOn).toLocaleDateString() %></span></p>
+                <h2><i class="fas fa-shopping-bag"></i> Order Info</h2>
+                
+                <div class="info-row">
+                    <span class="label">Order ID:</span>
+                    <span class="value">#<%= order.orderId %></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">Total Amount:</span>
+                    <span class="value price-tag">₹<%= order.finalAmount.toLocaleString() %></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">Payment Method:</span>
+                    <span class="value"><%= order.paymentMethod %></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">Order Date:</span>
+                    <span class="value"><%= new Date(order.createdOn).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' }) %></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">Status:</span>
+                    <span class="value">
+                        <% let statusClass = '';
+                           if (order.status === 'Pending') statusClass = 'status-pending';
+                           else if (order.status === 'Processing') statusClass = 'status-processing';
+                           else if (order.status === 'Shipped') statusClass = 'status-shipped';
+                           else if (order.status === 'Delivered') statusClass = 'status-delivered';
+                           else if (order.status === 'Cancelled') statusClass = 'status-cancelled';
+                           else if (order.status.includes('Return')) statusClass = 'status-return';
+                           else if (order.status.includes('payment')) statusClass = 'status-payment';
+                        %>
+                        <span class="status-badge <%= statusClass %>"><%= order.status %></span>
+                    </span>
+                </div>
 
-                <label class="label">Status:</label>
-                <select id="status-<%= order.orderId %>" onchange="updateStatus('<%= order.orderId %>')" <%= ['Delivered', 'Return Request', 'Return Accepted', 'Return Rejected','payment pending'].includes(order.status) ? 'disabled' : '' %>>>
-                    <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
-                    <option value="Processing" <%= order.status === 'Processing' ? 'selected' : '' %>>Processing</option>
-                    <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
-                    <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                    <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
-                    <option value="Return Request" <%= order.status === 'Return Request' ? 'selected' : '' %> disabled>Return Request</option>
-                    <option value="Return Accepted" <%= order.status === 'Return Accepted' ? 'selected' : '' %> disabled>Return Accepted</option>
-                    <option value="Return Rejected" <%= order.status === 'Return Rejected' ? 'selected' : '' %> disabled>Return Rejected</option>
-                    <option value="payment pending" <%= order.status === 'payment pending' ? 'selected' : '' %> disabled>payment Pending</option>
-                </select>                
+                <div class="select-container">
+                    <select id="status-<%= order.orderId %>" onchange="updateStatus('<%= order.orderId %>')" <%= ['Delivered', 'Return Request', 'Return Accepted', 'Return Rejected','payment pending'].includes(order.status) ? 'disabled' : '' %>>
+                        <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                        <option value="Processing" <%= order.status === 'Processing' ? 'selected' : '' %>>Processing</option>
+                        <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                        <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                        <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                        <option value="Return Request" <%= order.status === 'Return Request' ? 'selected' : '' %> disabled>Return Request</option>
+                        <option value="Return Accepted" <%= order.status === 'Return Accepted' ? 'selected' : '' %> disabled>Return Accepted</option>
+                        <option value="Return Rejected" <%= order.status === 'Return Rejected' ? 'selected' : '' %> disabled>Return Rejected</option>
+                        <option value="payment pending" <%= order.status === 'payment pending' ? 'selected' : '' %> disabled>Payment Pending</option>
+                    </select>
+                </div>
             </div>
 
             <!-- Shipping Address -->
             <div class="card">
-                <h2>Shipping Address</h2>
-                <p><span class="label">Name:</span> <span class="value"><%= order.address.name %></span></p>
-                <p><span class="label">City:</span> <span class="value"><%= order.address.city %>, <%= order.address.state %> - <%= order.address.pincode %></span></p>
-                <p><span class="label">Phone:</span> <span class="value"><%= order.address.phone %></span></p>
+                <h2><i class="fas fa-map-marker-alt"></i> Shipping Address</h2>
+                
+                <div class="info-row">
+                    <span class="label">Name:</span>
+                    <span class="value"><%= order.address.name %></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">Landmark:</span>
+                    <span class="value"><%= order.address.landMark%></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">City:</span>
+                    <span class="value"><%= order.address.city %></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">State/Pincode:</span>
+                    <span class="value"><%= order.address.state %> - <%= order.address.pincode %></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">Phone:</span>
+                    <span class="value"><%= order.address.phone %></span>
+                </div>
             </div>
         </div>
 
         <!-- Order Items -->
         <div class="card order-items">
-            <h2>Ordered Items</h2>
+            <h2><i class="fas fa-box-open"></i> Ordered Items</h2>
+            
             <% order.orderItems.forEach(item => { %>
                 <div class="item-card">
-                    <p><strong>Product:</strong> <%= item.productName %></p>
-                    <p><strong>Quantity:</strong> <%= item.quantity %></p>
-                    <p><strong>Price:</strong> ₹<%= item.price %></p>
+                    <div class="item-image">
+                        <img src="/uploads/re-image/<%= item.productImage[0] %>" alt="<%= item.productName %>" />
+                    </div>
+                    
+                    <div class="item-details">
+                        <h3><%= item.productName %></h3>
+                        <p><span class="quantity-tag">Qty: <%= item.quantity %></span></p>
+                        <p><span class="price-tag">₹<%= item.price.toLocaleString() %></span></p>
 
-                    <% if (item.returnRequest?.status === 'Pending') { %>
-                        <div class="return-request-section">
-                            <h4>Return Request</h4>
-                            <p><strong>Reason:</strong> <%= item.returnRequest.reason %></p>
-                            <button onclick="handleReturn('<%= order.orderId %>', '<%= item.productId %>', 'Approved')">Approve</button>
-                            <button class="reject-btn" onclick="handleReturn('<%= order.orderId %>', '<%= item.productId %>', 'Rejected')">Reject</button>
-                        </div>
-                    <% } %>
+                        <% if (item.returnRequest?.status === 'Pending') { %>
+                            <div class="return-request-section">
+                                <h4><i class="fas fa-undo-alt"></i> Return Request</h4>
+                                <p><strong>Reason:</strong> <%= item.returnRequest.reason %></p>
+                                
+                                <div class="return-actions">
+                                    <button onclick="handleReturn('<%= order.orderId %>', '<%= item.productId %>', 'Approved')">
+                                        <i class="fas fa-check"></i>
+                                        <i class="fas fa-check"></i> Approve Return
+                                    </button>
+                                    <button class="reject-btn" onclick="handleReturn('<%= order.orderId %>', '<%= item.productId %>', 'Rejected')">
+                                        <i class="fas fa-times"></i> Reject Return
+                                    </button>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
                 </div>
             <% }) %>
         </div>
     </div>
-</body>
 
-<script>
-    const finalAmount = '<%= order.finalAmount %>'
+    <script>
+        const finalAmount = '<%= order.finalAmount %>';
 
-async function handleReturn(orderId, productId, status) {
+        async function handleReturn(orderId, productId, status) {
+            try {
+                const response = await fetch('/admin/handleReturn', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ orderId, productId, status, finalAmount })
+                });
 
-    const response = await fetch('/admin/handleReturn', {
-        method: 'POST',
-        headers: {
-            'Content-type': 'application/json'
-        },
-        body: JSON.stringify({ orderId, productId, status, finalAmount })
-    })
+                const result = await response.json();
 
-    const result = await response.json()
-
-            if (result.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: result.message,
-                    confirmButtonColor: '#28a745',
-                    timer: 3000,
-                    showConfirmButton: false,
-                    toast: true,
-                    position: 'top-end'
-                }).then(() => {
-                    window.location.reload()
-                })
-            } else {
+                if (result.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: result.message,
+                        confirmButtonColor: '#28a745',
+                        timer: 3000,
+                        showConfirmButton: false,
+                        toast: true,
+                        position: 'top-end'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: result.message || 'Error while updating the status!',
+                        confirmButtonColor: '#dc3545'
+                    });
+                }
+            } catch (error) {
+                console.error("Error handling return:", error);
                 Swal.fire({
                     icon: 'error',
-                    title: 'Oops...',
-                    text: 'Error while updating the status!',
+                    title: 'Error!',
+                    text: 'Something went wrong while processing your request.',
                     confirmButtonColor: '#dc3545'
                 });
             }
+        }
 
-}
-
-
-
-
-    function updateStatus(itemId) {
-        const status = document.getElementById(`status-${itemId}`).value;
-        fetch('/admin/changeStatus', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ itemId, status })
-        })
-        .then(response => response.json())
-        .then(data => {
+        function updateStatus(itemId) {
+            const status = document.getElementById(`status-${itemId}`).value;
+            
             Swal.fire({
-                icon: data.success ? 'success' : 'error',
-                title: data.success ? 'Success!' : 'Oops!',
-                text: data.message || 'Something went wrong.',
-                confirmButtonText: 'OK'
-            }).then(() => location.reload());
-        })
-        .catch(error => Swal.fire({ icon: 'error', title: 'Error!', text: 'Failed to update order status.' }));
-    }
-</script>
+                title: 'Update Order Status?',
+                text: `Are you sure you want to change the status to "${status}"?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, update it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch('/admin/changeStatus', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ itemId, status })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        Swal.fire({
+                            icon: data.success ? 'success' : 'error',
+                            title: data.success ? 'Success!' : 'Oops!',
+                            text: data.message || 'Something went wrong.',
+                            confirmButtonText: 'OK'
+                        }).then(() => location.reload());
+                    })
+                    .catch(error => {
+                        console.error("Error updating status:", error);
+                        Swal.fire({ 
+                            icon: 'error', 
+                            title: 'Error!', 
+                            text: 'Failed to update order status.' 
+                        });
+                    });
+                }
+            });
+        }
+    </script>
+</body>
 
 <%- include("../../views/partials/admin/footer") %>
 
