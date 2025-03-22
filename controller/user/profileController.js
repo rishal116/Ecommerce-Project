@@ -25,10 +25,10 @@ function generateOtp(){
 async function sendVerificationEmail(email, otp) {
     try {
         if (!email) {
-            console.error("Error: Email is undefined");
-            return false;
+            console.error("Error: Email is undefined")
+            return false
         }
-
+        
         const transporter = nodemailer.createTransport({
             service: "gmail",
             port: 587,
@@ -38,23 +38,21 @@ async function sendVerificationEmail(email, otp) {
                 user: process.env.NODEMAILER_EMAIL,
                 pass: process.env.NODEMAILER_PASSWORD,
             }
-        });
-
+        })
+        
         const mailOptions = {
             from: process.env.NODEMAILER_EMAIL,
             to: email,
             subject: "Your OTP for reset password",
             text: `Your OTP is ${otp}`,
             html: `<b>Your OTP is ${otp}</b>`
-        };
-
-        const info = await transporter.sendMail(mailOptions); 
-        console.log("emailsent:",info.messageId)
-
-        return info.accepted.length > 0;
+        }
+        
+        const info = await transporter.sendMail(mailOptions)
+        return info.accepted.length > 0
     } catch (error) {
-        console.error("Error sending email:", error);
-        return false;
+        console.error("Error in sendVerificationEmail: ", error)
+        return false
     }
 }
 
@@ -63,7 +61,7 @@ const securePassword = async(password)=>{
         const passwordHash = await bycrpt.hash(password,10)
         return passwordHash
     } catch (error) {
-        console.error("Error verifying password:", error);
+        console.error("Error in securePassword: ", error)
         res.render("/pageNotFound")
     }
 }
@@ -74,13 +72,12 @@ const forgotEmailValid = async(req,res)=>{
         const findUser = await User.findOne({email:email})
         if(findUser){
             const otp = generateOtp()
-            const emailSent = await sendVerificationEmail(email, otp);
+            const emailSent = await sendVerificationEmail(email, otp)
             if(emailSent){
                 req.session.userOtp = otp
                 req.session.email = email
                 res.render("forgotPass-otp")
-                console.log("OTP FOR RESET PASS :",otp);
-                
+                console.log("OTP FOR RESET PASS :",otp)
             }else{
                 res.json({success:false , message:'Failed to sent otp, Please try again'})
             }
@@ -96,34 +93,29 @@ const forgotEmailValid = async(req,res)=>{
 
 const verifyForgotPassOtp = async (req, res) => {
     try {
-        const { otp } = req.body;
-
-        const userOtp = parseInt(otp, 10);
-        const sessionOtp = parseInt(req.session.userOtp, 10);
-
-
-
+        const { otp } = req.body
+        const userOtp = parseInt(otp, 10)
+        const sessionOtp = parseInt(req.session.userOtp, 10)
         if (!otp || otp.length !== 6 || isNaN(userOtp)) {
-            return res.status(400).json({ success: false, message: "Invalid OTP format" });
+            return res.status(400).json({ success: false, message: "Invalid OTP format" })
         }
-
         if (userOtp === sessionOtp) {
-            return res.json({ success: true, redirectUrl: "/reset-password" });
+            return res.json({ success: true, redirectUrl: "/reset-password" })
         } else {
-            return res.status(400).json({ success: false, message: "OTP is incorrect" });
+            return res.status(400).json({ success: false, message: "OTP is incorrect" })
         }
     } catch (error) {
-        console.error("Error verifying OTP:", error);
-        res.status(500).json({ success: false, message: "An error occurred, please try again" });
+        console.error("Error in verifyForgotPassOtp: ", error)
+        res.status(500).json({ success: false, message: "An error occurred, please try again" })
     }
-};
-
+}
 
 const getResetPassPage = async(req,res)=>{
     try {
         res.render("resetPassword")
     } catch (error) {
-        
+        console.error("Error in getResetPassPage: ",error)
+        res.status(500).json({ success: false, message: "An error occurred, please try again" })
     }
 }
 
@@ -138,39 +130,33 @@ const postNewPassword = async(req,res)=>{
         }else{
             res.render("reset-password",{message:"password not match"})
         }
-       
     } catch (error) {
-        console.error("Error resending password:", error);
-        res.status(500).json({ success: false, message: "Internal server error, Please try again" });
+        console.error("Error in postNewPassword: ", error)
+        res.status(500).json({ success: false, message: "Internal server error, Please try again" })
     }
 }
 
 const resendOtp = async (req, res) => {
     try {
-
-
-        const otp = generateOtp();
-        req.session.userOtp = otp;
-
-        const email = req.session.email;  
+        const otp = generateOtp()
+        req.session.userOtp = otp
+        const email = req.session.email
         if (!email) {
-            console.log("Email not found in session");
-            return res.status(400).json({ success: false, message: "Email not found in session" });
+            console.log("Email not found in session")
+            return res.status(400).json({ success: false, message: "Email not found in session" })
         }
-
-        const emailSent = await sendVerificationEmail(email, otp);
+        const emailSent = await sendVerificationEmail(email, otp)
         if (emailSent) {
-            console.log("Resend OTP:", otp);
-            return res.status(200).json({ success: true, message: "OTP resent successfully" });
+            console.log("Resend OTP:", otp)
+            return res.status(200).json({ success: true, message: "OTP resent successfully" })
         } else {
-            return res.status(500).json({ success: false, message: "Failed to resend OTP, Please try again" });
+            return res.status(500).json({ success: false, message: "Failed to resend OTP, Please try again" })
         }
     } catch (error) {
-        console.error("Error resending OTP:", error);
-        return res.status(500).json({ success: false, message: "Internal server error, Please try again" });
+        console.error("Error resending OTP:", error)
+        return res.status(500).json({ success: false, message: "Internal server error, Please try again" })
     }
-};
-
+}
 
 const account = async(req,res)=>{
     try {

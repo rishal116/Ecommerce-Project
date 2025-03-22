@@ -3,171 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OTP Verification</title>
+    <title>OTP Verification - TrendyThreads</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
-    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css" />
-    <link rel="stylesheet" href="css/elegant-icons.css" type="text/css" />
-    <link rel="stylesheet" href="css/magnific-popup.css" type="text/css" />
-    <link rel="stylesheet" href="css/nice-select.css" type="text/css" />
-    <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css" />
-    <link rel="stylesheet" href="css/slicknav.min.css" type="text/css" />
-    <link rel="stylesheet" href="css/style.css" type="text/css" />
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-
+    
     <style>
+        :root {
+            --trendy-pink: #FF3F6C;
+            --trendy-light-pink: #fff0f3;
+            --trendy-gray: #696b79;
+            --trendy-light-gray: #f5f5f6;
+            --trendy-dark: #282c3f;
+        }
+        
         body, html {
             height: 100%;
             margin: 0;
-            font-family: "Nunito Sans", sans-serif;
+            background-color: #fdfdfd;
+            font-family: 'Assistant', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            color: var(--trendy-dark);
             overflow: hidden;
         }
-        .container {
+        
+        .trendy-container {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100%;
+            padding: 0 20px;
         }
-        .login_wrap {
+        
+        .trendy-logo {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--trendy-pink);
+            letter-spacing: 0.5px;
+        }
+        
+        .trendy-card {
             width: 100%;
             max-width: 400px;
-            padding: 20px;
-            border-radius: 5px;
-            background: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            border: none;
         }
-        .heading_s1 h3 {
-            margin: 0;
-            font-size: 24px;
+        
+        .trendy-title {
+            font-size: 20px;
             font-weight: 600;
-            color: #333;
+            margin-bottom: 24px;
             text-align: center;
-            margin-bottom: 30px;
+            color: var(--trendy-dark);
         }
-        .form-group {
-            margin-bottom: 15px;
+        
+        .trendy-form-group {
+            margin-bottom: 20px;
         }
-        .otp-timer {
-            display: inline-block;
-            margin-left: 10px;
+        
+        .trendy-form-group label {
+            display: block;
+            margin-bottom: 8px;
             font-size: 14px;
-            position: relative;
+            color: var(--trendy-gray);
+        }
+        
+        .trendy-form-control {
+            height: 50px;
+            border-radius: 4px;
+            border: 1px solid #d4d5d9;
+            padding: 0 15px;
+            font-size: 16px;
+            width: 100%;
+            outline: none;
+            box-sizing: border-box;
+        }
+        
+        .trendy-form-control:focus {
+            border-color: var(--trendy-gray);
+            box-shadow: none;
+        }
+        
+        .trendy-btn {
+            background-color: var(--trendy-pink);
+            color: white;
+            border: none;
+            height: 50px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            margin-bottom: 16px;
+        }
+        
+        .trendy-btn:hover {
+            background-color: #e93963;
+        }
+        
+        .trendy-btn:disabled {
+            background-color: #f3a5b5;
+            cursor: not-allowed;
+        }
+        
+        .trendy-btn-secondary {
+            background-color: white;
+            color: var(--trendy-pink);
+            border: 1px solid var(--trendy-pink);
+            height: 50px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .trendy-btn-secondary:hover {
+            background-color: var(--trendy-light-pink);
+        }
+        
+        .trendy-btn-secondary:disabled {
+            border-color: #d4d5d9;
+            color: #d4d5d9;
+            cursor: not-allowed;
+        }
+        
+        .trendy-otp-timer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        .trendy-otp-timer {
+            display: inline-block;
             width: 60px;
             height: 60px;
             border-radius: 50%;
             line-height: 60px;
             text-align: center;
-            background: #f2f2f2;
-            border: 2px solid #ddd;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            background: var(--trendy-light-pink);
+            border: 2px solid #ffd9e2;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            margin-bottom: 16px;
         }
+        
         #timerValue {
             display: block;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
-            color: #333;
+            color: var(--trendy-pink);
             line-height: 60px;
         }
+        
         #timerValue.expired {
             font-size: 14px;
-            color: red;
+            color: var(--trendy-pink);
         }
-        .btn-primary {
-            background-color: #007bff;
-            border: none;
-            width: 100%;
-            margin-top: 10px;
-            display: block;
-        }
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-        .btn-secondary {
-            width: 100%;
-            background-color: #6c757d;
-            border: none;
-            margin-top: 10px;
-            display: block;
-        }
-        .btn-secondary:hover {
-            background-color: #5a6268;
-        }
-        .alert-danger {
+        
+        .trendy-alert {
             margin-top: 15px;
+            padding: 12px;
+            border-radius: 4px;
             text-align: center;
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
         }
-        .text-center {
+        
+        .trendy-footer {
             text-align: center;
-            margin-top: 15px;
-        }
-        .text-muted {
-            color: #6c757d;
-            text-align: center;
-        }
-        .pt-25 {
-            padding-top: 25px;
+            margin-top: 20px;
+            font-size: 12px;
+            color: var(--trendy-gray);
         }
     </style>
-
 </head>
 <body>
 
-    <div class="container">
-        <div class="login_wrap">
-            <div class="padding_eight_all bg-white">
-                <div class="heading_s1">
-                    <h3>Email Verification Page</h3>
-                </div>
-                <form action="/verify-passForgot-otp" method="POST">
-                    <div class="form-group">
-                        <label for="otp">Enter OTP:</label>
-                        <input type="text" id="otp" name="otp" class="form-control" required maxlength="6" pattern="\d*" />
-                    </div>
-                    <button class="btn btn-primary" id="v-email">Verify Email</button>
-                    <div class="form-group text-center">
-                        <div id="otpTimer" class="otp-timer">
-                            <span id="timerValue">60</span>
-                        </div>
-                        <button type="button" class="btn btn-secondary" onclick="resendOTP()">Resend OTP</button>
-                    </div>
-                    <% if (locals.message && message.length > 0) { %>
-                    <div class="alert alert-danger"><%= message %></div>
-                    <% } %>
-                </form>
-            
+<div class="trendy-container">
+    <div class="trendy-card">
+        <div class="trendy-logo">
+            TrendyThreads
+        </div>
+        
+        <div class="trendy-title">
+            Email Verification
+        </div>
+        
+        <form id="otpForm">
+            <div class="trendy-form-group">
+                <label for="otp">Enter OTP sent to your email</label>
+                <input type="text" id="otp" name="otp" class="trendy-form-control" required maxlength="6" pattern="\d*" placeholder="6-digit OTP" />
             </div>
+            
+            <button type="submit" class="trendy-btn" id="v-email">VERIFY</button>
+            
+            <div class="trendy-otp-timer-container">
+                <div id="otpTimer" class="trendy-otp-timer">
+                    <span id="timerValue">60</span>
+                </div>
+                <button type="button" class="trendy-btn-secondary" onclick="resendOTP()" disabled>RESEND OTP</button>
+            </div>
+            
+            <div id="errorMessage" class="trendy-alert" style="display: none;"></div>
+        </form>
+        
+        <div class="trendy-footer">
+            <p>© 2025 www.trendythreads.com All rights reserved.</p>
         </div>
     </div>
-    
+</div>
 
-    <script>
-
-
-
-let timerValue = 60
+<script>
+let timerValue = 60;
 let timerElement = document.getElementById('timerValue');
-let resendButton = document.querySelector('.btn-secondary');
-let timerInterval
-let isTimeUp = false
+let resendButton = document.querySelector('.trendy-btn-secondary');
+let timerInterval;
+let isTimeUp = false;
 
 function startTimer() {
-    isTimeUp = false
-    resendButton.disabled = true
-    timerElement.textContent = timerValue
+    isTimeUp = false;
+    resendButton.disabled = true;
+    timerElement.textContent = timerValue;
+    timerElement.classList.remove("expired");
 
     timerInterval = setInterval(() => {
         if (timerValue > 0) {
             timerValue--;
             timerElement.textContent = timerValue;
         } else {
-            clearInterval(timerInterval)
-            timerElement.textContent = "Expired"
-            timerElement.classList.add("expired")
-            resendButton.disabled = false
-            isTimeUp = true
+            clearInterval(timerInterval);
+            timerElement.textContent = "Expired";
+            timerElement.classList.add("expired");
+            resendButton.disabled = false;
+            isTimeUp = true;
         }
     }, 1000);
 }
@@ -180,68 +261,86 @@ function resendOTP() {
     startTimer();
     isTimeUp = false;
 
-    fetch('/resend-forgot-otp', { method: 'POST' })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Response from server:", data); 
-            Swal.fire("OTP Resent", "A new OTP has been sent to your email.", "success");
-        })
-        .catch(error => {
-            console.error("Fetch error:", error);
-            Swal.fire("Error", "Failed to resend OTP. Try again.", "error");
+    fetch('/resend-forgot-otp', { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Response from server:", data);
+        Swal.fire({
+            title: "OTP Resent",
+            text: "A new OTP has been sent to your email.",
+            icon: "success",
+            confirmButtonColor: "#FF3F6C"
         });
+    })
+    .catch(error => {
+        console.error("Fetch error:", error);
+        Swal.fire({
+            title: "Error",
+            text: "Failed to resend OTP. Please try again.",
+            icon: "error",
+            confirmButtonColor: "#FF3F6C"
+        });
+    });
 
     resendButton.disabled = true;
 }
 
-
-document.getElementById('v-email').addEventListener('click', async function (event) {
-    event.preventDefault()
-
+document.getElementById('otpForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    
     if (isTimeUp) {
         Swal.fire({
-            title: "Time Up!",
+            title: "Time Expired",
             text: "Your OTP has expired. Please request a new OTP.",
-            icon: "warning"
+            icon: "warning",
+            confirmButtonColor: "#FF3F6C"
         });
-        return
+        return;
     }
 
     const userOtp = document.getElementById('otp').value;
+    
+    if (!userOtp || userOtp.length !== 6 || !/^\d+$/.test(userOtp)) {
+        document.getElementById('errorMessage').textContent = "Please enter a valid 6-digit OTP";
+        document.getElementById('errorMessage').style.display = "block";
+        return;
+    }
 
-    const response = await fetch('/verify-passForgot-otp', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ otp: userOtp })
+    try {
+        const response = await fetch('/verify-passForgot-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ otp: userOtp })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            Swal.fire({
+                title: "Success!",
+                text: "Email verified successfully.",
+                icon: "success",
+                confirmButtonColor: "#FF3F6C"
+            }).then(() => {
+                window.location.href = data.redirectUrl;
+            });
+        } else {
+            document.getElementById('errorMessage').textContent = data.message || "Invalid OTP. Please try again.";
+            document.getElementById('errorMessage').style.display = "block";
+        }
+    } catch (error) {
+        console.error("Verification error:", error);
+        document.getElementById('errorMessage').textContent = "An error occurred. Please try again.";
+        document.getElementById('errorMessage').style.display = "block";
+    }
 });
 
-
-const data = await response.json()
-
-if (response.ok) {
-    Swal.fire({
-        title: "Success!",
-        text: "Your operation was completed successfully.",
-        icon: "success"
-    }).then(() => {
-        window.location.href = data.redirectUrl;  
-    });
-} else {
-    Swal.fire({
-        title: "Failed!",
-        text: data.message || "OTP verification failed.",
-        icon: "error"
-    });
-}
-});
-
-window.onload = startTimer
-
-
-    </script>
+window.onload = startTimer;
+</script>
 
 </body>
-</html>
-
 </html>
 

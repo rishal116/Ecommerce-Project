@@ -1,258 +1,334 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
-    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css" />
-    <link rel="stylesheet" href="css/elegant-icons.css" type="text/css" />
-    <link rel="stylesheet" href="css/magnific-popup.css" type="text/css" />
-    <link rel="stylesheet" href="css/nice-select.css" type="text/css" />
-    <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css" />
-    <link rel="stylesheet" href="css/slicknav.min.css" type="text/css" />
-    <link rel="stylesheet" href="css/style.css" type="text/css" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-</head>
-<style>
-    /* General Styling */
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Trendy Threads</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #ff3f6c;
+      --primary-dark: #e6375f;
+      --secondary: #535766;
+      --light-gray: #f5f5f6;
+      --medium-gray: #eaeaec;
+      --text-dark: #282c3f;
+      --text-light: #94969f;
+      --success: #03a685;
+      --error: #ff5722;
+    }
+    
     * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: "Poppins", sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-
+    
     body {
-        background: #ffffff; /* Changed to white background */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
+      font-family: 'Inter', sans-serif;
+      background-color: #fdfdfd;
+      color: var(--text-dark);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
     }
-
-    .login-container {
-        background: #f9f9f9; /* Soft grayish white for contrast */
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        width: 350px;
-        border: 1px solid #ddd; /* Light border for a subtle look */
+    
+    .auth-container {
+      width: 100%;
+      max-width: 400px;
+      background-color: white;
+      border-radius: 4px;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
     }
-
-    h2 {
-        margin-bottom: 15px;
-        font-size: 24px;
-        color: #333;
+    
+    .auth-header {
+      padding: 24px 30px;
+      border-bottom: 1px solid var(--medium-gray);
     }
-
-    input {
-        width: 100%;
-        padding: 12px;
-        margin: 10px 0;
-        border: 2px solid #ccc;
-        border-radius: 6px;
-        font-size: 16px;
-        transition: 0.3s;
-        background: #ffffff;
+    
+    .auth-header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 6px;
     }
-
-    input:focus {
-        border-color: #007bff;
-        outline: none;
+    
+    .auth-header p {
+      color: var(--text-light);
+      font-size: 14px;
     }
-
-    button {
-        width: 100%;
-        padding: 12px;
-        background: #007bff;
-        color: white;
-        font-size: 18px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: 0.3s;
-        margin-top: 10px;
+    
+    .auth-form {
+      padding: 30px;
     }
-
-    button:hover {
-        background: #0056b3;
+    
+    .form-group {
+      margin-bottom: 20px;
     }
-
-    .error {
-        color: red;
-        font-size: 14px;
-        margin-bottom: 10px;
+    
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-dark);
     }
-
-    p {
-        margin-top: 15px;
-        font-size: 14px;
+    
+    .form-control {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--medium-gray);
+      border-radius: 4px;
+      font-size: 14px;
+      color: var(--text-dark);
+      transition: all 0.2s ease;
     }
-
-    p a {
-        color: #007bff;
-        font-weight: bold;
-        text-decoration: none;
-        transition: 0.3s;
+    
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(255, 63, 108, 0.1);
     }
-
-    p a:hover {
-        text-decoration: underline;
-        color:#0056b3;
-    }
+    
     .password-container {
-    position: relative;
-    width: 100%;
-}
+      position: relative;
+    }
+    
+    .toggle-password {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    .error-message {
+      color: var(--error);
+      font-size: 12px;
+      margin-top: 6px;
+      font-weight: 500;
+    }
+    
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 24px 0;
+      color: var(--text-light);
+      font-size: 12px;
+    }
+    
+    .divider::before,
+    .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background-color: var(--medium-gray);
+    }
+    
+    .divider::before {
+      margin-right: 16px;
+    }
+    
+    .divider::after {
+      margin-left: 16px;
+    }
+    
+    .forgot-password {
+      text-align: right;
+      margin-top: -12px;
+      margin-bottom: 20px;
+    }
+    
+    .forgot-password a {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    
+    .forgot-password a:hover {
+      text-decoration: underline;
+    }
+    
+    .social-auth {
+      margin-bottom: 24px;
+    }
+    
+    .btn-google {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: white;
+      border: 1px solid var(--medium-gray);
+      color: var(--text-dark);
+      padding: 12px;
+      font-weight: 500;
+      gap: 10px;
+    }
+    
+    .btn-google:hover {
+      background-color: var(--light-gray);
+    }
+    
+    .btn-google img {
+      width: 20px;
+      height: 20px;
+    }
+    
+    .auth-footer {
+      text-align: center;
+      padding: 20px 30px;
+      border-top: 1px solid var(--medium-gray);
+      color: var(--text-dark);
+      font-size: 14px;
+    }
+    
+    .auth-footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    
+    .auth-footer a:hover {
+      text-decoration: underline;
+    }
+    
+    .error-alert {
+      background-color: rgba(255, 87, 34, 0.1);
+      color: var(--error);
+      padding: 12px 16px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      font-weight: 500;
+    }
 
-.password-container input {
-    width: 100%;
-    padding: 12px;
-    padding-right: 40px; /* Space for eye icon */
-    border: 2px solid #ccc;
-    border-radius: 6px;
-    font-size: 16px;
-    background: #ffffff;
-}
-
-.password-container i {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: #777;
-}
-
-.password-container i:hover {
-    color: black;
-}
-
-      /* Google Button Styling */
-      .social-btns {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 10px;
-        }
-
-        /* Google Button Styling */
-        .btn-google {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #fff;
-            border: 1px solid #dcdcdc;
-            border-radius: 5px;
-            padding: 10px 15px;
-            text-decoration: none;
-            color: #555;
-            font-weight: bold;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-google:hover {
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
-            background-color: #f8f8f8;
-        }
-
-        /* Google Logo */
-        .btn-google img {
-            width: 24px;
-            height: 24px;
-            margin-right: 10px;
-        }
-
-
-</style>
+    @media (max-width: 480px) {
+      .auth-container {
+        box-shadow: none;
+      }
+      
+      .auth-header,
+      .auth-form,
+      .auth-footer {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
 <body>
-    <body>
-        <div class="login-container">
-            <h2>Login</h2>
+  <div class="auth-container">
+    <div class="auth-header">
+      <h1>Login</h1>
+      <p>Sign in to your fashion account</p>
+    </div>
     
-            <% if (message) { %>
-                <p class="error"><%= message %></p>
-            <% } %>
-    
-            <form action="/login" method="POST" id="loginForm">
-                <input type="email" id="email" name="email" placeholder="Enter Email" required>
-                <p id="emailError" class="error"></p>
-    
-                <div class="password-container">
-                    <input type="password" id="password" name="password" placeholder="Enter Password" required>
-                    <i class="fa fa-eye" id="togglePassword"></i>
-                </div>
-                <p id="passwordError" class="error"></p>
-    
-                <button type="submit">Login</button>
-            </form>
-    
-            <!-- Forgot Password -->
-            <p><a href="/forgot-password">Forgot Password?</a></p>
-    
-            <!-- Google Sign-In Button -->
-            <div class="social-btns">
-                <a href="/auth/google" class="btn-google">
-                    <img src="img/googlesignup.png" alt="Google Logo">
-                    Sign in with Google
-                </a>
-            </div>
-    
-            <p>Don't have an account? <a href="/signup">Sign up</a></p>
+    <div class="auth-form">
+      <% if (message) { %>
+        <div class="error-alert"><%= message %></div>
+      <% } %>
+      
+      <form id="loginForm" action="/login" method="POST">
+        <div class="form-group">
+          <label for="email" class="form-label">Email Address</label>
+          <input type="email" id="email" name="email" class="form-control" placeholder="example@email.com" required>
+          <div id="emailError" class="error-message"></div>
         </div>
+        
+        <div class="form-group">
+          <label for="password" class="form-label">Password</label>
+          <div class="password-container">
+            <input type="password" id="password" name="password" class="form-control" placeholder="Your password" required>
+            <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+          </div>
+          <div id="passwordError" class="error-message"></div>
+        </div>
+        
+        <div class="forgot-password">
+          <a href="/forgot-password">Forgot Password?</a>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">LOGIN</button>
+        
+        <div class="divider">OR</div>
+        
+        <div class="social-auth">
+          <a href="/auth/google" class="btn btn-google">
+            <img src="img/googlesignup.png" alt="Google Logo">
+            <span>Continue with Google</span>
+          </a>
+        </div>
+      </form>
+    </div>
     
-        <script>
-            // Toggle Password Visibility
-            const togglePassword = document.querySelector("#togglePassword");
-            const passwordInput = document.querySelector("#password");
+    <div class="auth-footer">
+      Don't have an account? <a href="/signup">Sign up</a>
+    </div>
+  </div>
+
+  <script>
+    // Toggle Password Visibility
+    const togglePassword = document.querySelector("#togglePassword");
+    const passwordInput = document.querySelector("#password");
     
-            togglePassword.addEventListener("click", function () {
-                const type = passwordInput.type === "password" ? "text" : "password";
-                passwordInput.type = type;
-                this.classList.toggle("fa-eye");
-                this.classList.toggle("fa-eye-slash");
-            });
+    togglePassword.addEventListener("click", function() {
+      const type = passwordInput.type === "password" ? "text" : "password";
+      passwordInput.type = type;
+      this.classList.toggle("fa-eye");
+      this.classList.toggle("fa-eye-slash");
+    });
     
-            // Form Validation
-            document.getElementById("loginForm").addEventListener("submit", function (event) {
-                let isValid = true;
-                const email = document.getElementById("email").value.trim();
-                const password = document.getElementById("password").value.trim();
-                const emailError = document.getElementById("emailError");
-                const passwordError = document.getElementById("passwordError");
-    
-                emailError.textContent = "";
-                passwordError.textContent = "";
-    
-                const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-                if (!emailRegex.test(email)) {
-                    emailError.textContent = "Invalid email format.";
-                    isValid = false;
-                }
-    
-                if (password.length < 6) {
-                    passwordError.textContent = "Password must be at least 6 characters.";
-                    isValid = false;
-                }
-    
-                if (!isValid) event.preventDefault();
-            });
-    
-          
-        </script>
-    
-        <!-- Google Sign-In Script -->
-        <script src="https://accounts.google.com/gsi/client" async defer></script>
-    </body>
-    
-    
+    // Form Validation
+    document.getElementById("loginForm").addEventListener("submit", function(event) {
+      let isValid = true;
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const emailError = document.getElementById("emailError");
+      const passwordError = document.getElementById("passwordError");
+      
+      emailError.textContent = "";
+      passwordError.textContent = "";
+      
+      const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(email)) {
+        emailError.textContent = "Please enter a valid email address";
+        isValid = false;
+      }
+      
+      if (password.length < 6) {
+        passwordError.textContent = "Password must be at least 6 characters";
+        isValid = false;
+      }
+      
+      if (!isValid) event.preventDefault();
+    });
+  </script>
 </body>
 </html>
 
