@@ -57,6 +57,9 @@ function generateOtp(){
 
 async function sendVerificationEmail(email, otp) {
     try {
+        console.log("Email:", process.env.NODEMAILER_EMAIL);
+        console.log("Password:", process.env.NODEMAILER_PASSWORD);
+
         if (!email) {
             console.error("Error: Email is undefined");
             return false;

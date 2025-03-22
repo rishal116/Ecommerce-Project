@@ -72,6 +72,7 @@ router
 
 // dashboard management
 .get('/orders/filter',auth.adminAuth, dashboardController.filterOrder)
+.get("/orders/report",auth.adminAuth,dashboardController.getOrdersReport)
 .get('/orders/download/excel',auth.adminAuth, dashboardController.downloadExcelReport)
 .get('/orders/download/pdf', auth.adminAuth, dashboardController.downloadPdfReport)
 

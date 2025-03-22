@@ -1,0 +1,189 @@
+
+<%- include("../../views/partials/admin/header") %>
+    <title>Trendy Threads - Orders Report</title>
+    <style>
+        body {
+            font-family: 'Helvetica', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #374151;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .title {
+            color: #2563EB;
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: #374151;
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        .divider {
+            border-top: 1px solid #E5E7EB;
+            margin: 15px 0;
+        }
+        .report-period {
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .orders-table th {
+            background-color: #F3F4F6;
+            padding: 12px 10px;
+            text-align: left;
+            font-size: 14px;
+            color: #111827;
+            font-weight: bold;
+        }
+        .orders-table td {
+            padding: 12px 10px;
+            font-size: 14px;
+            color: #4B5563;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        .orders-table tr:nth-child(even) {
+            background-color: #F9FAFB;
+        }
+        .amount {
+            text-align: right;
+        }
+        .status {
+            text-align: center;
+        }
+        .date {
+            text-align: center;
+        }
+        .summary-box {
+            border: 1px solid #374151;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        .summary-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 15px;
+        }
+        .summary-item {
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #4B5563;
+        }
+        .status-completed { color: #10B981; }
+        .status-pending { color: #F59E0B; }
+        .status-cancelled { color: #EF4444; }
+        .status-processing { color: #3B82F6; }
+        .status-shipped { color: #6366F1; }
+        .status-delivered { color: #22C55E; }
+        .status-return-request { color: #D97706; }
+        .status-return-accepted { color: #10B981; }
+        .status-return-rejected { color: #EF4444; }
+        .status-payment-pending { color: #E11D48; }
+        .actions {
+            margin-bottom: 20px;
+        }
+        .btn {
+            padding: 8px 16px;
+            background-color: #2563EB;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .filters {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .form-group label {
+            font-size: 14px;
+        }
+        .form-group input {
+            padding: 8px;
+            border: 1px solid #E5E7EB;
+            border-radius: 4px;
+        }
+    </style>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Trendy Threads</h1>
+            <h2 class="subtitle">Orders Report</h2>
+            <div class="divider"></div>
+            <p class="report-period">Report Period: <%= startDate.toLocaleDateString() %> - <%= endDate.toLocaleDateString() %></p>
+        </div>
+
+        <div class="filters">
+            <form action="/admin/orders/report" method="GET">
+                <div class="form-group">
+                    <label for="startDate">Start Date:</label>
+                    <input type="date" id="startDate" name="startDate" value="<%= startDate.toISOString().split('T')[0] %>">
+                </div>
+                <div class="form-group">
+                    <label for="endDate">End Date:</label>
+                    <input type="date" id="endDate" name="endDate" value="<%= endDate.toISOString().split('T')[0] %>">
+                </div>
+                <button type="submit" class="btn">Apply Filters</button>
+            </form>
+        </div>
+
+        <table class="orders-table">
+            <thead>
+                <tr>
+                    <th>USER NAME</th>
+                    <th class="amount">PRICE</th>
+                    <th class="amount">AMOUNT</th>
+                    <th class="status">STATUS</th>
+                    <th class="date">DATE</th>
+                    <th>PAYMENT METHOD</th> <!-- New column added -->
+                </tr>
+            </thead>
+            <tbody>
+                <% orders.forEach((order, index) => { %>
+                    <tr>
+                        <td><%= order.userId?.name || "Unknown" %></td>
+                        <td class="amount">₹<%= (order.totalPrice || 0).toFixed(2) %></td>
+                        <td class="amount">₹<%= (order.finalAmount || 0).toFixed(2) %></td>
+                        <td class="status">
+                            <% const statusClass = `status-${order.status.toLowerCase().replace(/\s+/g, '-')}` %>
+                            <span class="<%= statusClass %>"><%= order.status %></span>
+                        </td>
+                        <td class="date"><%= new Date(order.createdOn).toLocaleDateString() %></td>
+                        <td><%= order.paymentMethod || "N/A" %></td> <!-- Displaying payment method -->
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+
+        <div class="summary-box">
+            <h3 class="summary-title">Summary</h3>
+            <div class="summary-item">Total Orders: <%= totalOrders %></div>
+            <div class="summary-item">Total Items: <%= totalItems %></div>
+            <div class="summary-item">Total Base Amount: ₹<%= totalBaseAmount.toFixed(2) %></div>
+            <div class="summary-item">Total Discount: ₹<%= totalDiscount.toFixed(2) %></div>
+            <div class="summary-item">Total Final Amount: ₹<%= totalFinalAmount.toFixed(2) %></div>
+        </div>
+    </div>
+    <%- include("../../views/partials/admin/footer") %>

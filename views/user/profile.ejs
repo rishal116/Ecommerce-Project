@@ -1,129 +1,177 @@
-<%- include("../../views/partials/user/header") %> <!-- Just include header directly -->
+<%- include("../../views/partials/user/header") %>
 
-<title>Your Profile</title>
+<title>Your Profile | Fashion Store</title>
 <style>
+
     /* Main Container for the entire page */
     .main-container {
         display: flex;
-        flex-wrap: wrap;
+        max-width: 1200px;
         padding: 20px;
-        margin: 0 auto;
+        margin: 20px auto;
+        gap: 20px;
+        box-sizing: border-box;
+        font-family: 'Assistant', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
 
     /* Sidebar Style */
     .sidebar {
-        flex: 1;
-        min-width: 250px;
-        max-width: 300px;
+        width: 250px;
         background-color: #ffffff;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Profile Image and Name Section */
+    .profile-header {
         padding: 20px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-        margin-right: 20px;
+        border-bottom: 1px solid #eaeaec;
+        display: flex;
+        align-items: center;
+    }
+
+    .profile-image {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #f3f3f3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
+        color: #282c3f;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .profile-name {
+        font-size: 16px;
+        font-weight: 600;
+        color: #282c3f;
     }
 
     /* Sidebar Header */
     .sidebar h3 {
-        font-size: 1.5rem;
-        margin-bottom: 20px;
-        color: #333;
-        font-weight: bold;
+        font-size: 12px;
+        text-transform: uppercase;
+        color: #94969f;
+        padding: 20px 20px 0;
+        margin: 0;
+        letter-spacing: 0.5px;
     }
 
     /* Sidebar Links */
-    .sidebar a {
-        display: block;
-        color: #333;
+    .sidebar-menu {
+        list-style: none;
+        padding: 0;
+        margin: 15px 0;
+    }
+
+    .sidebar-menu a {
+        display: flex;
+        align-items: center;
+        color: #282c3f;
         text-decoration: none;
-        padding: 12px;
-        margin: 12px 0;
-        font-size: 1rem;
-        border-radius: 5px;
-        transition: background-color 0.3s ease, color 0.3s ease;
+        padding: 12px 20px;
+        font-size: 14px;
+        position: relative;
     }
 
-    .sidebar a:hover {
-        background-color: #f1f1f1;
+    .sidebar-menu a.active {
+        color: #ff3f6c;
+        font-weight: 600;
     }
 
-    .sidebar a.active {
-        background-color: #e8f0fe;
-        color: #1967d2;
-        font-weight: 500;
+    .sidebar-menu a.active::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background-color: #ff3f6c;
+    }
+
+    .sidebar-menu a:hover {
+        background-color: #f5f5f6;
     }
 
     /* Main Content Area */
     .main-content {
-        flex: 3;
-        min-width: 600px;
+        flex: 1;
         background-color: #ffffff;
-        padding: 20px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
     }
 
     /* Header for Main Content */
     .account-header {
-        font-size: 1.75rem;
+        padding: 20px;
+        font-size: 18px;
+        font-weight: 600;
+        color: #282c3f;
+        border-bottom: 1px solid #eaeaec;
+    }
+
+    /* Profile Section Style */
+    .section {
+        padding: 20px;
+    }
+    
+    .profile-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .info-item {
         margin-bottom: 20px;
-        font-weight: bold;
-        color: #333;
     }
-
-    /* Form Section Style */
-    .section h4 {
-        font-size: 1.25rem;
-        margin-bottom: 15px;
-        font-weight: bold;
-        color: #333;
-    }
-
-    /* Form Group Style */
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    .form-group label {
-        display: block;
-        font-size: 1rem;
+    
+    .info-label {
+        font-size: 12px;
+        color: #94969f;
         margin-bottom: 8px;
-        color: #333;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
-    .form-group input {
-        width: 100%;
-        padding: 12px;
-        font-size: 1rem;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        margin-bottom: 5px;
-        box-sizing: border-box;
+    .info-value {
+        font-size: 16px;
+        color: #282c3f;
+        font-weight: 500;
     }
 
-    .form-group input:focus {
-        border-color: #1967d2;
-        outline: none;
-    }
-
-    .form-group small {
-        font-size: 0.9rem;
-        color: #777;
-    }
-
-    /* Button Style */
-    button {
-        padding: 12px 25px;
-        background-color: #1967d2;
+    /* Edit Button Style */
+    .edit-button {
+        margin-top: 20px;
+        padding: 12px 45px;
+        background-color: #ff3f6c;
         color: #fff;
-        font-size: 1rem;
+        font-size: 14px;
+        font-weight: 600;
         border: none;
-        border-radius: 5px;
+        border-radius: 4px;
         cursor: pointer;
         transition: background-color 0.3s ease;
+        text-align: center;
+        display: inline-block;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
-    button:hover {
-        background-color: #1558a3;
+    .edit-button:hover {
+        background-color: #ff527b;
+    }
+
+    /* No User Message Style */
+    .no-user-message {
+        padding: 30px;
+        text-align: center;
+        color: #94969f;
+        font-size: 14px;
     }
 
     /* Responsive Design */
@@ -133,86 +181,79 @@
         }
 
         .sidebar {
-            margin-right: 0;
+            width: 100%;
             margin-bottom: 20px;
         }
 
-        .main-content {
-            min-width: 100%;
-        }
-
-        .form-group input {
-            font-size: 0.9rem;
-        }
-
-        button {
-            width: 100%;
+        .profile-info {
+            grid-template-columns: 1fr;
         }
     }
-
-    .change{
-        margin-left: 500px;
-        color: black;
-        
-    }
-    .change:hover{
-        color: #1558a3;
-    }
-
-    .edit-button {
-    margin-top: 15px;
-    padding: 12px;
-    background-color: #14CAD8;
-    color: #fff;
-    font-size: 1rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    width: 100%; /* Makes the button full-width */
-    text-align: center;
-}
-
-.edit-button:hover {
-    background-color: #0FA5B2;
-}
-
 </style>
 
 <!-- Main Container for Sidebar and Main Content -->
 <div class="main-container">
     <!-- Sidebar -->
     <div class="sidebar">
-        <h3>Profile Settings</h3>
-        <a href="/userProfile" class="active">Personal Information</a>
-        <a href="/myAddress">Your Addresses</a>
-        <a href="/wishlist">Wishlist</a>
-        <a href="/myorders">Your Orders</a>
+        <div class="profile-header">
+            <div class="profile-image">
+                <%= user && user.name ? user.name.charAt(0).toUpperCase() : 'U' %>
+            </div>
+            <div class="profile-name">
+                Hello, <%= user && user.name ? user.name.split(' ')[0] : 'User' %>
+            </div>
+        </div>
+        
+        <h3>Account</h3>
+        <ul class="sidebar-menu">
+            <li><a href="/userProfile" class="active">Profile</a></li>
+            <li><a href="/myAddress">Addresses</a></li>
+            <li><a href="/wishlist">Wishlist</a></li>
+        </ul>
+        
+        <h3>Orders</h3>
+        <ul class="sidebar-menu">
+            <li><a href="/myorders">Orders</a></li>
+        </ul>
     </div>
 
     <!-- Main Content -->
     <div class="main-content">
-        <div class="account-header">Personal Information</div>
+        <div class="account-header">Profile Details</div>
 
-
-       <!-- Profile Details Section -->
-<div class="section" id="profile-details">
-    <p><strong>Full Name:</strong> <span id="full-name-text"><%= user.name %></span></p>
-    <p><strong>Mobile Number:</strong> <span id="phone-text"><%= user.phone %></span></p>
-    <p><strong>Email ID:</strong> <span id="email-text"><%= user.email %></span></p> 
-
-    <!-- Edit Button -->
-<a href="/editProfile">
-    <button class="edit-button">Edit</button>
-</a>
-
-</div>
-
-
+        <!-- Profile Details Section -->
+        <div class="section" id="profile-details">
+            <% if (user) { %>
+                <div class="profile-info">
+                    <div class="info-item">
+                        <div class="info-label">Full Name</div>
+                        <div class="info-value" id="full-name-text"><%= user.name %></div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Mobile Number</div>
+                        <div class="info-value" id="phone-text"><%= user.phone %></div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Email ID</div>
+                        <div class="info-value" id="email-text"><%= user.email %></div>
+                    </div>
+                    
+                    
+                </div>
+                
+                <!-- Edit Button -->
+                <a href="/editProfile" class="edit-button">Edit Profile</a>
+            <% } else { %>
+                <div class="no-user-message">
+                    <p>No user information available. Please sign in to view your profile.</p>
+                </div>
+            <% } %>
+        </div>
     </div>
 </div>
 
-<%- include("../../views/partials/user/footer") %> <!-- Just include footer directly -->
-
+<%- include("../../views/partials/user/footer") %>
 
 

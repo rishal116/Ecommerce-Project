@@ -140,8 +140,6 @@ const editCategory = async(req,res)=>{
         if(existingCategory){
            return res.status(400).json({error:"Category already exists , Please try another name"})
         } 
-
-
         const updateCategory = await Category.findByIdAndUpdate(id,{
             name :categoryName,
             description : description,

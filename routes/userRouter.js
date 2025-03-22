@@ -34,8 +34,9 @@ router
 .patch('/saveEmail',userAuth, accountController.saveEmail)
 .post('/saveAccount',userAuth, accountController.saveDetails)
 .post("/sendOtp",userAuth,accountController.sendOtp)
-
 .patch("/resetPassword",userAuth,accountController.resetPassword)
+
+.get("/contact",userAuth,accountController.contactUs)
 
 router.get(
     "/auth/google",
@@ -66,7 +67,6 @@ router.get(
 .post("/search",userController.searchProducts)
 
 // address management
-.get("/addAddress",userAuth,profileController.addAddress)
 .post("/addAddress",userAuth,profileController.postAddAddress)
 .get("/editAddress",userAuth,profileController.editAddress)
 .post("/editAddress",userAuth,profileController.postEditAddress)

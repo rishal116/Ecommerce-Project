@@ -649,7 +649,7 @@ const orderCancel = async (req, res) => {
             }
         }
 
-        await Order.findOneAndDelete({ orderId: orderId });
+        await Order.findOneAndUpdate({ orderId: orderId },{$set:{status:"Cancelled"}})
 
         res.json({ success: true, message: 'Order cancelled and stock updated successfully' });
 

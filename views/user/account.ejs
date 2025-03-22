@@ -1,15 +1,55 @@
+
 <%- include("../../views/partials/user/header") %>
-<title>Your Account</title>
+
+<div class="container">
+    <div class="account-header">Your Account</div>
+    <div class="grid">
+        <a href="/userProfile">
+            <div class="card">
+                <i class="fas fa-user-circle"></i>
+                <h3>Your Profile</h3>
+                <p>Manage your personal details</p>
+            </div>
+        </a>
+        <a href="/myAddress">
+            <div class="card">
+                <i class="fas fa-map-marker-alt"></i>
+                <h3>Your Addresses</h3>
+                <p>Edit addresses for orders and gifts</p>
+            </div>
+        </a>
+        <a href="/wishlist">
+            <div class="card">
+                <i class="fas fa-heart"></i>
+                <h3>Your Wishlist</h3>
+                <p>Save your favorite items</p>
+            </div>
+        </a>
+        <a href="/wallet">
+            <div class="card">
+                <i class="fas fa-wallet"></i>
+                <h3>Your Wallet</h3>
+                <p>Manage your balance</p>
+            </div>
+        </a>
+        <a href="/contact">
+            <div class="card">
+                <i class="fas fa-headset"></i>
+                <h3>Contact Us</h3>
+                <p>Get help from customer service</p>
+            </div>
+        </a>
+        <a href="/myOrders">
+            <div class="card">
+                <i class="fas fa-box"></i>
+                <h3>Your Orders</h3>
+                <p>View and manage your orders</p>
+            </div>
+        </a>
+    </div>
+</div>
 
 <style>
-/* Main Container
-/* .container {
-    max-width: 1100px;
-    margin: 50px auto;
-    padding: 20px;
-    text-align: center;
-} */ */
-
 /* Account Header */
 .account-header {
     font-size: 32px;
@@ -97,55 +137,6 @@ a {
     }
 }
 </style>
-
-<!-- Your Account Page Content -->
-<div class="container">
-    <div class="account-header">Your Account</div>
-    <div class="grid">
-        <a href="/userProfile">
-            <div class="card">
-                <i class="fas fa-user-circle"></i>
-                <h3>Your Profile</h3>
-                <p>Manage your personal details</p>
-            </div>
-        </a>
-        <a href="/address">
-            <div class="card">
-                <i class="fas fa-map-marker-alt"></i>
-                <h3>Your Addresses</h3>
-                <p>Edit addresses for orders and gifts</p>
-            </div>
-        </a>
-        <a href="/wishlist">
-            <div class="card">
-                <i class="fas fa-heart"></i>
-                <h3>Your Wishlist</h3>
-                <p>Save your favorite items</p>
-            </div>
-        </a>
-        <a href="/wallet">
-            <div class="card">
-                <i class="fas fa-wallet"></i>
-                <h3>Your Wallet</h3>
-                <p>Manage your balance</p>
-            </div>
-        </a>
-        <a href="/contact">
-            <div class="card">
-                <i class="fas fa-headset"></i>
-                <h3>Contact Us</h3>
-                <p>Get help from customer service</p>
-            </div>
-        </a>
-        <a href="/myOrders">
-            <div class="card">
-                <i class="fas fa-box"></i>
-                <h3>Your Orders</h3>
-                <p>View and manage your orders</p>
-            </div>
-        </a>
-    </div>
-</div>
 
 <%- include("../../views/partials/user/footer") %>
 

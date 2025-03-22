@@ -1303,6 +1303,7 @@ body {
                     <label for="addressType" style="margin-right: 3px;">Address Type </label>
                     <select id="addressType" name="addressType"   required>
                         <option value="Home">Home</option>
+                        <option value="Business">Business</option>
                         <option value="Work">Work</option>
                         <option value="Other">Other</option>
                     </select>
@@ -1568,19 +1569,23 @@ function validateForm(event) {
     const pincode = document.getElementById('pincode').value.trim();
     const city = document.getElementById('city').value.trim();
     const state = document.getElementById('state').value.trim();
+    const landMark = document.getElementById("landMark").value.trim();
 
     // Reset error styles
     resetErrors();
 
     let isValid = true;
 
-    // Name validation (only letters allowed)
+    // Name validation (at least 3 characters, only letters)
     if (!name) {
-        showError('name', 'Full Name is required');
-        isValid = false;
+        showError("name", "Full Name is required")
+        isValid = false
+    } else if (name.length < 3) {
+        showError("name", "Full Name must be at least 3 characters")
+        isValid = false
     } else if (!/^[a-zA-Z\s]+$/.test(name)) {
-        showError('name', 'Full Name must contain only letters');
-        isValid = false;
+        showError("name", "Only letters allowed in Full Name")
+        isValid = false
     }
 
     // Phone validation (10 digits)
@@ -1619,6 +1624,18 @@ function validateForm(event) {
     } else if (!/^[a-zA-Z\s]+$/.test(city)) {
         showError('city', 'City must contain only letters');
         isValid = false;
+    }
+
+     // Landmark validation (at least 3 characters, letters & numbers allowed)
+     if (!landMark) {
+        showError("landMark", "Landmark is required")
+        isValid = false
+    } else if (landMark.length < 3) {
+        showError("landMark", "Landmark must be at least 3 characters")
+        isValid = false
+    } else if (!/^[a-zA-Z0-9\s]+$/.test(landMark)) {
+        showError("landMark", "Only letters and numbers allowed in Landmark")
+        isValid = false
     }
 
     // State validation (only letters allowed)

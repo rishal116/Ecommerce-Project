@@ -68,10 +68,6 @@ const securePassword = async(password)=>{
     }
 }
 
-
-
-
-
 const forgotEmailValid = async(req,res)=>{
     try {
         const {email} = req.body
@@ -189,57 +185,88 @@ const account = async(req,res)=>{
 
 // address management 
 
-const myAddress = async(req,res)=>{
+const myAddress = async (req, res) => {
     try {
-        const userId = req.session.user
-        const userData = await User.findById(userId)
-        const addressData = await Address.findOne({userId:userId})
-        res.render("myAddress",{
-            user:userData,
-            userAddress:addressData,
-        })
+        const userId = req.session.user;
+        const userData = await User.findById(userId);
+        
+        // Pagination logic
+        const page = parseInt(req.query.page) || 1; // Get current page (default: 1)
+        const limit = 5; // Addresses per page
+        const skip = (page - 1) * limit; // Calculate skip value
+
+        // Get addresses with pagination
+        const addressData = await Address.findOne({ userId: userId });
+        const totalAddresses = addressData?.address?.length || 0; // Total address count
+        const totalPages = Math.ceil(totalAddresses / limit); // Calculate total pages
+
+        // Slice addresses for pagination
+        const paginatedAddresses = addressData?.address.slice(skip, skip + limit) || [];
+
+        res.render("myAddress", {
+            user: userData,
+            userAddress: {
+                address: paginatedAddresses,
+                totalPages: totalPages,
+                currentPage: page
+            }
+        });
     } catch (error) {
         console.error("Error in address:", error);
         res.redirect("/pageNotFound");
     }
-}
+};
 
-const addAddress = async(req,res)=>{
-    try {
-        const user = req.session.user
-        res.render("add-address",{user:user})
-    } catch (error) {
-        res.redirect("/pageNotFound")
-    }
-}
 
-const postAddAddress = async(req,res)=>{
+const postAddAddress = async (req, res) => {
     try {
+        // Ensure user is authenticated
+        if (!req.session.user) {
+            return res.status(401).json({ success: false, message: "User not authenticated" });
+        }
         const userId = req.session.user
-        const userData = await User.findOne({_id:userId})
-        const {addressType,name,city,landMark,state,pincode,phone,altPhone} = req.body
 
-        const userAddress = await Address.findOne({userId:userData._id})
-        if(!userAddress){
-            const newAddress = new Address({
-                userId:userData._id,
-                address:[{
-                    addressType,name,city,landMark,state,pincode,phone,altPhone
-                }],
-            })
-
-            await newAddress.save()
-        }else{
-            userAddress.address.push({ addressType,name,city,landMark,state,pincode,phone,altPhone})
-            await userAddress.save()
+        // Validate request body
+        const { addressType, name, city, landMark, state, pincode, phone, altPhone } = req.body;
+        if (!addressType || !name || !city || !state || !pincode || !phone) {
+            return res.status(400).json({ success: false, message: "Missing required address fields" });
         }
 
-        res.redirect("/myAddress")
+        const userData = await User.findById(userId);
+        if (!userData) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        let userAddress = await Address.findOne({ userId });
+
+        let newAddress = {
+            addressType,
+            name,
+            city,
+            landMark,
+            state,
+            pincode,
+            phone,
+            altPhone
+        };
+
+        if (!userAddress) {
+            userAddress = new Address({
+                userId,
+                address: [newAddress],
+            });
+            await userAddress.save();
+        } else {
+            userAddress.address.push(newAddress);
+            await userAddress.save();
+        }
+        return res.redirect("/myAddress")
+        
     } catch (error) {
-        console.error("error addaddress:",error)
-        res.redirect("/pageNotFound")
+        console.error("Error in postAddAddress:", error);
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
     }
-}
+};
 
 const editAddress = async(req,res)=>{
     try {
@@ -260,44 +287,73 @@ const editAddress = async(req,res)=>{
         if(!addressData){
             return res.redirect("/pageNotFound")
         }
-        res.render("edit-address",{address:addressData,user:user})
+        res.status(200).json({ address: addressData });
     } catch (error) {
         console.error("error editaddress:",error)
         res.redirect("/pageNotFound")
     }
 }
 
-const postEditAddress = async(req,res)=>{
+const postEditAddress = async (req, res) => {
     try {
-        const data = req.body
-        const addressId = req.query.id
-        const user = req.session.query
-        const findAddress = await Address.findOne({"address._id":addressId})
-        if(!findAddress){
-            return res.redirect("/pageNotFound")
+        const { addressId, ...updateData } = req.body; // Extract addressId and update fields
+        const user = req.session.user;
+        console.log("Request Data:", req.body);
+
+        if (!user) {
+            return res.redirect("/login"); // Ensure the user is logged in
         }
-        await Address.updateOne({
-            "address._id":addressId},
-            {$set:{
-                "address.$":{
-                    _id:addressId,
-                    addressType:data.addressType,
-                    name:data.name,
-                    city:data.city,
-                    landMark:data.landMark,
-                    state:data.state,
-                    pincode:data.pincode,
-                    phone:data.phone,
-                    altPhone:data.altPhone
-                }
-            }}
-        )
-        res.redirect("/myAddress")
+
+        // Check if the address exists for the logged-in user
+        const findAddress = await Address.findOne({
+            userId: user,
+            "address._id": addressId,
+        });
+
+        console.log("fid",findAddress)
+
+        if (!findAddress) {
+            console.log("Address not found");
+            return res.redirect("/pageNotFound");
+        }
+
+       
+
+        // Build dynamic update object
+        let updateFields = {};
+        for (let key in updateData) {
+            if (updateData[key] !== undefined && updateData[key] !== "") {
+                updateFields[`address.$.${key}`] = updateData[key];
+            }
+        }
+
+        // Ensure there is something to update
+        if (Object.keys(updateFields).length === 0) {
+            console.log("No changes detected");
+            return res.redirect("/myAddress");
+        }
+
+        // Perform the update
+        const result = await Address.updateOne(
+            { userId: user, "address._id": addressId },
+            { $set: updateFields }
+        );
+
+        if (result.modifiedCount === 0) {
+            console.log("Address update failed");
+        } else {
+            console.log("Address updated successfully");
+        }
+
+        res.redirect("/myAddress");
+
     } catch (error) {
-        console.error("error editaddress:",error)
-        res.redirect("/pageNotFound")
+        console.error("Error in postEditAddress:", error);
+        res.redirect("/pageNotFound");
     }
-}
+};
+
+
 
 const deleteAddress = async(req,res)=>{
     try {
@@ -384,9 +440,8 @@ module.exports = {
     resendOtp,
     account,
     myAddress,
-    addAddress,
+    editAddress, 
     postAddAddress,
-    editAddress,
     postEditAddress,
     deleteAddress,
     addAddressInCheckout

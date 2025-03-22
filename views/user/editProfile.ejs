@@ -1,132 +1,393 @@
 <%- include('../../views/partials/user/header') %>
 
-
 <!-- Bootstrap JS (for modal functionality) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<title>Your Profile</title>
+<title>Edit Profile | Fashion Store</title>
 
 <!-- Include SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
+  
+  
+
+    /* Main Container for the entire page */
     .main-container {
         display: flex;
-        flex-wrap: wrap;
+        max-width: 1200px;
         padding: 20px;
-        margin: 0 auto;
+        margin: 20px auto;
+        gap: 20px;
+        box-sizing: border-box;
+        font-family: 'Assistant', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
 
+    /* Sidebar Style */
     .sidebar {
-        flex: 1;
-        min-width: 250px;
-        max-width: 300px;
+        width: 250px;
         background-color: #ffffff;
-        padding: 20px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-        margin-right: 20px;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
+    /* Profile Image and Name Section */
+    .profile-header {
+        padding: 20px;
+        border-bottom: 1px solid #eaeaec;
+        display: flex;
+        align-items: center;
+    }
+
+    .profile-image {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #f3f3f3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
+        color: #282c3f;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .profile-name {
+        font-size: 16px;
+        font-weight: 600;
+        color: #282c3f;
+    }
+
+    /* Sidebar Header */
     .sidebar h3 {
-        font-size: 1.5rem;
-        margin-bottom: 20px;
-        color: #333;
-        font-weight: bold;
+        font-size: 12px;
+        text-transform: uppercase;
+        color: #94969f;
+        padding: 20px 20px 0;
+        margin: 0;
+        letter-spacing: 0.5px;
     }
 
-    .sidebar a {
-        display: block;
-        color: #333;
+    /* Sidebar Links */
+    .sidebar-menu {
+        list-style: none;
+        padding: 0;
+        margin: 15px 0;
+    }
+
+    .sidebar-menu a {
+        display: flex;
+        align-items: center;
+        color: #282c3f;
         text-decoration: none;
-        padding: 12px;
-        margin: 12px 0;
-        font-size: 1rem;
-        border-radius: 5px;
-        transition: background-color 0.3s ease, color 0.3s ease;
+        padding: 12px 20px;
+        font-size: 14px;
+        position: relative;
     }
 
-    .sidebar a:hover {
-        background-color: #f1f1f1;
+    .sidebar-menu a.active {
+        color: #ff3f6c;
+        font-weight: 600;
     }
 
-    .sidebar a.active {
-        background-color: #e8f0fe;
-        color: #1967d2;
-        font-weight: 500;
+    .sidebar-menu a.active::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background-color: #ff3f6c;
     }
 
+    .sidebar-menu a:hover {
+        background-color: #f5f5f6;
+    }
+
+    /* Main Content Area */
     .main-content {
-        flex: 3;
-        min-width: 600px;
+        flex: 1;
         background-color: #ffffff;
-        padding: 20px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
     }
 
+    /* Header for Main Content */
     .account-header {
-        font-size: 1.75rem;
-        margin-bottom: 20px;
-        font-weight: bold;
-        color: #333;
+        padding: 20px;
+        font-size: 18px;
+        font-weight: 600;
+        color: #282c3f;
+        border-bottom: 1px solid #eaeaec;
+    }
+
+    /* Form Section */
+    form {
+        padding: 20px;
     }
 
     .form-group {
-        margin-bottom: 20px;
+        margin-bottom: 24px;
     }
 
     .form-group label {
         display: block;
-        font-size: 1rem;
+        font-size: 12px;
+        font-weight: 500;
+        color: #94969f;
         margin-bottom: 8px;
-        color: #333;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
-    .form-group input {
+    .form-label.required::after {
+        content: "*";
+        color: #ff3f6c;
+        margin-left: 4px;
+    }
+
+    .form-input {
         width: 100%;
-        padding: 12px;
-        font-size: 1rem;
-        border: 1px solid #ccc;
-        border-radius: 5px;
+        height: 40px;
+        padding: 8px 12px;
+        font-size: 14px;
+        border: 1px solid #d4d5d9;
+        border-radius: 4px;
         margin-bottom: 5px;
         box-sizing: border-box;
+        background-color: #fff;
+        color: #282c3f;
     }
 
-    .form-group input:focus {
-        border-color: #1967d2;
+    .form-input:focus {
+        border-color: #ff3f6c;
         outline: none;
+        box-shadow: 0 0 0 2px rgba(255,63,108,0.1);
     }
 
+    .form-input:read-only {
+        background-color: #f5f5f6;
+        cursor: not-allowed;
+    }
+
+    /* Button Styles */
     button {
-        padding: 12px 25px;
-        background-color: #0FA5B2;
-        color: #fff;
-        font-size: 1rem;
+        height: 40px;
+        padding: 0 20px;
+        font-size: 14px;
+        font-weight: 600;
         border: none;
-        border-radius: 5px;
+        border-radius: 4px;
         cursor: pointer;
         transition: background-color 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
-    button:hover {
-        background-color: #0FA5B2;
+    .action-button {
+        background-color: #ff3f6c;
+        color: white;
+    }
+
+    .action-button:hover {
+        background-color: #ff527b;
+    }
+
+    .secondary-button {
+        background-color: white;
+        color: #526cd0;
+        border: 1px solid #d4d5d9;
+    }
+
+    .secondary-button:hover {
+        background-color: #f5f5f6;
+    }
+
+    .save-button {
+        background-color: #ff3f6c;
+        color: white;
+        padding: 0 45px;
+        height: 48px;
+    }
+
+    .save-button:hover {
+        background-color: #ff527b;
+    }
+
+    /* OTP Input Style */
+    #otp-field {
+        width: 200px;
+        height: 40px;
+        padding: 8px 12px;
+        font-size: 14px;
+        border: 1px solid #d4d5d9;
+        border-radius: 4px;
+        margin-right: 10px;
+        box-sizing: border-box;
+        background-color: #fff;
+    }
+
+    /* Action Row */
+    .action-row {
+        display: flex;
+        align-items: center;
+        margin-top: 8px;
+    }
+
+    .action-row button {
+        margin-left: 10px;
+    }
+
+    /* Email Change Section */
+    .email-section {
+        position: relative;
+    }
+
+    .change-btn {
+        position: absolute;
+        right: 0;
+        top: 31px;
+        background: none;
+        border: none;
+        color: #526cd0;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 0;
+        font-size: 12px;
+        letter-spacing: 0.5px;
+    }
+
+    .change-btn:hover {
+        color: #ff3f6c;
+    }
+
+    /* Reset Password Button */
+    .reset-password-btn {
+        margin-top: 20px;
+        background: none;
+        border: none;
+        color: #526cd0;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 0;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        text-transform: none;
+    }
+
+    .reset-password-btn:hover {
+        color: #ff3f6c;
+    }
+
+    .reset-password-btn svg {
+        margin-right: 8px;
+    }
+
+    /* Modal Style */
+    .modal-content {
+        border-radius: 4px;
+        border: none;
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #eaeaec;
+        padding: 16px 20px;
+    }
+
+    .modal-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #282c3f;
+    }
+
+    .btn-close {
+        box-shadow: none;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #eaeaec;
+        padding: 16px 20px;
+    }
+
+    .btn-secondary {
+        background-color: white;
+        color: #282c3f;
+        border: 1px solid #d4d5d9;
+    }
+
+    .btn-primary {
+        background-color: #ff3f6c;
+        color: white;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #ff527b;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .main-container {
+            flex-direction: column;
+        }
+
+        .sidebar {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .main-content {
+            width: 100%;
+        }
+
+        .action-row {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .action-row button {
+            margin-left: 0;
+            margin-top: 10px;
+            width: 100%;
+        }
     }
 </style>
 
 <div class="main-container">
     <!-- Sidebar -->
     <div class="sidebar">
-        <h3>Profile Settings</h3>
-        <a href="/userProfile" class="active">Personal Information</a>
-        <a href="/myAddress">Your Addresses</a>
-        <a href="/wishlist">Wishlist</a>
-        <a href="/myorders">Your Orders</a>
+        <div class="profile-header">
+            <div class="profile-image">
+                <%= user && user.name ? user.name.charAt(0).toUpperCase() : 'U' %>
+            </div>
+            <div class="profile-name">
+                Hello, <%= user && user.name ? user.name.split(' ')[0] : 'User' %>
+            </div>
+        </div>
+        
+        <h3>Account</h3>
+        <ul class="sidebar-menu">
+            <li><a href="/userProfile" class="active">Profile</a></li>
+            <li><a href="/myAddress">Addresses</a></li>
+            <li><a href="/wishlist">Wishlist</a></li>
+        </ul>
+        
+        <h3>Orders</h3>
+        <ul class="sidebar-menu">
+            <li><a href="/myorders">Orders</a></li>
+        </ul>
     </div>
 
     <!-- Main Content -->
     <div class="main-content">
-        <div class="account-header">Your Profile</div>
+        <div class="account-header">Edit Profile</div>
 
         <form id="profile-form" action="/saveAccount" method="post">
             <div class="form-group">
@@ -134,65 +395,73 @@
                 <input type="text" class="form-input" name="fullName" id="fullName" value="<%= user.name %>" required>
             </div>
 
-            <div class="form-group">
-                <label class="form-label required">Email Id</label>
+            <div class="form-group email-section">
+                <label class="form-label required">Email ID</label>
                 <input type="email" class="form-input" id="email" name="email" value="<%= user.email %>" readonly required>
+                <button type="button" id="change-email" class="change-btn">CHANGE</button>
             </div>
-            <button type="button" id="change-email">CHANGE</button>
 
             <div class="form-group" style="display: none;" id="new-email-container">
                 <label class="form-label required">New Email</label>
-                <input type="email" class="form-input" id="new-email" name="newEmail" required>
-                <button type="button" id="send-otp">Send OTP</button>
+                <div class="action-row">
+                    <input type="email" class="form-input" id="new-email" name="newEmail" placeholder="Enter new email address" required>
+                    <button type="button" id="send-otp" class="secondary-button">Send OTP</button>
+                </div>
             </div>
 
             <div class="form-group" style="display: none;" id="verify-div">
-                <input type="number" placeholder="Enter OTP" id="otp-field">
-                <button type="button" id="verify-otp">Verify OTP</button>
+                <label class="form-label">Verification</label>
+                <div class="action-row">
+                    <input type="number" placeholder="Enter OTP" id="otp-field">
+                    <button type="button" id="verify-otp" class="action-button">Verify OTP</button>
+                </div>
             </div>
-
-<!-- Reset Password Button -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#resetPasswordModal" style="color:#0FA5B2;">
-    Reset Password
-</button>
-
-<!-- Reset Password Modal -->
-<div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-labelledby="resetPasswordModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="resetPasswordModalLabel">Reset Password</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="reset-password-form">
-                    <div class="mb-3">
-                        <label class="form-label">Old Password</label>
-                        <input type="password" id="old-password" class="form-control" placeholder="Enter old password" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">New Password</label>
-                        <input type="password" id="new-password" class="form-control" placeholder="Enter new password" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Confirm New Password</label>
-                        <input type="password" id="confirm-password" class="form-control" placeholder="Confirm new password" required>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="update-password">Update Password</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 
             <div class="form-group">
                 <label class="form-label required">Mobile Number</label>
                 <input type="tel" class="form-input" id="mobile" name="mobile" value="<%= user.phone %>" required>
+            </div>
+
+            <%if(!user.googleId){%>
+            <!-- Reset Password Button -->
+            <button type="button" class="reset-password-btn" data-bs-toggle="modal" data-bs-target="#resetPasswordModal">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 5C13.66 5 15 6.34 15 8C15 9.66 13.66 11 12 11C10.34 11 9 9.66 9 8C9 6.34 10.34 5 12 5ZM12 19.2C9.5 19.2 7.29 17.92 6 15.98C6.03 13.99 10 12.9 12 12.9C13.99 12.9 17.97 13.99 18 15.98C16.71 17.92 14.5 19.2 12 19.2Z" fill="currentColor"/>
+                </svg>
+                Reset Password
+            </button>
+            <%}%>
+
+            <!-- Reset Password Modal -->
+            <div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-labelledby="resetPasswordModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="resetPasswordModalLabel">Reset Password</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="reset-password-form">
+                                <div class="mb-3">
+                                    <label class="form-label">Old Password</label>
+                                    <input type="password" id="old-password" class="form-control" placeholder="Enter old password" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">New Password</label>
+                                    <input type="password" id="new-password" class="form-control" placeholder="Enter new password" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Confirm New Password</label>
+                                    <input type="password" id="confirm-password" class="form-control" placeholder="Confirm new password" required>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="update-password">Update Password</button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <button type="submit" class="save-button" id="save-change">SAVE CHANGES</button>
@@ -206,6 +475,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const newEmailContainer = document.getElementById('new-email-container');
     const sendOtpButton = document.getElementById('send-otp');
     const verifyOtpButton = document.getElementById('verify-otp');
+    const verifyDiv = document.getElementById('verify-div');
 
     changeEmailButton.addEventListener('click', () => {
         if (newEmailContainer.style.display === 'block') {
@@ -221,7 +491,14 @@ document.addEventListener('DOMContentLoaded', () => {
         sendOtpButton.addEventListener('click', async () => {
             const newEmail = document.getElementById('new-email').value;
             if (!newEmail) {
-                Swal.fire("Enter a valid email", "", "warning");
+                Swal.fire({
+                    icon: "warning",
+                    text: "Please enter a valid email address",
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 3000
+                });
                 return;
             }
 
@@ -235,14 +512,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
 
                 if (!data.success) {
-                    Swal.fire("Error", data.message, "error");
+                    Swal.fire({
+                        icon: "error",
+                        text: data.message,
+                        toast: true,
+                        position: "top-end"
+                    });
                     return;
                 }
 
-                Swal.fire("OTP Sent!", data.message, "success");
+                Swal.fire({
+                    icon: "success",
+                    text: "OTP sent to your email",
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 3000
+                });
                 document.getElementById('verify-div').style.display = 'block';
             } catch (error) {
-                Swal.fire("Error", "Failed to send OTP. Please check your internet connection.", "error");
+                Swal.fire({
+                    icon: "error",
+                    text: "Failed to send OTP. Please check your internet connection.",
+                    toast: true,
+                    position: "top-end"
+                });
             }
         });
     }
@@ -252,7 +546,14 @@ document.addEventListener('DOMContentLoaded', () => {
         verifyOtpButton.addEventListener('click', async () => {
             const otpValue = document.getElementById('otp-field').value;
             if (!otpValue) {
-                Swal.fire("Enter OTP", "", "warning");
+                Swal.fire({
+                    icon: "warning",
+                    text: "Please enter the OTP sent to your email",
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 3000
+                });
                 return;
             }
 
@@ -265,7 +566,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const data = await response.json();
                 if (!data.success) {
-                    Swal.fire("Invalid OTP", "Please try again", "error");
+                    Swal.fire({
+                        icon: "error",
+                        text: "Invalid OTP. Please try again.",
+                        toast: true,
+                        position: "top-end"
+                    });
                     return;
                 }
 
@@ -280,23 +586,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 const saveData = await saveResponse.json();
 
                 if (!saveData.success) {
-                    Swal.fire("Error", saveData.message, "error");
+                    Swal.fire({
+                        icon: "error",
+                        text: saveData.message,
+                        toast: true,
+                        position: "top-end"
+                    });
                     return;
                 }
 
                 Swal.fire({
-                    title: "Email Updated Successfully! ",
-                    text: saveData.message,
                     icon: "success",
-                    timer: 2000,
+                    text: "Email updated successfully!",
                     toast: true,
-                    position: "top-end"
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 2000
                 }).then(() => {
                     window.location.reload();
                 });
 
             } catch (error) {
-                Swal.fire("Error", "Failed to verify OTP or update email.", "error");
+                Swal.fire({
+                    icon: "error",
+                    text: "Failed to verify OTP or update email.",
+                    toast: true,
+                    position: "top-end"
+                });
             }
         });
     }
@@ -306,6 +622,18 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const fullName = document.getElementById('fullName').value;
         const mobile = document.getElementById('mobile').value;
+
+        if (!fullName || !mobile) {
+            Swal.fire({
+                icon: "warning",
+                text: "Please fill in all required fields",
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 3000
+            });
+            return;
+        }
 
         try {
             const response = await fetch('/saveAccount', {
@@ -317,47 +645,90 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (!data.success) {
-                Swal.fire("Error", data.message, "error");
+                Swal.fire({
+                    icon: "error",
+                    text: data.message,
+                    toast: true,
+                    position: "top-end"
+                });
                 return;
             }
 
-            Swal.fire("Profile Updated!", data.message, "success").then(() => {
-                window.location.reload();
+            Swal.fire({
+                icon: "success",
+                text: "Profile updated successfully!",
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 2000
+            }).then(() => {
+                window.location.href = "/userProfile";
             });
         } catch (error) {
-            Swal.fire("Error", "Failed to update profile", "error");
+            Swal.fire({
+                icon: "error",
+                text: "Failed to update profile",
+                toast: true,
+                position: "top-end"
+            });
         }
     });
 });
-
 </script>
+
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const updatePasswordBtn = document.getElementById("update-password");
     
         updatePasswordBtn.addEventListener("click", async () => {
-            const oldPassword = document.getElementById("old-password").value;
-            const newPassword = document.getElementById("new-password").value;
-            const confirmPassword = document.getElementById("confirm-password").value;
+            let oldPassword = document.getElementById("old-password").value.trim();
+            let newPassword = document.getElementById("new-password").value.trim();
+            let confirmPassword = document.getElementById("confirm-password").value.trim();
     
+            // 🚀 Check if all fields are filled
             if (!oldPassword || !newPassword || !confirmPassword) {
                 Swal.fire({
                     icon: "warning",
                     title: "Incomplete Fields",
-                    text: "Please fill in all fields.",
+                    text: "Please fill in all password fields.",
                 });
                 return;
             }
     
-            if (newPassword.length < 6) {
+            // 🚀 Check if old and new passwords are different
+            if (oldPassword === newPassword) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Same Password",
+                    text: "New password must be different from the old password.",
+                });
+                return;
+            }
+    
+            // 🚀 Password Strength Check (Minimum 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character)
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            
+            if (!passwordRegex.test(newPassword)) {
                 Swal.fire({
                     icon: "warning",
                     title: "Weak Password",
-                    text: "New password must be at least 6 characters long.",
+                    text: "New password must be at least 8 characters long and include uppercase, lowercase, number, and special character.",
                 });
                 return;
             }
     
+            // 🚀 Prevent Common Passwords
+            const commonPasswords = ["password", "123456", "12345678", "qwerty", "abc123", "password1", "123456789"];
+            if (commonPasswords.includes(newPassword.toLowerCase())) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Weak Password",
+                    text: "Your password is too common. Choose a stronger one.",
+                });
+                return;
+            }
+    
+            // 🚀 Check if new passwords match
             if (newPassword !== confirmPassword) {
                 Swal.fire({
                     icon: "error",
@@ -391,16 +762,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 }).then(() => {
                     location.reload();
                 });
+    
             } catch (error) {
                 Swal.fire({
                     icon: "error",
                     title: "Error",
-                    text: "Failed to update password.",
+                    text: "Failed to update password. Please try again later.",
                 });
             }
         });
     });
-    </script>
+</script>
     
 
 <%- include("../../views/partials/user/footer") %>
