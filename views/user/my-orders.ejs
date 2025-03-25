@@ -692,15 +692,24 @@ function cancelOrder(orderNumber) {
         title: 'Are you sure?',
         text: 'Do you really want to cancel this entire order?',
         icon: 'warning',
+        input: 'text',  
+        inputPlaceholder: 'Enter cancellation reason',
         showCancelButton: true,
         confirmButtonColor: '#d33',
         cancelButtonColor: '#3085d6',
         confirmButtonText: 'Yes, cancel it!',
+        inputValidator: (value) => {
+            if (!value) {
+                return 'Please provide a reason for cancellation!';
+            }
+        }
     }).then((result) => {
-        if (result.isConfirmed) {
+        if (result.isConfirmed && result.value) {
+            const reason = result.value; 
             fetch(`/orderCancel/${orderNumber}`, { 
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' }
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ reason }) 
             })
             .then(response => response.json())
             .then(data => {
@@ -718,6 +727,7 @@ function cancelOrder(orderNumber) {
         }
     });
 }
+
 
 function cancelProduct(orderNumber, productId) {
     Swal.fire({

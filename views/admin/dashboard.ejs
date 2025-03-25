@@ -522,10 +522,38 @@ body {
         </div>
       </div>
     </div>
-  </div>
-  
-
-<%- include("../../views/partials/admin/footer") %>
+    
+    <!-- Top 10 Best-Selling Brands -->
+     <h2 class="section-title">Top 5 Best-Selling Brands</h2>
+     <div class="table-container mb-4">
+      <div class="table-header">
+        <h3 class="table-title">Brand Performance</h3>
+      </div>
+      <div class="table-body">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Brand Name</th>
+                <th>Total Quantity Sold</th>
+                <th>Total Revenue</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% topBrands.forEach(brand => { %>
+                <tr>
+                  <td><%= brand.brandName %></td>
+                  <td><%= brand.totalQuantitySold.toLocaleString() %></td>
+                  <td>₹<%= brand.totalRevenue.toLocaleString() %></td>
+                </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%- include("../../views/partials/admin/footer") %>
 
   
 <script>

@@ -614,13 +614,18 @@ const loadOrderDetails = async (req, res) => {
 
 const orderCancel = async (req, res) => {
     try {
-        const orderId = req.params.id
-        console.log("oeder: ",req.params.id)
-        const order = await Order.findOne({ orderId: orderId })
+        const orderId = req.params.id;
+        const { reason } = req.body; 
+
+        console.log("Order ID:", orderId);
+        console.log("Cancellation Reason:", reason);
+
+        const order = await Order.findOne({ orderId });
 
         if (!order) {
             return res.status(404).json({ success: false, message: 'Order not found' });
         }
+
 
         for (const item of order.orderItems) {
             await Product.updateOne(
@@ -641,7 +646,7 @@ const orderCancel = async (req, res) => {
                     productName: order.orderItems.map(item => item.productName),
                     type: 'credit',
                     method: "refund",
-                })
+                });
                 
                 await userWallet.save();
             } else {
@@ -649,16 +654,19 @@ const orderCancel = async (req, res) => {
             }
         }
 
-        await Order.findOneAndUpdate({ orderId: orderId },{$set:{status:"Cancelled"}})
+        await Order.findOneAndUpdate(
+            { orderId },
+            { $set: { status: "Cancelled", cancellationReason: reason } }
+        );
 
-        res.json({ success: true, message: 'Order cancelled and stock updated successfully' });
+        res.json({ success: true, message: 'Order cancelled successfully, and stock updated' });
 
     } catch (error) {
         console.error('Error while cancelling the order:', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
-
 };
+
 
 const cancelProduct = async (req, res) => {
     try {

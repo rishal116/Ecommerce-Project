@@ -32,7 +32,7 @@ const downloadExcelReport = async (req, res) => {
     endDate.setHours(23, 59, 59, 999)
 
     const orders = await Order.find({
-      createdOn: { $gte: startDate, $lte: endDate }
+      createdOn: { $gte: startDate, $lte: endDate },
     })
     .populate('userId', 'name')
     
@@ -124,7 +124,7 @@ const downloadPdfReport = async (req, res) => {
     endDate.setHours(23, 59, 59, 999)
     
     const orders = await Order.find({
-      createdOn: { $gte: startDate, $lte: endDate }
+      createdOn: { $gte: startDate, $lte: endDate },
     })
     .populate('userId', 'name')
     
@@ -248,7 +248,7 @@ const getOrdersReport = async (req, res) => {
       }
 
       const orders = await Order.find({
-          createdOn: { $gte: startDate, $lte: endDate }
+          createdOn: { $gte: startDate, $lte: endDate },
       }).populate("userId", "name"); 
 
       const totalOrders = orders.length;

@@ -88,7 +88,7 @@ const loadDashboard = async (req, res) => {
                 $group: {
                     _id: null,
                     totalSales: { $sum: "$finalAmount" },
-                    totalDiscounts: { $sum: "$discount" }
+                    totalDiscounts: { $sum: "$discount" },
                 }
             }
         ]);
@@ -174,18 +174,61 @@ const loadDashboard = async (req, res) => {
             },
             {
                 $lookup: {
-                    from: "categories",
+                    from: "categories", // Ensure collection name matches your DB
                     localField: "_id",
                     foreignField: "_id",
                     as: "categoryInfo"
                 }
             },
             { $unwind: "$categoryInfo" },
-            { $sort: { totalRevenue: -1 } },
-            { $limit: 5 }
+            { $sort: { totalRevenue: -1 } }, // Sorting by revenue (highest first)
+            { $limit: 10 } // Now fetching top 10 instead of 5
         ]);
+        
 
-       
+        const topBrands = await Order.aggregate([
+            { $unwind: "$orderItems" }, 
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "orderItems.productId",
+                    foreignField: "_id",
+                    as: "productInfo"
+                }
+            },
+            { $unwind: "$productInfo" },
+            {
+                $group: {
+                    _id: "$productInfo.brand", 
+                    totalRevenue: { $sum: { $multiply: ["$orderItems.quantity", "$orderItems.price"] } },
+                    totalQuantitySold: { $sum: "$orderItems.quantity" }
+                }
+            },
+            {
+                $lookup: {
+                    from: "brands",
+                    localField: "_id", 
+                    foreignField: "brandName", 
+                    as: "brandInfo"
+                }
+            },
+            { $unwind: { path: "$brandInfo", preserveNullAndEmptyArrays: true } }, 
+            { $sort: { totalRevenue: -1 } },
+            { $limit: 10 },
+            {
+                $project: {
+                    _id: 0,
+                    brandName: "$_id",
+                    totalRevenue: 1,
+                    totalQuantitySold: 1,
+                    brandImage: { $arrayElemAt: ["$brandInfo.brandImage", 0] } 
+                }
+            }
+        ]);
+        
+        console.log("Top Brands:", topBrands);
+        
+
         res.render('dashboard', {
             data: {
                 totalSales,
@@ -212,7 +255,8 @@ const loadDashboard = async (req, res) => {
                 selectedPeriod: period
             },
             topProducts,
-            topCategories
+            topCategories,
+            topBrands
         });
 
     } catch (error) {

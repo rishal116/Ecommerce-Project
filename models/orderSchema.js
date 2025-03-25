@@ -120,6 +120,10 @@ address: {
       'Return Rejected',
     ],
   },
+  cancellationReason: { 
+    type: String,
+    default: '',
+  },
   createdOn: {
     type: Date,
     default: Date.now,

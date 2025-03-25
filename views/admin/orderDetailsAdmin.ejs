@@ -339,7 +339,7 @@
                 </div>
 
                 <div class="select-container">
-                    <select id="status-<%= order.orderId %>" onchange="updateStatus('<%= order.orderId %>')" <%= ['Delivered', 'Return Request', 'Return Accepted', 'Return Rejected','payment pending'].includes(order.status) ? 'disabled' : '' %>>
+                    <select id="status-<%= order.orderId %>" onchange="updateStatus('<%= order.orderId %>')" <%= ['Cancelled','Delivered', 'Return Request', 'Return Accepted', 'Return Rejected','payment pending'].includes(order.status) ? 'disabled' : '' %>>
                         <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
                         <option value="Processing" <%= order.status === 'Processing' ? 'selected' : '' %>>Processing</option>
                         <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
