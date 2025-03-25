@@ -1,7 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Contact Us | Myntra Style</title>
+<%- include("../../views/partials/user/header") %>
+    <title>Contact Us | TrendyThreads</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
         :root {
@@ -98,25 +96,23 @@
             border-top: 1px solid #eaeaec;
         }
     </style>
-</head>
-<body>
-    <!-- Header -->
-    <header class="myntra-header">
-        <div class="container">
-            <div class="d-flex justify-content-center">
-                <div class="text-center">
-                    <img src="/api/placeholder/130/36" alt="Myntra Logo" class="myntra-logo">
-                </div>
-            </div>
-        </div>
-    </header>
+
+   
     
     <!-- Main Content -->
     <div class="myntra-container">
         <div class="text-center mb-4">
-            <h1 class="myntra-title">Contact Us</h1>
-            <p class="myntra-subtitle">We'd love to hear from you. Please fill out the form below.</p>
+            <h1 class="myntra-title">Contact TrendyThreads</h1>
+            <p class="myntra-subtitle">We're here to help! Reach out with any questions or feedback.</p>
         </div>
+        <% if (messages.success.length > 0) { %>
+            <div class="alert alert-success"><%= messages.success %></div>
+        <% } %>
+        
+        <% if (messages.error.length > 0) { %>
+            <div class="alert alert-danger"><%= messages.error %></div>
+        <% } %>
+        
         
         <div class="contact-card">
             <form action="/contact" method="POST">
@@ -131,8 +127,19 @@
                 </div>
                 
                 <div class="mb-4">
+                    <label for="phone" class="form-label">Phone Number (Optional)</label>
+                    <input type="tel" id="phone" name="phone" class="form-control" placeholder="Enter your phone number">
+                </div>
+                
+                <div class="mb-4">
                     <label for="subject" class="form-label">Subject</label>
-                    <input type="text" id="subject" name="subject" class="form-control" required placeholder="What is this regarding?">
+                    <select id="subject" name="subject" class="form-control" required>
+                        <option value="">Select a subject</option>
+                        <option value="order">Order Inquiry</option>
+                        <option value="return">Return/Exchange</option>
+                        <option value="product">Product Information</option>
+                        <option value="other">Other</option>
+                    </select>
                 </div>
                 
                 <div class="mb-4">
@@ -147,15 +154,39 @@
         </div>
         
         <div class="text-center mt-5">
-            <p class="myntra-subtitle">You can also reach us at <strong>support@example.com</strong></p>
+            <p class="myntra-subtitle">
+                Customer Support: <strong>1-800-THREADS</strong><br>
+                Email: <strong>support@trendythreads.com</strong>
+            </p>
         </div>
     </div>
     
-    <!-- Footer -->
-    <footer class="myntra-footer">
-        <div class="container">
-            <p>© 2025 Myntra. All rights reserved.</p>
-        </div>
-    </footer>
-</body>
-</html>
+    
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.querySelector("form");
+
+            form.addEventListener("submit", function (event) {
+                const name = document.getElementById("name").value.trim();
+                const email = document.getElementById("email").value.trim();
+                const subject = document.getElementById("subject").value;
+                const message = document.getElementById("message").value.trim();
+
+                if (name === "" || email === "" || subject === "" || message === "") {
+                    event.preventDefault();
+                    alert("Please fill in all required fields.");
+                } else if (!validateEmail(email)) {
+                    event.preventDefault();
+                    alert("Please enter a valid email address.");
+                }
+            });
+
+            function validateEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+        });
+    </script>
+
+    <%- include("../../views/partials/user/footer") %>

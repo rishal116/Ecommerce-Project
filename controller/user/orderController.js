@@ -833,7 +833,7 @@ const retryPayment = async (req, res) => {
         }
         const updateOrder = await Order.updateOne({ orderId: orderId }, { status: 'Pending' })
         if (updateOrder.modifiedCount > 0) {
-            req.session.orderId = orderId
+            req.session.orderId1 = orderId
             res.status(200).json({ success: true })
             return
         }
@@ -847,13 +847,14 @@ const retryPayment = async (req, res) => {
 const loadPaymentSuccess = async (req, res) => {
     try {
         const orderId =  req.session.orderId
-        const order = await Order.findOne({ orderId: orderId })
+        console.log(orderId)
+        const order = await Order.findOne({_id: orderId })
         const userId = req.session.user
         const userWallet = await Wallet.findOne({ user: userId })
         if (userWallet) {
             userWallet.transaction.push({
                 amount:order.finalAmount,
-                transactionId: order.orderId,
+                transactionId:  orderId,
                 productName: order.orderItems.map(item => item.productName),
                 type: 'debit',
                 method:"upi",
@@ -863,10 +864,6 @@ const loadPaymentSuccess = async (req, res) => {
         } else {
             console.log('User wallet not found.')
         }
-
-
-
-
         res.render('payment-success')
        
     } catch (error) {

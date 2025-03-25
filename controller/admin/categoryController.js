@@ -1,31 +1,38 @@
 const Category = require("../../models/categorySchema")
 const Product = require("../../models/productSchema")
 
-const categoryInfo = async(req,res)=>{
+const categoryInfo = async (req, res) => {
     try {
-        const page  = parseInt(req.query.page) ||1
-        const limit = 3
-        const skip = (page-1)*limit
-        
-        const categoryData = await Category.find({})
-        .sort({createdAt:-1})
-        .skip(skip)
-        .limit(limit)
+        const page = parseInt(req.query.page) || 1;
+        const limit = 3;
+        const skip = (page - 1) * limit;
+        const searchQuery = req.query.search ? req.query.search.trim() : "";
 
-        const totalCategories = await Category.countDocuments() 
-        const totalPages = Math.ceil(totalCategories/limit)
-        
-        res.render("category",{
-            cat:categoryData,
-            currentPage:page,
-            totalPages:totalPages,
-            totalCategories:totalCategories
-        })
+        let filter = {};
+        if (searchQuery) {
+            filter = { name: { $regex: searchQuery, $options: "i" } };
+        }
+
+        const categoryData = await Category.find(filter)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
+        const totalCategories = await Category.countDocuments(filter);
+        const totalPages = Math.ceil(totalCategories / limit);
+
+        res.render("category", {
+            cat: categoryData,
+            currentPage: page,
+            totalPages: totalPages,
+            totalCategories: totalCategories,
+            searchQuery: searchQuery, 
+        });
     } catch (error) {
-        console.log("Error in caategoryInfo: ",error)
-        res.redirect("/admin/pageError")
+        console.log("Error in categoryInfo:", error);
+        res.redirect("/admin/pageError");
     }
-}
+};
 
 const addCategory = async(req,res)=>{
     try {

@@ -203,13 +203,7 @@ const resetPassword = async (req, res) => {
     }
 };
 
-const contactUs = async(req,res)=>{
-    try {
-        res.render("contactUs")
-    } catch (error) {
-        
-    }
-}
+
 
 
 
@@ -222,5 +216,4 @@ module.exports = {
     saveEmail,
     saveDetails,
     resetPassword,
-    contactUs 
 }

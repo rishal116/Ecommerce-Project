@@ -1,0 +1,231 @@
+<%- include("../../views/partials/admin/header") %>
+<title>Contact Messages | Admin Panel</title>
+
+<div class="container-fluid px-4 mt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">Contact Messages</h2>
+                    <div class="d-flex align-items-center">
+                        <button id="refreshMessages" class="btn btn-light me-2">
+                            <i class="fas fa-sync"></i> Refresh
+                        </button>
+                        <div class="input-group" style="width: 250px;">
+                            <input type="text" id="searchMessages" class="form-control" placeholder="Search messages...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body p-0">
+                    <% if (messages.length === 0) { %>
+                        <div class="alert alert-info m-3 text-center">
+                            <i class="fas fa-inbox me-2"></i>No messages have been received yet.
+                        </div>
+                    <% } else { %>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Subject</th>
+                                        <th>Message</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% messages.forEach(message => { %>
+                                        <tr>
+                                            <td><%= message.name %></td>
+                                            <td><%= message.email %></td>
+                                            <td><%= message.phone || "N/A" %></td>
+                                            <td><%= message.subject %></td>
+                                            <td>
+                                                <span class="text-truncate" style="max-width: 150px; display: inline-block;">
+                                                    <%= message.message %>
+                                                </span>
+                                            </td>
+                                            <td><%= message.createdAt.toLocaleString() %></td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <button class="btn btn-sm btn-info view-message" 
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#messageModal"
+                                                            data-name="<%= message.name %>"
+                                                            data-email="<%= message.email %>"
+                                                            data-phone="<%= message.phone || 'N/A' %>"
+                                                            data-subject="<%= message.subject %>"
+                                                            data-message="<%= message.message %>"
+                                                            data-date="<%= message.createdAt.toLocaleString() %>">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-danger delete-message" data-id="<%= message._id %>">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Message Details Modal -->
+<div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="messageModalLabel">Message Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Name:</strong>
+                        <p id="modalName"></p>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Email:</strong>
+                        <p id="modalEmail"></p>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Phone:</strong>
+                        <p id="modalPhone"></p>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Date:</strong>
+                        <p id="modalDate"></p>
+                    </div>
+                    <div class="col-12">
+                        <strong>Subject:</strong>
+                        <p id="modalSubject"></p>
+                    </div>
+                    <div class="col-12">
+                        <strong>Message:</strong>
+                        <p id="modalMessage"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Message View Modal
+    const messageModal = document.getElementById('messageModal');
+    messageModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        document.getElementById('modalName').textContent = button.getAttribute('data-name');
+        document.getElementById('modalEmail').textContent = button.getAttribute('data-email');
+        document.getElementById('modalPhone').textContent = button.getAttribute('data-phone');
+        document.getElementById('modalSubject').textContent = button.getAttribute('data-subject');
+        document.getElementById('modalMessage').textContent = button.getAttribute('data-message');
+        document.getElementById('modalDate').textContent = button.getAttribute('data-date');
+    });
+
+    // Search Messages
+    const searchInput = document.getElementById('searchMessages');
+    const tableRows = document.querySelectorAll('tbody tr');
+    searchInput.addEventListener('keyup', function() {
+        const searchTerm = this.value.toLowerCase();
+        tableRows.forEach(row => {
+            const rowText = row.textContent.toLowerCase();
+            row.style.display = rowText.includes(searchTerm) ? '' : 'none';
+        });
+    });
+
+    // Refresh Messages (placeholder - would typically call an AJAX endpoint)
+    const refreshButton = document.getElementById('refreshMessages');
+    refreshButton.addEventListener('click', function() {
+        location.reload();
+    });
+});
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Delete Message using AJAX
+    const deleteButtons = document.querySelectorAll(".delete-message");
+    deleteButtons.forEach(button => {
+        button.addEventListener("click", async function () {
+            const messageId = this.getAttribute("data-id");
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this message!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, Delete it!",
+                cancelButtonText: "Cancel",
+                reverseButtons: true,
+                customClass: {
+                    confirmButton: "btn btn-danger",
+                    cancelButton: "btn btn-secondary"
+                },
+                buttonsStyling: false
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch(`/admin/contact/${messageId}`, {
+                            method: "DELETE",
+                            headers: { "Content-Type": "application/json" }
+                        });
+
+                        const result = await response.json();
+                        if (result.success) {
+                            Swal.fire({
+                                toast: true,
+                                position: "top-end",
+                                icon: "success",
+                                title: "Message deleted successfully!",
+                                showConfirmButton: false,
+                                timer: 2000,
+                                timerProgressBar: true,
+                                background: "#1E1E2F",
+                                color: "#fff"
+                            });
+
+                            setTimeout(() => location.reload(), 2000);
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Deletion Failed",
+                                text: "An error occurred while deleting the message. Please try again.",
+                                background: "#1E1E2F",
+                                color: "#fff"
+                            });
+                        }
+                    } catch (error) {
+                        console.error("Error deleting message:", error);
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops!",
+                            text: "Something went wrong. Please try again later.",
+                            background: "#1E1E2F",
+                            color: "#fff"
+                        });
+                    }
+                }
+            });
+        });
+    });
+});
+
+
+</script>
+<!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<%- include("../../views/partials/admin/footer") %>

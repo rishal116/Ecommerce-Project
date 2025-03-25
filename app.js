@@ -9,6 +9,7 @@ const adminRouter = require("./routes/adminRouter")
 const db = require("./config/db")
 require("./config/passport");
 const nocache = require('nocache')
+const flash = require("express-flash")
 db()
 
 
@@ -27,6 +28,7 @@ app.use(session({
 }))
 
 app.use(nocache())
+app.use(flash())
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -36,6 +38,7 @@ app.set('views', [path.join(__dirname, 'views/user'),path.join(__dirname,"views/
 app.use(express.static(path.join(__dirname,"public")))
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 app.use("/productDetails", express.static("public"));
+app.use("/contact", express.static("public"));
 
 
 

@@ -8,9 +8,11 @@ const brandController = require("../controller/admin/brandController")
 const orderController = require("../controller/admin/orderController")
 const couponController = require("../controller/admin/couponController")
 const dashboardController = require("../controller/admin/dashboardController")
+const contactMessageController = require("../controller/admin/contactMessageController")
 const auth = require("../middlewares/auth")
 const multer = require("multer")
 const upload = require("../helpers/multer")
+const { getContactMessages } = require("../controller/admin/contactMessageController")
 
 router
 // Error management
@@ -75,5 +77,10 @@ router
 .get("/orders/report",auth.adminAuth,dashboardController.getOrdersReport)
 .get('/orders/download/excel',auth.adminAuth, dashboardController.downloadExcelReport)
 .get('/orders/download/pdf', auth.adminAuth, dashboardController.downloadPdfReport)
+
+// contact management
+.get("/contactMessages", auth.adminAuth,contactMessageController.getContactMessages)
+.delete("/contact/:id",auth.adminAuth,contactMessageController.deleteContactMessage)
+.get("/search",auth.adminAuth, contactMessageController.searchMessages)
 
 module.exports = router

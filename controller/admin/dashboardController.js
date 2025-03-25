@@ -252,7 +252,7 @@ const getOrdersReport = async (req, res) => {
       }).populate("userId", "name"); 
 
       const totalOrders = orders.length;
-      const totalItems = orders.reduce((sum, order) => sum + (order.items?.length || 0), 0);
+      const totalItems = orders.reduce((sum, order) => sum + (order.orderItems?.length || 0), 0);
       const totalBaseAmount = orders.reduce((sum, order) => sum + (order.totalPrice || 0), 0);
       const totalDiscount = orders.reduce((sum, order) => sum + (order.discount || 0), 0);
       const totalFinalAmount = orders.reduce((sum, order) => sum + (order.finalAmount || 0), 0);

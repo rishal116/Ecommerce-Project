@@ -8,6 +8,7 @@ const orderController = require("../controller/user/orderController")
 const accountController = require("../controller/user/accountController")
 const wishlistController = require("../controller/user/wishlistController")
 const couponController = require("../controller/user/couponController")
+const contactController = require("../controller/user/contactController")
 const walletController = require("../controller/user/walletController")
 const {userAuth} = require("../middlewares/auth")
 const passport = require("passport")
@@ -36,7 +37,9 @@ router
 .post("/sendOtp",userAuth,accountController.sendOtp)
 .patch("/resetPassword",userAuth,accountController.resetPassword)
 
-.get("/contact",userAuth,accountController.contactUs)
+// contact management
+.get("/contact",userAuth,contactController.contactUs)
+.post("/contact",userAuth,contactController.submitContactForm)
 
 router.get(
     "/auth/google",

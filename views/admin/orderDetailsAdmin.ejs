@@ -351,6 +351,12 @@
                         <option value="payment pending" <%= order.status === 'payment pending' ? 'selected' : '' %> disabled>Payment Pending</option>
                     </select>
                 </div>
+                <% if(order.cancellationReason){ %>
+                    <div class="info-row">
+                        <span class="label">Cancellation Reason:</span>
+                        <span class="value"><%= order.cancellationReason %></span>
+                    </div>
+                <% } %>
             </div>
 
             <!-- Shipping Address -->
