@@ -1,0 +1,132 @@
+<%- include("../../views/partials/admin/header") %>
+<style>
+    /* Container Styling */
+    .container {
+        max-width: 600px;
+        margin: 30px auto;
+        padding: 20px;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        text-align: left;
+    }
+    
+    /* Title */
+    .title {
+        text-align: center;
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+    
+    /* Transaction Card */
+    .transaction-card {
+        padding: 20px;
+        border-radius: 8px;
+        background: #f9f9f9;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .transaction-card p {
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+    
+    /* User Info */
+    .user-name {
+        font-weight: bold;
+    }
+    
+    .user-email {
+        font-size: 14px;
+        color: #666;
+    }
+    
+    /* Transaction Type Colors */
+    .credit {
+        color: green;
+        font-weight: bold;
+    }
+    
+    .debit {
+        color: red;
+        font-weight: bold;
+    }
+    
+    /* Amount */
+    .amount {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    /* Buttons */
+    .btn {
+        display: inline-block;
+        padding: 10px 15px;
+        margin-top: 10px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 16px;
+        text-align: center;
+        transition: background 0.3s ease;
+    }
+    
+    .view-btn {
+        background: #007bff;
+        color: white;
+    }
+    
+    .view-btn:hover {
+        background: #0056b3;
+    }
+    
+    .back-btn {
+        background: #6c757d;
+        color: white;
+    }
+    
+    .back-btn:hover {
+        background: #545b62;
+    }
+    
+    /* Responsive */
+    @media screen and (max-width: 768px) {
+        .container {
+            max-width: 90%;
+        }
+    
+        .btn {
+            width: 100%;
+            display: block;
+            text-align: center;
+        }
+    }
+    </style>
+<div class="container">
+    <h1 class="title">Transaction Details</h1>
+
+    <div class="transaction-card">
+        <p><strong>Transaction ID:</strong> <%= transaction.transactionId %></p>
+        <p><strong>Transaction Date:</strong> <%= new Date(transaction.createdAt).toLocaleString() %></p>
+        <p><strong>User:</strong> <span class="user-name"><%= user.name %></span> (<span class="user-email"><%= user.email %></span>)</p>
+        <p><strong>Type:</strong> 
+            <span class="<%= transaction.type === 'credit' ? 'credit' : 'debit' %>">
+                <%= transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1) %>
+            </span>
+        </p>
+        <p><strong>Method:</strong> <%= transaction.method %></p>
+        <p><strong>Amount:</strong> <span class="amount">$<%= transaction.amount.toFixed(2) %></span></p>
+
+        <% if (transaction.reason) { %>
+            <p><strong>Reason:</strong> <%= transaction.reason %></p>
+            <a href="/admin/orderDetailsAdmin/<%= transaction.transactionId %>" class="btn view-btn">View Order</a>
+        <% } %>
+
+        <a href="/admin/transactions" class="btn back-btn">Back to Transactions</a>
+    </div>
+</div>
+
+<%- include("../../views/partials/admin/footer") %>
+
+

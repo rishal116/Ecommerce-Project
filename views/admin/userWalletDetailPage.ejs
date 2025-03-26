@@ -1,0 +1,130 @@
+<%- include("../../views/partials/admin/header") %>
+
+<div class="container mt-5">
+    <div class="card shadow-lg border-0">
+        <div class="card-header text-white bg-gradient-primary py-3">
+            <h2 class="mb-0 text-center">Wallet Details for <%= wallet.user.name %></h2>
+        </div>
+        <div class="card-body p-4">
+            <p><strong>Email:</strong> <%= wallet.user.email %></p>
+            <p><strong>Balance:</strong> 
+                <span class="fw-bold text-success">
+                    <%= new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(wallet.balance.toFixed(2)) %>
+                </span>
+            </p>
+
+            <h3 class="mt-4">Transactions</h3>
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-dark text-center">
+                        <tr>
+                            <th>Transaction ID</th>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Method</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (transactions.length > 0) { %>
+                            <% transactions.forEach(t => { %>
+                                <tr class="text-center">
+                                    <td><%= t.transactionId %></td>
+                                    <td><%= new Date(t.createdAt).toLocaleString() %></td>
+                                    <td>
+                                        <% if (t.type === 'credit') { %>
+                                            <span class="badge bg-success px-3 py-2">Credit</span>
+                                        <% } else { %>
+                                            <span class="badge bg-danger px-3 py-2">Debit</span>
+                                        <% } %>
+                                    </td>
+                                    <td class="fw-bold">
+                                        <%= new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(t.amount) %>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary text-white px-3 py-2"><%= t.method.toUpperCase() %></span>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/transaction/<%= t.transactionId %>" class="btn btn-sm btn-outline-primary rounded-pill">
+                                            View
+                                        </a>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">No transactions found.</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <nav>
+                <ul class="pagination justify-content-center mt-3">
+                    <% if (currentPage > 1) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                        </li>
+                    <% } %>
+
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                            <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                        </li>
+                    <% } %>
+
+                    <% if (currentPage < totalPages) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                        </li>
+                    <% } %>
+                </ul>
+            </nav>
+
+            <a href="/admin/transactions" class="btn btn-secondary mt-3 rounded-pill shadow">Back to Transactions</a>
+        </div>
+    </div>
+</div>
+
+<%- include("../../views/partials/admin/footer") %>
+<style>
+    .bg-gradient-primary {
+    background: linear-gradient(135deg, #007bff, #6610f2);
+}
+
+.card-header {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.pagination .active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.btn-outline-primary {
+    border: 1px solid #007bff;
+    color: #007bff;
+    transition: 0.3s;
+}
+
+.btn-outline-primary:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.rounded-pill {
+    border-radius: 50px !important;
+}
+
+</style>
+
+

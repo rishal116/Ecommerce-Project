@@ -1,0 +1,223 @@
+<%- include("../../views/partials/admin/header") %>
+
+<style>
+/* General Container */
+.container {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Title */
+.title {
+    text-align: center;
+    font-size: 26px;
+    font-weight: bold;
+    background: linear-gradient(135deg, #007bff, #6610f2);
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+/* Table Styling */
+.table-container {
+    overflow-x: auto;
+    max-height: 500px;
+}
+
+.transactions-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    background: #fff;
+    border-radius: 5px;
+    overflow: hidden;
+    table-layout: fixed;
+}
+
+.transactions-table th,
+.transactions-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+    word-wrap: break-word;
+    text-align: center;
+}
+
+.transactions-table th {
+    background: #007bff;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.transactions-table tbody tr:hover {
+    background: #f8f9fa;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* User Info */
+.user-name {
+    font-weight: bold;
+}
+
+.user-email {
+    font-size: 12px;
+    color: #666;
+}
+
+/* Transaction Type Badges */
+.credit {
+    color: green;
+    font-weight: bold;
+    background: #d4edda;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.debit {
+    color: red;
+    font-weight: bold;
+    background: #f8d7da;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+/* View Button */
+.view-btn {
+    display: inline-block;
+    padding: 6px 12px;
+    background: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.view-btn:hover {
+    background: #218838;
+    transform: scale(1.05);
+}
+
+/* Pagination */
+.pagination {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.pagination .btn {
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 5px;
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.pagination .btn:hover {
+    background: #0056b3;
+    transform: scale(1.05);
+}
+
+.pagination .btn.disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+    .transactions-table th,
+    .transactions-table td {
+        padding: 8px;
+    }
+
+    .view-btn {
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+
+    .pagination .btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+}
+</style>
+
+<div class="container">
+    <h1 class="title">Wallet Transactions</h1>
+
+    <div class="table-container">
+        <table class="transactions-table">
+            <thead>
+                <tr>
+                    <th>Transaction ID</th>
+                    <th>Date</th>
+                    <th>User</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Details</th>
+                    <th>Wallet</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% transactions.forEach(transaction => { %>
+                    <tr>
+                        <td><%= transaction.transaction.transactionId %></td>
+                        <td><%= new Date(transaction.transaction.createdAt).toLocaleString() %></td>
+                        <td>
+                            <span class="user-name"><%= transaction.user.name %></span> 
+                            <br>
+                            <span class="user-email"><%= transaction.user.email %></span>
+                        </td>
+                        <td class="<%= transaction.transaction.type === 'credit' ? 'credit' : 'debit' %>">
+                            <%= transaction.transaction.type.charAt(0).toUpperCase() + transaction.transaction.type.slice(1) %>
+                        </td>
+                        <td><strong>₹<%= transaction.transaction.amount.toFixed(2) %></strong></td>
+                        <td>
+                            <a href="/admin/transaction/<%= transaction.transaction.transactionId %>" class="view-btn">View</a>
+                        </td>
+                        <td>
+                            <a href="/admin/wallet/<%= transaction.user ? transaction.user._id : '' %>" class="view-btn">View Wallet</a>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        <% if (currentPage > 1) { %>
+            <a href="?page=<%= currentPage - 1 %>" class="btn">Previous</a>
+        <% } else { %>
+            <span class="btn disabled">Previous</span>
+        <% } %>
+
+        <span class="current-page">Page <%= currentPage %> of <%= totalPages %></span>
+
+        <% if (currentPage < totalPages) { %>
+            <a href="?page=<%= currentPage + 1 %>" class="btn">Next</a>
+        <% } else { %>
+            <span class="btn disabled">Next</span>
+        <% } %>
+    </div>
+</div>
+
+<%- include("../../views/partials/admin/footer") %>
+
+
+
+

@@ -9,6 +9,7 @@ const orderController = require("../controller/admin/orderController")
 const couponController = require("../controller/admin/couponController")
 const dashboardController = require("../controller/admin/dashboardController")
 const contactMessageController = require("../controller/admin/contactMessageController")
+const walletAdminController =   require("../controller/admin/walletAdminController")
 const auth = require("../middlewares/auth")
 const multer = require("multer")
 const upload = require("../helpers/multer")
@@ -82,5 +83,13 @@ router
 .get("/contactMessages", auth.adminAuth,contactMessageController.getContactMessages)
 .delete("/contact/:id",auth.adminAuth,contactMessageController.deleteContactMessage)
 .get("/search",auth.adminAuth, contactMessageController.searchMessages)
+
+
+// wallet management
+.get('/transactions', auth.adminAuth,walletAdminController.renderTransactionsPage)
+.get('/transaction/:transactionId', auth.adminAuth,walletAdminController.renderTransactionDetailsPage)
+.get('/wallet/:userId', auth.adminAuth, walletAdminController.renderWalletPage)
+
+
 
 module.exports = router

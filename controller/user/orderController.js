@@ -646,6 +646,7 @@ const orderCancel = async (req, res) => {
                     productName: order.orderItems.map(item => item.productName),
                     type: 'credit',
                     method: "refund",
+                    reason:"cancel",
                 });
                 
                 await userWallet.save();
