@@ -294,13 +294,18 @@
                     <td data-label="size" class="size-price"><%= item.selectedSize%></td>
                     <td data-label="Price" class="item-price">₹<%= item.price.toFixed(2) %></td>
                     <td data-label="Quantity">
-                        <div class="quantity-control">
-                            <button onclick="updateCartItem('<%= item._id %>', parseInt(this.nextElementSibling.value) - 1, '<%= item.selectedSize %>')">-</button>
-                            <input type="number" value="<%= item.quantity %>" min="1" onchange="updateCartItem('<%= item._id %>', this.value, '<%= item.selectedSize%>')">
-                            <button onclick="updateCartItem('<%= item._id %>', parseInt(this.previousElementSibling.value) + 1, '<%= item.selectedSize %>')">+</button>
-                        </div>
-                                                
+                        <% if (item.isUnavailable) { %>
+                            <span class="unavailable-text">Product Not Available</span>
+                        <% } else { %>
+                            <div class="quantity-control">
+                                <button onclick="updateCartItem('<%= item._id %>', parseInt(this.nextElementSibling.value) - 1, '<%= item.selectedSize %>')">-</button>
+                                <input type="number" value="<%= item.quantity %>" min="1" onchange="updateCartItem('<%= item._id %>', this.value, '<%= item.selectedSize%>')">
+                                <button onclick="updateCartItem('<%= item._id %>', parseInt(this.previousElementSibling.value) + 1, '<%= item.selectedSize %>')">+</button>
+                            </div>
+                        <% } %>
                     </td>
+                    
+                    
                     <td data-label="Total" class="item-total">₹<%= (item.price * item.quantity).toFixed(2) %></td>
                     <td>
                         <button class="remove-btn" onclick="removeFromCart('<%= item._id %>')">

@@ -31,12 +31,17 @@ const walletSchema = new Schema({
         },
         method: {
             type: String,
-            enum: ["upi", "wallet", "card", "net banking", "refund"],
+            enum: ["upi", "wallet", "card", "net banking", "refund","cod"],
         },
         reason: {
             type: String,
             enum: ["return order", "cancel"], 
             default: null
+        },
+        status: {  
+            type: String,
+            enum: ["pending", "completed", "failed"],
+            default: "completed"
         }
     }]
 })

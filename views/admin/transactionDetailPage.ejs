@@ -102,31 +102,49 @@
             text-align: center;
         }
     }
-    </style>
+</style>
+
 <div class="container">
     <h1 class="title">Transaction Details</h1>
 
-    <div class="transaction-card">
-        <p><strong>Transaction ID:</strong> <%= transaction.transactionId %></p>
-        <p><strong>Transaction Date:</strong> <%= new Date(transaction.createdAt).toLocaleString() %></p>
-        <p><strong>User:</strong> <span class="user-name"><%= user.name %></span> (<span class="user-email"><%= user.email %></span>)</p>
-        <p><strong>Type:</strong> 
-            <span class="<%= transaction.type === 'credit' ? 'credit' : 'debit' %>">
-                <%= transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1) %>
-            </span>
-        </p>
-        <p><strong>Method:</strong> <%= transaction.method %></p>
-        <p><strong>Amount:</strong> <span class="amount">$<%= transaction.amount.toFixed(2) %></span></p>
+    <% if (transaction) { %>  <!-- Ensure transaction exists before rendering -->
+        <div class="transaction-card">
+            <p><strong>Transaction ID:</strong> <%= transaction.transactionId || "N/A" %></p>
+            <p><strong>Transaction Date:</strong> <%= transaction.createdAt ? new Date(transaction.createdAt).toLocaleString() : "N/A" %></p>
+            
+            <% if (user) { %>
+                <p><strong>User:</strong> 
+                    <span class="user-name"><%= user.name || "Unknown" %></span> 
+                    (<span class="user-email"><%= user.email || "N/A" %></span>)
+                </p>
+            <% } %>
 
-        <% if (transaction.reason) { %>
-            <p><strong>Reason:</strong> <%= transaction.reason %></p>
-            <a href="/admin/orderDetailsAdmin/<%= transaction.transactionId %>" class="btn view-btn">View Order</a>
-        <% } %>
+            <p><strong>Type:</strong> 
+                <span class="<%= transaction.type === 'credit' ? 'credit' : 'debit' %>">
+                    <%= transaction.type ? transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1) : "N/A" %>
+                </span>
+            </p>
+            
+            <p><strong>Method:</strong> <%= transaction.method || "N/A" %></p>
+            <p><strong>Amount:</strong> <span class="amount">$<%= transaction.amount ? transaction.amount.toFixed(2) : "0.00" %></span></p>
 
-        <a href="/admin/transactions" class="btn back-btn">Back to Transactions</a>
-    </div>
+            <% if (transaction.reason) { %>
+                <p><strong>Reason:</strong> <%= transaction.reason %></p>
+                <a href="/admin/orderDetailsAdmin/<%= transaction.transactionId %>" class="btn view-btn">View Order</a>
+            <% } %>
+
+            <% if(transaction.method === "cod") { %>
+                <p><strong>Status:</strong> <%= transaction.status %></p>
+            <% } %>
+
+            <a href="/admin/transactions" class="btn back-btn">Back to Transactions</a>
+        </div>
+    <% } else { %>
+        <p class="text-center text-red-500">Transaction data not found.</p>
+    <% } %>
 </div>
 
 <%- include("../../views/partials/admin/footer") %>
+
 
 

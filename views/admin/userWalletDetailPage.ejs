@@ -1,29 +1,140 @@
 <%- include("../../views/partials/admin/header") %>
 
-<div class="container mt-5">
-    <div class="card shadow-lg border-0">
-        <div class="card-header text-white bg-gradient-primary py-3">
-            <h2 class="mb-0 text-center">Wallet Details for <%= wallet.user.name %></h2>
+<style>
+    /* Custom Color Palette */
+    :root {
+        --primary-color: #2ecc71;
+        --secondary-color: #95a5a6;
+        --success-color: #27ae60;
+        --danger-color: #e74c3c;
+        --info-color: #3498db;
+        --dark-color: #34495e;
+        --light-color: #ecf0f1;
+        --text-color: #2c3e50;
+    }
+
+    /* Wallet Details Styling */
+    .wallet-details {
+        max-width: 1100px;
+        margin: 2rem auto;
+    }
+
+    .card {
+        border: none;
+        border-top: 4px solid var(--primary-color);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .card-header {
+        background-color: var(--light-color);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+    }
+
+    .card-header h2 {
+        color: var(--text-color);
+        font-weight: 600;
+        margin-bottom: 0;
+    }
+
+    .wallet-balance {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--success-color);
+    }
+
+    /* Table Styling */
+    .table-hover tbody tr:hover {
+        background-color: rgba(46, 204, 113, 0.05);
+        transition: background-color 0.3s ease;
+    }
+
+    .table thead {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    /* Transaction Badges */
+    .badge-credit {
+        background-color: var(--success-color);
+    }
+
+    .badge-debit {
+        background-color: var(--danger-color);
+    }
+
+    .badge-method {
+        background-color: var(--info-color);
+    }
+
+    /* Pagination */
+    .pagination .page-item.active .page-link {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .pagination .page-link {
+        color: var(--dark-color);
+    }
+
+    /* Buttons */
+    .btn-view-transaction {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+        color: white;
+    }
+
+    .btn-back {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .wallet-details {
+            margin: 1rem;
+        }
+        
+        .card-header h2 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<div class="container wallet-details">
+    <div class="card shadow-lg">
+        <div class="card-header">
+            <h2 class="text-center">
+                <i class="fas fa-wallet text-success mr-2"></i>
+                Wallet Details for <%= wallet.user.name %>
+            </h2>
         </div>
         <div class="card-body p-4">
-            <p><strong>Email:</strong> <%= wallet.user.email %></p>
-            <p><strong>Balance:</strong> 
-                <span class="fw-bold text-success">
-                    <%= new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(wallet.balance.toFixed(2)) %>
-                </span>
-            </p>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <p><strong>Email:</strong> <%= wallet.user.email %></p>
+                </div>
+                <div class="col-md-6 text-md-right">
+                    <p>
+                        <strong>Balance:</strong> 
+                        <span class="wallet-balance">
+                            <%= new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(wallet.balance.toFixed(2)) %>
+                        </span>
+                    </p>
+                </div>
+            </div>
 
-            <h3 class="mt-4">Transactions</h3>
+            <h3 class="mt-4 mb-3 text-center">Recent Transactions</h3>
             <div class="table-responsive">
                 <table class="table table-hover table-bordered">
-                    <thead class="table-dark text-center">
+                    <thead>
                         <tr>
-                            <th>Transaction ID</th>
-                            <th>Date</th>
-                            <th>Type</th>
-                            <th>Amount</th>
-                            <th>Method</th>
-                            <th>Details</th>
+                            <th class="text-center">Transaction ID</th>
+                            <th class="text-center">Date</th>
+                            <th class="text-center">Type</th>
+                            <th class="text-center">Amount</th>
+                            <th class="text-center">Method</th>
+                            <th class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -31,30 +142,39 @@
                             <% transactions.forEach(t => { %>
                                 <tr class="text-center">
                                     <td><%= t.transactionId %></td>
-                                    <td><%= new Date(t.createdAt).toLocaleString() %></td>
+                                    <td><%= new Date(t.createdAt).toLocaleString('en-IN', {
+                                        year: 'numeric',
+                                        month: 'short',
+                                        day: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                    }) %></td>
                                     <td>
-                                        <% if (t.type === 'credit') { %>
-                                            <span class="badge bg-success px-3 py-2">Credit</span>
-                                        <% } else { %>
-                                            <span class="badge bg-danger px-3 py-2">Debit</span>
-                                        <% } %>
+                                        <span class="badge <%= t.type === 'credit' ? 'badge-credit' : 'badge-debit' %> px-3 py-2">
+                                            <%= t.type.charAt(0).toUpperCase() + t.type.slice(1) %>
+                                        </span>
                                     </td>
                                     <td class="fw-bold">
                                         <%= new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(t.amount) %>
                                     </td>
                                     <td>
-                                        <span class="badge bg-primary text-white px-3 py-2"><%= t.method.toUpperCase() %></span>
+                                        <span class="badge badge-method text-white px-3 py-2">
+                                            <%= t.method.toUpperCase() %>
+                                        </span>
                                     </td>
                                     <td>
-                                        <a href="/admin/transaction/<%= t.transactionId %>" class="btn btn-sm btn-outline-primary rounded-pill">
-                                            View
+                                        <a href="/admin/transaction/<%= t.transactionId %>" class="btn btn-sm btn-view-transaction">
+                                            View Details
                                         </a>
                                     </td>
                                 </tr>
                             <% }) %>
                         <% } else { %>
                             <tr>
-                                <td colspan="6" class="text-center text-muted">No transactions found.</td>
+                                <td colspan="6" class="text-center text-muted">
+                                    <i class="fas fa-exclamation-circle mr-2"></i>
+                                    No transactions found
+                                </td>
                             </tr>
                         <% } %>
                     </tbody>
@@ -62,11 +182,13 @@
             </div>
 
             <!-- Pagination -->
-            <nav>
+            <nav aria-label="Transaction navigation">
                 <ul class="pagination justify-content-center mt-3">
                     <% if (currentPage > 1) { %>
                         <li class="page-item">
-                            <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                            <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                <span aria-hidden="true">&laquo; Previous</span>
+                            </a>
                         </li>
                     <% } %>
 
@@ -78,53 +200,23 @@
 
                     <% if (currentPage < totalPages) { %>
                         <li class="page-item">
-                            <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                            <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                <span aria-hidden="true">Next &raquo;</span>
+                            </a>
                         </li>
                     <% } %>
                 </ul>
             </nav>
 
-            <a href="/admin/transactions" class="btn btn-secondary mt-3 rounded-pill shadow">Back to Transactions</a>
+            <div class="text-center mt-4">
+                <a href="/admin/transactions" class="btn btn-back rounded-pill shadow">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Transactions
+                </a>
+            </div>
         </div>
     </div>
 </div>
 
 <%- include("../../views/partials/admin/footer") %>
-<style>
-    .bg-gradient-primary {
-    background: linear-gradient(135deg, #007bff, #6610f2);
-}
-
-.card-header {
-    font-weight: bold;
-    font-size: 1.2rem;
-}
-
-.table-hover tbody tr:hover {
-    background-color: #f8f9fa;
-}
-
-.pagination .active .page-link {
-    background-color: #007bff;
-    border-color: #007bff;
-    color: white;
-}
-
-.btn-outline-primary {
-    border: 1px solid #007bff;
-    color: #007bff;
-    transition: 0.3s;
-}
-
-.btn-outline-primary:hover {
-    background-color: #007bff;
-    color: white;
-}
-
-.rounded-pill {
-    border-radius: 50px !important;
-}
-
-</style>
 
 

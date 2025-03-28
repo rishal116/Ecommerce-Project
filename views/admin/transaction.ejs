@@ -1,218 +1,194 @@
-<%- include("../../views/partials/admin/header") %>
+<%- include("../../views/partials/admin/header", { pageTitle: 'Wallet Transactions' }) %>
 
 <style>
-/* General Container */
-.container {
-    max-width: 1100px;
-    margin: 30px auto;
-    padding: 20px;
-    background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Title */
-.title {
-    text-align: center;
-    font-size: 26px;
-    font-weight: bold;
-    background: linear-gradient(135deg, #007bff, #6610f2);
-    color: white;
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-
-/* Table Styling */
-.table-container {
-    overflow-x: auto;
-    max-height: 500px;
-}
-
-.transactions-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
-    background: #fff;
-    border-radius: 5px;
-    overflow: hidden;
-    table-layout: fixed;
-}
-
-.transactions-table th,
-.transactions-table td {
-    padding: 12px 15px;
-    border-bottom: 1px solid #ddd;
-    word-wrap: break-word;
-    text-align: center;
-}
-
-.transactions-table th {
-    background: #007bff;
-    color: white;
-    font-weight: bold;
-    text-transform: uppercase;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-
-.transactions-table tbody tr:hover {
-    background: #f8f9fa;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* User Info */
-.user-name {
-    font-weight: bold;
-}
-
-.user-email {
-    font-size: 12px;
-    color: #666;
-}
-
-/* Transaction Type Badges */
-.credit {
-    color: green;
-    font-weight: bold;
-    background: #d4edda;
-    padding: 5px 10px;
-    border-radius: 5px;
-}
-
-.debit {
-    color: red;
-    font-weight: bold;
-    background: #f8d7da;
-    padding: 5px 10px;
-    border-radius: 5px;
-}
-
-/* View Button */
-.view-btn {
-    display: inline-block;
-    padding: 6px 12px;
-    background: #28a745;
-    color: white;
-    text-decoration: none;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
-}
-
-.view-btn:hover {
-    background: #218838;
-    transform: scale(1.05);
-}
-
-/* Pagination */
-.pagination {
-    text-align: center;
-    margin-top: 20px;
-}
-
-.pagination .btn {
-    display: inline-block;
-    padding: 8px 12px;
-    margin: 5px;
-    background: #007bff;
-    color: white;
-    text-decoration: none;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: bold;
-    transition: all 0.3s ease;
-}
-
-.pagination .btn:hover {
-    background: #0056b3;
-    transform: scale(1.05);
-}
-
-.pagination .btn.disabled {
-    background: #cccccc;
-    cursor: not-allowed;
-}
-
-/* Responsive */
-@media screen and (max-width: 768px) {
-    .transactions-table th,
-    .transactions-table td {
-        padding: 8px;
+    /* Custom Color Palette */
+    :root {
+        --primary-color: #2ecc71;
+        --secondary-color: #95a5a6;
+        --success-color: #27ae60;
+        --danger-color: #e74c3c;
+        --info-color: #3498db;
+        --dark-color: #34495e;
+        --light-color: #ecf0f1;
+        --text-color: #2c3e50;
     }
 
-    .view-btn {
-        padding: 5px 10px;
-        font-size: 12px;
+    /* Enhanced Table Styling */
+    .wallet-transactions .table thead {
+        background-color: var(--primary-color);
+        color: white;
     }
 
-    .pagination .btn {
-        padding: 6px 10px;
-        font-size: 12px;
+    .wallet-transactions .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(46, 204, 113, 0.05);
     }
-}
+
+    .wallet-transactions .table-hover tbody tr:hover {
+        background-color: rgba(46, 204, 113, 0.1);
+        transition: background-color 0.3s ease;
+    }
+
+    /* Transaction Type Badges */
+    .badge-credit {
+        background-color: var(--success-color);
+        color: white;
+    }
+
+    .badge-debit {
+        background-color: var(--danger-color);
+        color: white;
+    }
+
+    /* Action Buttons */
+    .btn-transaction-details {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+    }
+
+    .btn-wallet-view {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    /* Pagination Styling */
+    .pagination .page-item.active .page-link {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .pagination .page-link {
+        color: var(--dark-color);
+    }
+
+    /* User Info Styling */
+    .user-info strong {
+        color: var(--text-color);
+    }
+
+    .user-info small {
+        color: var(--secondary-color);
+    }
+
+    /* Card Styling */
+    .card {
+        border-top: 4px solid var(--primary-color);
+    }
+
+    .card-header {
+        background-color: var(--light-color);
+        color: var(--text-color);
+    }
 </style>
 
-<div class="container">
-    <h1 class="title">Wallet Transactions</h1>
+<div class="container wallet-transactions">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h1 class="card-title">
+                        <i class="fas fa-wallet mr-2 text-success"></i>Wallet Transactions
+                    </h1>
+                </div>
+                
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">Transaction ID</th>
+                                    <th class="text-center">Date & Time</th>
+                                    <th class="text-center">User Details</th>
+                                    <th class="text-center">Transaction Type</th>
+                                    <th class="text-center">Amount</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (transactions && transactions.length) { %>
+                                    <% transactions.forEach(transaction => { %>
+                                        <tr>
+                                            <td class="text-center align-middle">
+                                                <%= transaction.transaction.transactionId %>
+                                            </td>
+                                            <td class="text-center align-middle">
+                                                <%= transaction.transaction.createdAt ? new Date(transaction.transaction.createdAt).toLocaleString('en-IN', {
+                                                    year: 'numeric',
+                                                    month: 'short',
+                                                    day: 'numeric',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit'
+                                                }) : 'N/A' %>
+                                            </td>
+                                            <td class="text-center align-middle">
+                                                <div class="user-info">
+                                                    <strong><%= transaction.user.name || 'Unknown User' %></strong>
+                                                    <br>
+                                                    <small><%= transaction.user.email || 'No email' %></small>
+                                                </div>
+                                            </td>
+                                            <td class="text-center align-middle">
+                                                <span class="badge <%= transaction.transaction.type === 'credit' ? 'badge-credit' : 'badge-debit' %>">
+                                                    <%= transaction.transaction.type.charAt(0).toUpperCase() + transaction.transaction.type.slice(1) %>
+                                                </span>
+                                            </td>
+                                            <td class="text-center align-middle">
+                                                <strong class="text-success">
+                                                    ₹<%= transaction.transaction.amount ? transaction.transaction.amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00' %>
+                                                </strong>
+                                            </td>
+                                            <td class="text-center align-middle">
+                                                <div class="btn-group" role="group">
+                                                    <a href="/admin/transaction/<%= transaction.transaction.transactionId %>" class="btn btn-sm btn-transaction-details mr-1">
+                                                        <i class="fas fa-eye"></i> Details
+                                                    </a>
+                                                    <a href="/admin/wallet/<%= transaction.user ? transaction.user._id : '' %>" class="btn btn-sm btn-wallet-view">
+                                                        <i class="fas fa-wallet"></i> Wallet
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">
+                                            <i class="fas fa-exclamation-circle mr-2"></i>No transactions found
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
-    <div class="table-container">
-        <table class="transactions-table">
-            <thead>
-                <tr>
-                    <th>Transaction ID</th>
-                    <th>Date</th>
-                    <th>User</th>
-                    <th>Type</th>
-                    <th>Amount</th>
-                    <th>Details</th>
-                    <th>Wallet</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% transactions.forEach(transaction => { %>
-                    <tr>
-                        <td><%= transaction.transaction.transactionId %></td>
-                        <td><%= new Date(transaction.transaction.createdAt).toLocaleString() %></td>
-                        <td>
-                            <span class="user-name"><%= transaction.user.name %></span> 
-                            <br>
-                            <span class="user-email"><%= transaction.user.email %></span>
-                        </td>
-                        <td class="<%= transaction.transaction.type === 'credit' ? 'credit' : 'debit' %>">
-                            <%= transaction.transaction.type.charAt(0).toUpperCase() + transaction.transaction.type.slice(1) %>
-                        </td>
-                        <td><strong>₹<%= transaction.transaction.amount.toFixed(2) %></strong></td>
-                        <td>
-                            <a href="/admin/transaction/<%= transaction.transaction.transactionId %>" class="view-btn">View</a>
-                        </td>
-                        <td>
-                            <a href="/admin/wallet/<%= transaction.user ? transaction.user._id : '' %>" class="view-btn">View Wallet</a>
-                        </td>
-                    </tr>
-                <% }) %>
-            </tbody>
-        </table>
-    </div>
+                <div class="card-footer">
+                    <nav aria-label="Transaction pages">
+                        <ul class="pagination justify-content-center">
+                            <% if (currentPage > 1) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo; Previous</span>
+                                    </a>
+                                </li>
+                            <% } %>
 
-    <!-- Pagination -->
-    <div class="pagination">
-        <% if (currentPage > 1) { %>
-            <a href="?page=<%= currentPage - 1 %>" class="btn">Previous</a>
-        <% } else { %>
-            <span class="btn disabled">Previous</span>
-        <% } %>
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    Page <%= currentPage %> of <%= totalPages %>
+                                </span>
+                            </li>
 
-        <span class="current-page">Page <%= currentPage %> of <%= totalPages %></span>
-
-        <% if (currentPage < totalPages) { %>
-            <a href="?page=<%= currentPage + 1 %>" class="btn">Next</a>
-        <% } else { %>
-            <span class="btn disabled">Next</span>
-        <% } %>
+                            <% if (currentPage < totalPages) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                        <span aria-hidden="true">Next &raquo;</span>
+                                    </a>
+                                </li>
+                            <% } %>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

@@ -70,6 +70,7 @@ const getOrderListPageAdmin = async (req, res) => {
 const changeOrderStatus = async (req, res) => {
     try {
         const { itemId, status } = req.body
+        console.log(req.body)
         if (!itemId || !status) {
             return res.status(400).json({ success: false, message: 'Order ID and status are required' })
         }
@@ -79,9 +80,27 @@ const changeOrderStatus = async (req, res) => {
             { $set: { status } },
             { new: true }
         )
+
+        console.log("updateOdrder: ",updatedOrder)
+
         
         if (!updatedOrder) {
             return res.status(404).json({ success: false, message: 'Order not found' })
+        }
+
+        if (status == 'Delivered') {
+            const walletUpdate = await Wallet.updateOne(
+                { 
+                    user: updatedOrder.userId, 
+                    "transaction.transactionId": itemId, 
+                    "transaction.method": "cod"  // Ensure payment method is COD
+                },
+                { $set: { "transaction.$.status": "completed" } }
+            );
+
+            if (walletUpdate.matchedCount === 0) {
+                console.warn(`No matching COD transaction found for order ${itemId}`);
+            }
         }
         
         return res.status(200).json({ success: true, message: 'Order status updated successfully', order: updatedOrder })
@@ -193,7 +212,7 @@ const handleReturn = async (req, res) => {
             
             wallet.transaction.push({
                 amount: refundAmount,
-                transactionId: `refund-${orderId}-${productId}-${Date.now()}`,
+                transactionId: `${orderId}`,
                 productName: [item.productName],
                 type: "credit",
                 method: "refund",

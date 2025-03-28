@@ -123,6 +123,9 @@ const orderPlaced = async (req, res) => {
     try {
         const userId = req.session.user;
         const { paymentMethod, addressId ,snum } = req.body
+        console.log("dd",req.body)
+        console.log(paymentMethod);
+        
         const userCart = await Cart.findOne({ userId }).populate('items.productId');
         if (!userCart || userCart.items.length === 0) {
             return res.status(400).json({ success: false, message: "Cart is empty" });
@@ -221,7 +224,28 @@ const orderPlaced = async (req, res) => {
         req.session.offerPrice = null
         req.session.appliedCoupon = undefined
         req.session.orderId = newOrder._id
+        req.session.orderOrderId = newOrder.orderId
         
+        if (paymentMethod === "Cash on Delivery") {
+            let wallet = await Wallet.findOne({ user: userId })
+            if (!wallet) {
+                wallet = new Wallet({ user: userId, balance: 0, transaction: [] })
+            }
+            
+            wallet.transaction.push({
+                type: "debit",
+                amount: finalAmount,
+                transactionId:req.session.orderOrderId ,
+                createdAt: new Date(),
+                productName: orderedItems.map(item => item.productId.toString()),
+                method: "cod",
+                status: "pending"
+            })
+            
+            await wallet.save()
+            return res.json({ success: true, message: "Order placed with COD. Payment pending.", orderId: newOrder._id })
+        }
+
         if (paymentMethod === "upi") {
             let wallet = await Wallet.findOne({ user: userId })
             if (!wallet) {

@@ -16,7 +16,11 @@ const getCartPage = async (req, res) => {
     const limit = 5;
     const skip = (page - 1) * limit;
 
-    let cart = await Cart.findOne({ userId }).populate('items.productId');
+    let cart = await Cart.findOne({ userId }).populate({
+      path: 'items.productId',
+      populate: { path: 'category', model: 'Category' } 
+    });
+
     if (!cart) {
       cart = new Cart({
         userId,
@@ -24,17 +28,27 @@ const getCartPage = async (req, res) => {
       });
     }
 
- 
-    cart.items = cart.items.filter(item => item.productId && !item.productId.isBlocked);
+    cart.items = cart.items.map(item => {
+      if (!item.productId || item.productId.isBlocked || !item.productId.category?.isListed) {
+        return null; 
+      }
+
+      const selectedSizeData = item.productId.sizes.find(s => s.size === item.selectedSize);
+      item.isUnavailable = selectedSizeData ? selectedSizeData.quantity === 0 : true;
+
+      return item;
+    }).filter(item => item !== null);
 
     const totalItems = cart.items.length;
     const totalPages = Math.ceil(totalItems / limit);
     const paginatedItems = cart.items.slice(skip, skip + limit);
     cart.items = paginatedItems;
 
- 
-    let subtotal = cart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    let total = subtotal; 
+    let subtotal = cart.items.reduce((sum, item) => {
+      return sum + (!item.isUnavailable ? item.price * item.quantity : 0);
+    }, 0);
+
+    let total = subtotal;
 
     cart.subtotal = subtotal;
     cart.total = total;
@@ -42,7 +56,7 @@ const getCartPage = async (req, res) => {
     const userData = await User.findById(userId);
 
     res.render('cart', {
-      cart: cart,
+      cart,
       user: userData,
       currentPage: page,
       totalPages
@@ -53,6 +67,8 @@ const getCartPage = async (req, res) => {
     res.redirect('/pageNotFound');
   }
 };
+
+
 
 
 

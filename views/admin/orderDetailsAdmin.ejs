@@ -339,18 +339,33 @@
                 </div>
 
                 <div class="select-container">
-                    <select id="status-<%= order.orderId %>" onchange="updateStatus('<%= order.orderId %>')" <%= ['Cancelled','Delivered', 'Return Request', 'Return Accepted', 'Return Rejected','payment pending'].includes(order.status) ? 'disabled' : '' %>>
-                        <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
-                        <option value="Processing" <%= order.status === 'Processing' ? 'selected' : '' %>>Processing</option>
-                        <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
-                        <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                        <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                    <select id="status-<%= order.orderId %>" onchange="updateStatus('<%= order.orderId %>')" 
+                        <%= ['Cancelled', 'Delivered', 'Return Request', 'Return Accepted', 'Return Rejected', 'payment pending'].includes(order.status) ? 'disabled' : '' %>>
+                        
+                        <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %> 
+                            <%= ['Processing', 'Shipped', 'Delivered', 'Cancelled', 'Return Request', 'Return Accepted', 'Return Rejected', 'payment pending'].includes(order.status) ? 'disabled' : '' %>>Pending</option>
+                
+                        <option value="Processing" <%= order.status === 'Processing' ? 'selected' : '' %> 
+                            <%= ['Shipped', 'Delivered', 'Cancelled', 'Return Request', 'Return Accepted', 'Return Rejected', 'payment pending'].includes(order.status) ? 'disabled' : '' %>>Processing</option>
+                
+                        <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %> 
+                            <%= ['Delivered', 'Cancelled', 'Return Request', 'Return Accepted', 'Return Rejected', 'payment pending'].includes(order.status) ? 'disabled' : '' %>>Shipped</option>
+                
+                        <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %> 
+                            <%= ['Cancelled', 'Return Request', 'Return Accepted', 'Return Rejected', 'payment pending'].includes(order.status) ? 'disabled' : '' %>>Delivered</option>
+                
+                        <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %> 
+                            <%= ['Return Request', 'Return Accepted', 'Return Rejected', 'payment pending'].includes(order.status) ? 'disabled' : '' %>>Cancelled</option>
+                
                         <option value="Return Request" <%= order.status === 'Return Request' ? 'selected' : '' %> disabled>Return Request</option>
+                
                         <option value="Return Accepted" <%= order.status === 'Return Accepted' ? 'selected' : '' %> disabled>Return Accepted</option>
+                
                         <option value="Return Rejected" <%= order.status === 'Return Rejected' ? 'selected' : '' %> disabled>Return Rejected</option>
+                
                         <option value="payment pending" <%= order.status === 'payment pending' ? 'selected' : '' %> disabled>Payment Pending</option>
                     </select>
-                </div>
+                </div>                
                 <% if(order.cancellationReason){ %>
                     <div class="info-row">
                         <span class="label">Cancellation Reason:</span>
