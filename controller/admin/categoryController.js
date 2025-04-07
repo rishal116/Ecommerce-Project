@@ -163,6 +163,20 @@ const editCategory = async(req,res)=>{
     }
 }
 
+const walletMoneyAdd = async(req,res)=>{
+    try {
+        const {status,id} = req.query
+        if(status == "Cancelled"){
+            const walletAdd = await Wallet.updateOne({
+                user:id,
+
+            },{$set:{balance:100}})
+        }
+    } catch (error) {
+        
+    }
+}
+
 module.exports = {
     categoryInfo,
     addCategory,

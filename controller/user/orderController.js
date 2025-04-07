@@ -675,7 +675,20 @@ const orderCancel = async (req, res) => {
                 
                 await userWallet.save();
             } else {
-                console.log('User wallet not found.');
+                const newWallet = new Wallet({
+                    user: order.userId,
+                    balance: order.finalAmount,
+                    transaction: [{
+                        amount: order.finalAmount,
+                        transactionId: order.orderId,
+                        productName: order.orderItems.map(item => item.productName),
+                        type: 'credit',
+                        method: "refund",
+                        reason: "cancel",
+                    }]
+                });
+            
+                await newWallet.save();
             }
         }
 

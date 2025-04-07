@@ -235,7 +235,6 @@ const editProduct = async (req, res) => {
     try {
         const id = req.params.id
         const data = req.body
-        const images = req.files ? req.files.map(file => file.filename) : []
 
         let sizes = []
         try {
@@ -267,6 +266,27 @@ const editProduct = async (req, res) => {
         if (!existingProduct) {
             console.error("Product not found!")
             return res.redirect("/admin/pageError")
+        }
+
+        const images = []
+        if (req.files && req.files.length > 0) {
+            await Promise.all(req.files.map(async (file) => {
+                try {
+                    const originalImagePath = file.path
+                    const outputImagePath = path.join('public', 'uploads', 'product-images', file.filename)
+                    const dir = path.join('public', 'uploads', 'product-images')
+                    if (!fs.existsSync(dir)) {
+                        fs.mkdirSync(dir, { recursive: true })
+                    }
+                    await sharp(originalImagePath)
+                    .resize(440, 440, { fit: 'cover' })
+                    .toFile(outputImagePath)
+                    images.push(file.filename)
+                
+                } catch (err) {
+                    console.error(`Error processing image ${file.filename}:`, err)
+                }
+            }))
         }
 
         

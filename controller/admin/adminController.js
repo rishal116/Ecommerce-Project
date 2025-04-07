@@ -14,34 +14,36 @@ const pageError = async(req,res)=> {
     }
 }
 
-const loadLogin = async(req,res)=>{
-    if(req.session.admin){
-        return res.redirect("/admin")
+const loadLogin = async (req, res) => {
+    if (req.session.admin) {
+        return res.redirect("/admin");
     }
-    res.render("adminLogin",{message:null})
-}
+    res.render("adminLogin", { message: null });
+};
 
-const login = async(req,res)=>{
+const login = async (req, res) => {
     try {
-        const {email,password} = req.body
-        const admin = await User.findOne({email,isAdmin:true})
-        const adminPass = admin.password
+        const { email, password } = req.body;
+        const admin = await User.findOne({ email, isAdmin: true });
 
-        if(admin){
-            if(adminPass == password){
-                req.session.admin = true
-                return res.redirect("/admin")
-            }else{
-                return res.redirect("/admin/login")
-            }
-        }else{
-            return res.redirect("/admin/login")
+        if (!admin) {
+            return res.render("adminLogin", { message: "Admin not found." });
+        }
+
+        const adminPass = admin.password;
+
+        if (adminPass === password) {
+            req.session.admin = true;
+            return res.redirect("/admin");
+        } else {
+            return res.render("adminLogin", { message: "Incorrect password." });
         }
     } catch (error) {
-        console.error("Error in login: ",error)
-        return res.redirect("/admin/pageError")
+        console.error("Error in login:", error);
+        return res.render("adminLogin", { message: "An error occurred. Please try again." });
     }
-}
+};
+
 
 const loadDashboard = async (req, res) => {
     try {

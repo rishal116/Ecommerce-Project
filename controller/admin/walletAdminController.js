@@ -68,10 +68,8 @@ const renderTransactionDetailsPage = async (req, res) => {
 
 const renderWalletPage = async (req, res) => {
     try {
-        console.log("Route hit: renderWalletPage");
 
-        const { userId } = req.params;
-        console.log("User ID received:", userId);
+        const { userId } = req.params
 
         let page = parseInt(req.query.page) || 1;
         let limit = 5; 
@@ -91,7 +89,6 @@ const renderWalletPage = async (req, res) => {
         const totalTransactions = wallet.transaction.length;
         const totalPages = Math.ceil(totalTransactions / limit);
 
-        console.log("Wallet data found:", wallet);
 
         res.render('userWalletDetailPage', { 
             wallet, 
