@@ -138,20 +138,21 @@ const verifyOtp = async (req,res)=>{
         const {otp} = req.body
         if(parseInt(otp)===parseInt(req.session.userOtp)){
             const user = req.session.userData
+            console.log("user: ",user)
             if (!user.password) {
                 return res.status(400).json({ success: false, message: "Password is missing in session data." })
             }
             const passwordHash = await securePassword(user.password)
             const existingUser = await User.findOne({ email: user.email })
+            console.log("")
             if (existingUser) {
-                return res.status(400).json({ success: false, message: "Email already registered. Please log in." })
+                return res.status(400).json({ success: false, message: "Email already registered. Please log in."})
             }
             const saveUserData = new User({
                 name:user.name,
                 email:user.email,
                 phone:user.phone,
                 password:passwordHash,
-                googleId: null
             })
             await saveUserData.save()
             req.session.user = saveUserData._id
@@ -160,9 +161,6 @@ const verifyOtp = async (req,res)=>{
             res.status(400).json({success:false, message:"Invalid OTP, Please try again"})
         }
     } catch (error) {
-        if (error.code === 11000) {
-            return res.status(400).json({ success: false, message: "Email already exists. Please log in." })
-        }
         console.log("Error in verifyOtp: ",error)
         res.status(500).json({success:false, message:"An error occured"})
     }
