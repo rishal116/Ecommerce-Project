@@ -21,7 +21,9 @@ const userSchema = new Schema({
     googleId:{
         type:String,
         unique:true,
-        require:false
+        sparse: true,
+        require:false,
+        default: null
     },
     password:{
         type:String,
