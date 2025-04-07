@@ -413,8 +413,8 @@ function validateForm() {
     } else if (name.length < 3) {
         displayErrorMessage("name-error", "Name must be at least 3 characters long")
         isValid = false
-    } else if (!/^[A-Za-z\s]+$/.test(name)) {
-        displayErrorMessage("name-error", "Category name should contain only letters and spaces")
+    } else if (!/^[A-Za-z]+(?:[\s-][A-Za-z]+)*$/.test(name)) {
+        displayErrorMessage("name-error", "Category name should contain only letters, spaces, and hyphens")
         isValid = false
     }
 
