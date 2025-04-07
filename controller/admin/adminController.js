@@ -176,15 +176,15 @@ const loadDashboard = async (req, res) => {
             },
             {
                 $lookup: {
-                    from: "categories", // Ensure collection name matches your DB
+                    from: "categories",
                     localField: "_id",
                     foreignField: "_id",
                     as: "categoryInfo"
                 }
             },
             { $unwind: "$categoryInfo" },
-            { $sort: { totalRevenue: -1 } }, // Sorting by revenue (highest first)
-            { $limit: 10 } // Now fetching top 10 instead of 5
+            { $sort: { totalRevenue: -1 } },
+            { $limit: 10 } 
         ]);
         
 
@@ -228,7 +228,8 @@ const loadDashboard = async (req, res) => {
             }
         ]);
         
-        console.log("Top Brands:", topBrands);
+        const revenueChartData = await generateRevenueChartData(period);
+
         
 
         res.render('dashboard', {
@@ -254,7 +255,8 @@ const loadDashboard = async (req, res) => {
                 expiredCoupons,
                 totalCouponUsage,
                 discountPercentage: totalSales ? ((totalDiscounts / totalSales) * 100).toFixed(2) : 0,
-                selectedPeriod: period
+                selectedPeriod: period,
+                revenueChartData
             },
             topProducts,
             topCategories,
@@ -265,6 +267,50 @@ const loadDashboard = async (req, res) => {
         console.error("Error fetching dashboard data:", error);
         res.status(500).send("Internal Server Error");
     }
+};
+
+const generateRevenueChartData = async (period) => {
+    let groupFormat, dateLimit;
+
+    const now = new Date();
+
+    switch (period) {
+        case '1day':
+            groupFormat = { $hour: "$createdOn" };
+            dateLimit = new Date(now);
+            dateLimit.setDate(now.getDate() - 1);
+            break;
+        case '1week':
+            groupFormat = { $dayOfMonth: "$createdOn" };
+            dateLimit = new Date(now);
+            dateLimit.setDate(now.getDate() - 7);
+            break;
+        case '1month':
+            groupFormat = { $dayOfMonth: "$createdOn" };
+            dateLimit = new Date(now);
+            dateLimit.setMonth(now.getMonth() - 1);
+            break;
+        default: 
+            groupFormat = { $month: "$createdOn" };
+            dateLimit = new Date(2000, 0, 1); 
+            break;
+    }
+
+    const data = await Order.aggregate([
+        { $match: { createdOn: { $gte: dateLimit, $lte: now } } },
+        {
+            $group: {
+                _id: groupFormat,
+                total: { $sum: "$finalAmount" }
+            }
+        },
+        { $sort: { _id: 1 } }
+    ]);
+
+    const labels = data.map(item => item._id.toString());
+    const values = data.map(item => item.total);
+
+    return { labels, values };
 };
 
 
