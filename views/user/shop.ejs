@@ -664,36 +664,43 @@
 
       <!-- Product Grid -->
       <main class="product-grid animate__animated animate__fadeIn">
-        <% for (let i = 0; i < products.length; i++) { %>
-          <div class="product-card animate__animated animate__fadeIn" >
-            <% if(products[i].salePrice !== products[i].regularPrice) { %>
-              <div class="discount-badge">
-                <%= Math.round((1 - products[i].salePrice / products[i].regularPrice) * 100) %>% OFF
-              </div>
-            <% } %>
-            <a href="/productDetails/<%= products[i]._id %>">
-              <img src="/uploads/re-image/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>" />
-            </a>
-            <div class="product-info">
-              <h4><%= products[i].productName %></h4>
-              <p><strong>Brand:</strong> <%= products[i].brand %></p>
-              <div class="price-info">
-                <span class="sale-price">₹<%= products[i].salePrice.toLocaleString('en-IN') %></span> 
-                <% if (products[i].salePrice !== products[i].regularPrice) { %>
-                  <span class="regular-price">₹<%= products[i].regularPrice.toLocaleString('en-IN') %></span>
-                <% } %>
-              </div>
-            </div>
-            <div class="product-actions">
-              <button class="add-to-cart-btn" 
-                onclick="openSizeModal('<%= products[i]._id %>', '<%= products[i].salePrice %>', `<%= JSON.stringify(products[i].sizes.filter(s => s.quantity > 0)) %>`)">
-                <i class="fas fa-shopping-cart"></i> Add to Cart
-              </button>
-              <button class="wishlist-btn" data-product-id="<%= products[i]._id %>" onclick="addToWishlist('<%=products[i]._id%>')">
-                <i class="fas fa-heart"></i> Wishlist
-              </button>
-            </div>
+        <% if (products.length === 0) { %>
+          <div class="no-products-message">
+            <h3>No products found.</h3>
+            <p>Please try adjusting your filters or search again.</p>
           </div>
+        <% } else { %>
+          <% for (let i = 0; i < products.length; i++) { %>
+            <div class="product-card animate__animated animate__fadeIn">
+              <% if(products[i].salePrice !== products[i].regularPrice) { %>
+                <div class="discount-badge">
+                  <%= Math.round((1 - products[i].salePrice / products[i].regularPrice) * 100) %>% OFF
+                </div>
+              <% } %>
+              <a href="/productDetails/<%= products[i]._id %>">
+                <img src="/uploads/re-image/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>" />
+              </a>
+              <div class="product-info">
+                <h4><%= products[i].productName %></h4>
+                <p><strong>Brand:</strong> <%= products[i].brand %></p>
+                <div class="price-info">
+                  <span class="sale-price">₹<%= products[i].salePrice.toLocaleString('en-IN') %></span>
+                  <% if (products[i].salePrice !== products[i].regularPrice) { %>
+                    <span class="regular-price">₹<%= products[i].regularPrice.toLocaleString('en-IN') %></span>
+                  <% } %>
+                </div>
+              </div>
+              <div class="product-actions">
+                <button class="add-to-cart-btn" 
+                  onclick="openSizeModal('<%= products[i]._id %>', '<%= products[i].salePrice %>', `<%= JSON.stringify(products[i].sizes.filter(s => s.quantity > 0)) %>`)">
+                  <i class="fas fa-shopping-cart"></i> Add to Cart
+                </button>
+                <button class="wishlist-btn" data-product-id="<%= products[i]._id %>" onclick="addToWishlist('<%=products[i]._id%>')">
+                  <i class="fas fa-heart"></i> Wishlist
+                </button>
+              </div>
+            </div>
+          <% } %>
         <% } %>
       </main>
     </div>
@@ -1014,6 +1021,12 @@ async function addToCart(event, productId, productPrice) {
 .swal-confirm-btn:hover {
     background: linear-gradient(135deg, #0056b3, #003d80);
     box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4);
+}
+.no-products-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  margin-top: 2rem;
+  color: #999;
 }
 
 
