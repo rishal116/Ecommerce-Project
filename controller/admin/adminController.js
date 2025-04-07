@@ -30,31 +30,10 @@ const login = async (req, res) => {
             return res.render("adminLogin", { message: "Admin not found." });
         }
 
-        const adminPass = admin.password;
+        const isMatch = await bcrypt.compare(password, admin.password);
 
-        if (adminPass === password) {
-            req.session.admin = true;const login = async (req, res) => {
-                try {
-                    const { email, password } = req.body;
-                    const admin = await User.findOne({ email, isAdmin: true });
-            
-                    if (!admin) {
-                        return res.render("adminLogin", { message: "Admin not found." });
-                    }
-            
-                    const isMatch = await bcrypt.compare(password, admin.password);
-            
-                    if (isMatch) {
-                        req.session.admin = true;
-                        return res.redirect("/admin");
-                    } else {
-                        return res.render("adminLogin", { message: "Incorrect password." });
-                    }
-                } catch (error) {
-                    console.error("Error in login:", error);
-                    return res.render("adminLogin", { message: "An error occurred. Please try again." });
-                }
-            };
+        if (isMatch) {
+            req.session.admin = true;
             return res.redirect("/admin");
         } else {
             return res.render("adminLogin", { message: "Incorrect password." });
