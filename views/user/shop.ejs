@@ -743,13 +743,25 @@
 
 <script>
 function addToWishlist(productId) {
-
   $.ajax({
     url: "/addToWishlist",
     method: "POST",
     data: { productId: productId },
     success: (response) => {
       Swal.close();
+
+      if (response.message === "User not logged in") {
+        Swal.fire({
+          title: "🔒 Please log in!",
+          text: "You must be logged in to add products to your wishlist.",
+          icon: "warning",
+          confirmButtonText: "Login",
+          iconColor: "#f39c12",
+        }).then(() => {
+          window.location.href = "/login";
+        });
+        return;
+      }
 
       Swal.fire({
         title: response.status ? "❤️ Added to Wishlist!" : "⚠️ Already in Wishlist!",
@@ -778,6 +790,7 @@ function addToWishlist(productId) {
     },
   });
 }
+
 </script>
 
 <script>

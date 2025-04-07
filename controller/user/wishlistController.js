@@ -41,8 +41,8 @@ const addToWishlist = async(req,res)=>{
         const productId = req.body.productId
         const userId = req.session.user
         if (!userId) {
-            return res.redirect('/login'); 
-        }
+            return res.status(401).json({ status: false, message: "User not logged in" });
+        }        
         const userData = await User.findById(userId)
         if(userData.wishlist.includes(productId)){
             return res.status(200).json({status:false ,message:"Product already in wishlist"})

@@ -639,62 +639,51 @@ const loadOrderDetails = async (req, res) => {
 const orderCancel = async (req, res) => {
     try {
         const orderId = req.params.id;
-        const { reason } = req.body; 
-
-        console.log("Order ID:", orderId);
-        console.log("Cancellation Reason:", reason);
-
+        const { reason } = req.body;
         const order = await Order.findOne({ orderId });
 
         if (!order) {
             return res.status(404).json({ success: false, message: 'Order not found' });
         }
 
-
         for (const item of order.orderItems) {
             await Product.updateOne(
                 { _id: item.productId, "sizes.size": item.selectedSize },
-                { $inc: { "sizes.$.quantity": item.quantity } } 
+                { $inc: { "sizes.$.quantity": item.quantity } }
             );
         }
 
-        if (order.paymentMethod === 'upi' || order.paymentMethod === 'wallet') {
-            const userWallet = await Wallet.findOne({ user: order.userId });
+        if (['upi', 'wallet'].includes(order.paymentMethod)) {
+            let userWallet = await Wallet.findOne({ user: order.userId });
+
+            const transactionEntry = {
+                amount: order.finalAmount,
+                transactionId: order.orderId,
+                productName: order.orderItems.map(item => item.productName),
+                type: 'credit',
+                method: 'refund',
+                reason: 'cancel',
+                status: 'completed'
+            };
 
             if (userWallet) {
                 userWallet.balance += order.finalAmount;
-
-                userWallet.transaction.push({
-                    amount: order.finalAmount,
-                    transactionId: order.orderId,
-                    productName: order.orderItems.map(item => item.productName),
-                    type: 'credit',
-                    method: "refund",
-                    reason:"cancel",
-                });
-                
+                userWallet.transaction.push(transactionEntry);
                 await userWallet.save();
+                console.log('Refund credited to existing wallet.');
             } else {
-                const newWallet = new Wallet({
+                userWallet = new Wallet({
                     user: order.userId,
                     balance: order.finalAmount,
-                    transaction: [{
-                        amount: order.finalAmount,
-                        transactionId: order.orderId,
-                        productName: order.orderItems.map(item => item.productName),
-                        type: 'credit',
-                        method: "refund",
-                        reason: "cancel",
-                    }]
+                    transaction: [transactionEntry]
                 });
-            
-                await newWallet.save();
+                await userWallet.save();
+                console.log('New wallet created and refund added.');
             }
         }
-
         await Order.findOneAndUpdate(
             { orderId },
-            { $set: { status: "Cancelled", cancellationReason: reason } }
+            { $set: { status: 'Cancelled', cancellationReason: reason } }
         );
 
         res.json({ success: true, message: 'Order cancelled successfully, and stock updated' });
@@ -704,6 +693,7 @@ const orderCancel = async (req, res) => {
         res.status(500).json({ success: false, message: 'Server error' });
     }
 };
+
 
 
 const cancelProduct = async (req, res) => {
@@ -747,23 +737,30 @@ const cancelProduct = async (req, res) => {
             order.totalPrice = 0;
         }
         
-        const userWallet = await Wallet.findOne({ user: order.userId })
-        if (userWallet) {
-            userWallet.balance += productTotalPrice
-            
-            userWallet.transaction.push({
-                amount: productTotalPrice,
-                transactionId: order.orderId,
-                productName: order.orderItems.map(item => item.productName),
-                type: 'credit',
-                method:"refund",
-            })
-            
-            await userWallet.save()
-            console.log('Refund added to wallet successfully.')
-        } else {
-            console.log('User wallet not found.')
+        let userWallet = await Wallet.findOne({ user: order.userId });
+
+        if (!userWallet) {
+            userWallet = new Wallet({
+                user: order.userId,
+                balance: 0,
+                transaction: []
+            });
         }
+
+        userWallet.balance += productTotalPrice;
+
+        userWallet.transaction.push({
+            amount: productTotalPrice,
+            transactionId: order.orderId,
+            productName: [canceledProduct.productName],
+            type: 'credit',
+            method: 'refund',
+            reason: 'cancel',
+            status: 'completed'
+        });
+
+        await userWallet.save();
+        console.log('Refund processed and added to wallet.');
         
         order.orderItems.splice(productIndex, 1)
         if (order.orderItems.length === 0) {
@@ -885,23 +882,28 @@ const retryPayment = async (req, res) => {
 const loadPaymentSuccess = async (req, res) => {
     try {
         const orderId =  req.session.orderId
-        console.log(orderId)
         const order = await Order.findOne({_id: orderId })
         const userId = req.session.user
-        const userWallet = await Wallet.findOne({ user: userId })
-        if (userWallet) {
-            userWallet.transaction.push({
-                amount:order.finalAmount,
-                transactionId:  orderId,
-                productName: order.orderItems.map(item => item.productName),
-                type: 'debit',
-                method:"upi",
-            })
-            await userWallet.save()
-            console.log('Refund added to wallet successfully.')
-        } else {
-            console.log('User wallet not found.')
+        let userWallet = await Wallet.findOne({ user: userId })
+        if (!userWallet) {
+            userWallet = new Wallet({
+                user: userId,
+                balance: 0,
+                transaction: []
+            });
         }
+
+        userWallet.transaction.push({
+            amount: order.finalAmount,
+            transactionId: order._id.toString(),
+            productName: order.orderItems.map(item => item.productName),
+            type: 'debit',
+            method: 'upi',
+            status: 'completed'
+        });
+
+        await userWallet.save();
+        console.log('Payment transaction recorded in wallet.');
         res.render('payment-success')
        
     } catch (error) {
