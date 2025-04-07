@@ -1,19 +1,19 @@
 <%- include("../../views/partials/admin/header") %>
 
 <style>
-       /* Breadcrumb Styling */
-   .breadcrumb {
+    /* Breadcrumb Styling */
+    .breadcrumb {
         display: flex;
         align-items: center;
         font-size: 14px;
-        background-color: #F9FAFB; /* Light Gray Background */
+        background-color: #F9FAFB;
         padding: 10px 16px;
         border-radius: 8px;
         margin-bottom: 20px;
     }
 
     .breadcrumb a {
-        color: #4B5563; /* Dark Gray */
+        color: #4B5563;
         text-decoration: none;
         margin-right: 8px;
         font-weight: 500;
@@ -24,17 +24,18 @@
     }
 
     .breadcrumb span {
-        color: #9CA3AF; /* Light Gray Text */
+        color: #9CA3AF;
         margin-right: 8px;
     }
 </style>
+
 <div class="container mx-auto px-6 mt-6">
-  <!-- Breadcrumb -->
-<div class="breadcrumb">
-    <a href="/admin">Dashboard</a>
-    <span>›</span>
-    <a href="/admin/products">Products</a>
-</div>
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="/admin">Dashboard</a>
+        <span>›</span>
+        <a href="/admin/products">Products</a>
+    </div>
 
     <!-- Page Header -->
     <div class="flex justify-between items-center mb-6">
@@ -63,7 +64,7 @@
                     <th class="py-3 px-4 border">Product Name</th>
                     <th class="py-3 px-4 border">Brand</th>
                     <th class="py-3 px-4 border">Category</th>
-                    <th class="py-3 px-4 border">regular Price</th>
+                    <th class="py-3 px-4 border">Regular Price</th>
                     <th class="py-3 px-4 border">Sale Price</th>
                     <th class="py-3 px-4 border">Offer Price</th>
                     <th class="py-3 px-4 border">Offer</th>
@@ -73,80 +74,86 @@
                 </tr>
             </thead>
             <tbody>
-                <% for (let i = data.length - 1; i >= 0; i--) { %>
-                <tr class="text-center hover:bg-gray-100 transition">
-                    <td class="py-3 px-4 border">
-                        <img id="main-product-image" src="/uploads/re-image/<%= data[i].productImage[0] %>" alt="Product Image">
-                    </td>
-                    <td class="py-3 px-4 border"><%= data[i].productName%></td>
-                    <td class="py-3 px-4 border"><%= data[i].brand%></td>
-                    <td class="py-3 px-4 border"><%= data[i].category.name%></td>
-                    <td class="py-3 px-4 border"><%= data[i].regularPrice%></td>
-                    <td class="py-3 px-4 border"><%= data[i].salePrice%></td>
-                    <td class="py-3 px-4 border"> <%if(data[i].productOffer){%>
-                        <%=data[i].productOffer%>
-                        <%}else{%> 
-                            0% 
-                        <%}%>
+                <% if (data.length === 0) { %>
+                    <tr>
+                        <td colspan="11" class="text-center py-6 text-gray-500">
+                            No products found.
                         </td>
-                    <td class="py-3 px-4 border">
-                        <div class="flex justify-center gap-2">
-                            <% if (data[i].productOffer ===0) { %>
-                            <a href="#" class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition" onclick="addOffer('<%= data[i]._id %>')">
-                                Add Offer
-                            </a>
+                    </tr>
+                <% } else { %>
+                    <% for (let i = data.length - 1; i >= 0; i--) { %>
+                    <tr class="text-center hover:bg-gray-100 transition">
+                        <td class="py-3 px-4 border">
+                            <img id="main-product-image" src="/uploads/re-image/<%= data[i].productImage[0] %>" alt="Product Image">
+                        </td>
+                        <td class="py-3 px-4 border"><%= data[i].productName%></td>
+                        <td class="py-3 px-4 border"><%= data[i].brand%></td>
+                        <td class="py-3 px-4 border"><%= data[i].category.name%></td>
+                        <td class="py-3 px-4 border"><%= data[i].regularPrice%></td>
+                        <td class="py-3 px-4 border"><%= data[i].salePrice%></td>
+                        <td class="py-3 px-4 border">
+                            <% if (data[i].productOffer) { %>
+                                <%= data[i].productOffer %>
                             <% } else { %>
-                            <a href="#" class="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 transition" onclick="removeOffer('<%= data[i]._id %>')">
-                                Remove
-                            </a>
+                                0%
                             <% } %>
-                        </div>
-                    </td>
-                    <td class="py-6 px-6 border">
-                        <% if (data[i].sizes && data[i].sizes.length > 0) { %>
-                            <ul class="text-left">
-                                <% data[i].sizes.forEach(sizeData => { %>
-                                    <li><strong><%= sizeData.size %>:</strong> <%= sizeData.quantity %> pcs</li>
-                                <% }); %>
-                            </ul>
-                        <% } else { %>
-                            <span class="text-gray-500">No sizes available</span>
-                        <% } %>
-                    </td>
-                    
-                    <td class="py-3 px-4 border">
-                        <div class="flex justify-center gap-2">
-                            <% if (data[i].isBlocked === false) { %>
-                            <a href="/admin/blockProduct?id=<%= data[i]._id %>"
-                                class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition shadow">
-                                Block
-                            </a>
+                        </td>
+                        <td class="py-3 px-4 border">
+                            <div class="flex justify-center gap-2">
+                                <% if (data[i].productOffer === 0) { %>
+                                    <a href="#" class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition" onclick="addOffer('<%= data[i]._id %>')">
+                                        Add Offer
+                                    </a>
+                                <% } else { %>
+                                    <a href="#" class="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 transition" onclick="removeOffer('<%= data[i]._id %>')">
+                                        Remove
+                                    </a>
+                                <% } %>
+                            </div>
+                        </td>
+                        <td class="py-6 px-6 border">
+                            <% if (data[i].sizes && data[i].sizes.length > 0) { %>
+                                <ul class="text-left">
+                                    <% data[i].sizes.forEach(sizeData => { %>
+                                        <li><strong><%= sizeData.size %>:</strong> <%= sizeData.quantity %> pcs</li>
+                                    <% }); %>
+                                </ul>
                             <% } else { %>
-                            <a href="/admin/unblockProduct?id=<%= data[i]._id %>"
-                                class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition shadow">
-                                Unblock
-                            </a>
+                                <span class="text-gray-500">No sizes available</span>
                             <% } %>
-                        </div>
-                    </td>
-                    <td class="py-3 px-4 border">
-                        <a href="/admin/editProduct?id=<%= data[i]._id %>"
-                            class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition shadow">
-                            Edit
-                        </a>
-                    </td>
-                </tr>
+                        </td>
+                        <td class="py-3 px-4 border">
+                            <div class="flex justify-center gap-2">
+                                <% if (data[i].isBlocked === false) { %>
+                                    <a href="/admin/blockProduct?id=<%= data[i]._id %>" class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition shadow">
+                                        Block
+                                    </a>
+                                <% } else { %>
+                                    <a href="/admin/unblockProduct?id=<%= data[i]._id %>" class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition shadow">
+                                        Unblock
+                                    </a>
+                                <% } %>
+                            </div>
+                        </td>
+                        <td class="py-3 px-4 border">
+                            <a href="/admin/editProduct?id=<%= data[i]._id %>" class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition shadow">
+                                Edit
+                            </a>
+                        </td>
+                    </tr>
+                    <% } %>
                 <% } %>
             </tbody>
         </table>
     </div>
 
     <!-- Pagination -->
+    <% if (totalPages > 1) { %>
     <div class="container mt-6">
         <nav aria-label="Page navigation">
             <ul class="pagination justify-center mb-4 flex space-x-2">
                 <% for (let i = 1; i <= totalPages; i++) { %>
-                <li class="page-item <%=(i === currentPage) ? 'bg-indigo-600 text-white' : 'bg-gray-300' %> rounded">
+                <li class="page-item <%=(i == currentPage) ? 'bg-indigo-600 text-white' : 'bg-gray-300' %> rounded">
                     <a class="page-link px-3 py-2 rounded hover:bg-indigo-700" href="?page=<%= i %>">
                         <%= i %>
                     </a>
@@ -155,78 +162,79 @@
             </ul>
         </nav>
     </div>
+    <% } %>
 </div>
 
 <script>
     async function addOffer(productId) {
-    const { value: amount } = await Swal.fire({
-        title: "Offer in percentage",
-        input: "number",
-        inputLabel: "Percentage",
-        inputPlaceholder: "%",
-        inputAttributes: { min: 1, max: 99,tep: 1 },
-        showCancelButton: true
-    });
-
-    if (!amount) return;
-
-    if (amount < 1 || amount > 99) {
-        return Swal.fire("Invalid Input", "Offer percentage should be between 1 and 99.", "error");
-    }
-
-    try {
-        const response = await fetch("/admin/addProductOffer", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ percentage: amount, productId })
+        const { value: amount } = await Swal.fire({
+            title: "Offer in percentage",
+            input: "number",
+            inputLabel: "Percentage",
+            inputPlaceholder: "%",
+            inputAttributes: { min: 1, max: 99, step: 1 },
+            showCancelButton: true
         });
 
-        const data = await response.json();
-        if (response.ok && data.status === true) {
-            Swal.fire("Offer Added", "The offer has been successfully added.", "success").then(() => location.reload());
-        } else {
-            throw new Error(data.message || "Failed to add offer.");
-        }
-    } catch (error) {
-        Swal.fire("Error", error.message, "error");
-    }
-}
+        if (!amount) return;
 
-async function removeOffer(productId) {
-    Swal.fire({
-        title: "Are you sure?",
-        text: "Do you want to remove this offer?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#d33",
-        cancelButtonColor: "#3085d6",
-        confirmButtonText: "Yes, remove it!"
-    }).then(async (result) => {
-        if (!result.isConfirmed) return;
+        if (amount < 1 || amount > 99) {
+            return Swal.fire("Invalid Input", "Offer percentage should be between 1 and 99.", "error");
+        }
 
         try {
-            const response = await fetch("/admin/removeProductOffer", {
+            const response = await fetch("/admin/addProductOffer", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ productId })
+                body: JSON.stringify({ percentage: amount, productId })
             });
 
             const data = await response.json();
             if (response.ok && data.status === true) {
-                Swal.fire("Offer Removed", "The offer has been successfully removed.", "success")
-                .then(() => location.reload());
+                Swal.fire("Offer Added", "The offer has been successfully added.", "success").then(() => location.reload());
             } else {
-                throw new Error(data.message || "Failed to remove offer.");
+                throw new Error(data.message || "Failed to add offer.");
             }
         } catch (error) {
             Swal.fire("Error", error.message, "error");
         }
-    });
-}
-</script>
+    }
 
+    async function removeOffer(productId) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Do you want to remove this offer?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Yes, remove it!"
+        }).then(async (result) => {
+            if (!result.isConfirmed) return;
+
+            try {
+                const response = await fetch("/admin/removeProductOffer", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ productId })
+                });
+
+                const data = await response.json();
+                if (response.ok && data.status === true) {
+                    Swal.fire("Offer Removed", "The offer has been successfully removed.", "success")
+                        .then(() => location.reload());
+                } else {
+                    throw new Error(data.message || "Failed to remove offer.");
+                }
+            } catch (error) {
+                Swal.fire("Error", error.message, "error");
+            }
+        });
+    }
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <%- include("../../views/partials/admin/footer") %>
+
