@@ -672,6 +672,7 @@ const orderCancel = async (req, res) => {
                 await userWallet.save();
                 console.log('Refund credited to existing wallet.');
             } else {
+<<<<<<< HEAD
                 userWallet = new Wallet({
                     user: order.userId,
                     balance: order.finalAmount,
@@ -679,6 +680,22 @@ const orderCancel = async (req, res) => {
                 });
                 await userWallet.save();
                 console.log('New wallet created and refund added.');
+=======
+                const newWallet = new Wallet({
+                    user: order.userId,
+                    balance: order.finalAmount,
+                    transaction: [{
+                        amount: order.finalAmount,
+                        transactionId: order.orderId,
+                        productName: order.orderItems.map(item => item.productName),
+                        type: 'credit',
+                        method: "refund",
+                        reason: "cancel",
+                    }]
+                });
+            
+                await newWallet.save();
+>>>>>>> 0ff71ee (final)
             }
         }
         await Order.findOneAndUpdate(

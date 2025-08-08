@@ -143,6 +143,7 @@ const editCategory = async(req,res)=>{
         const {categoryName,description} = req.body
     
         const existingCategory = await Category.findOne({name:categoryName})
+
         
         if(existingCategory){
            return res.status(400).json({error:"Category already exists , Please try another name"})

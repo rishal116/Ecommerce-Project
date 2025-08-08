@@ -21,6 +21,7 @@ const loadLogin = async (req, res) => {
     res.render("adminLogin", { message: null });
 };
 
+<<<<<<< HEAD
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -41,6 +42,31 @@ const login = async (req, res) => {
     } catch (error) {
         console.error("Error in login:", error);
         return res.render("adminLogin", { message: "An error occurred. Please try again." });
+=======
+
+
+const login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        const admin = await User.findOne({ email, isAdmin: true });
+
+        if (admin) {
+            const isMatch = await bcrypt.compare(password, admin.password);
+
+            if (isMatch) {
+                req.session.admin = true;
+                return res.redirect("/admin");
+            } else {
+                return res.redirect("/admin/login");
+            }
+        } else {
+            return res.redirect("/admin/login");
+        }
+    } catch (error) {
+        console.error("Error in login: ", error);
+        return res.redirect("/admin/pageError");
+>>>>>>> 0ff71ee (final)
     }
 };
 
